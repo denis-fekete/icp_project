@@ -27,6 +27,10 @@ public:
 private slots:
     void on_btnCreateRobot_clicked();
 
+    void on_btnTest_clicked();
+
+    void on_btnTest_2_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;

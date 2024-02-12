@@ -15,6 +15,7 @@ Robot::Robot(double x, double y, double radius, double rot, double detRadius) : 
 
 Robot::~Robot() {}
 
+
 bool distanceBetweenTwoCircles(Point c1, double rad1, Point c2, double rad2)
 {
     auto radius = rad1 + rad2;

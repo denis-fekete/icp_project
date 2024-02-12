@@ -17,7 +17,7 @@ public:
 
     void Initialize(QGraphicsScene* scene);
     void Move(double distance);
-    void Rotate(double angle);
+    void RotateAroundSelf(double angle);
 };
 
 #endif // AUTOROBOT_H

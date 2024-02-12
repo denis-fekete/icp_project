@@ -257,6 +257,32 @@
          <string>Default rotation</string>
         </property>
        </widget>
+       <widget class="QPushButton" name="btnTest">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>310</y>
+          <width>80</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Move</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="btnTest_2">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>350</y>
+          <width>80</width>
+          <height>24</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Rotate</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="_3ObstacleConfigaration">
        <attribute name="label">

@@ -40,3 +40,16 @@ void MainWindow::on_btnCreateRobot_clicked()
     robots.back()->Initialize(this->scene);
 }
 
+
+
+void MainWindow::on_btnTest_clicked()
+{
+    robots.back()->Move(10);
+}
+
+
+void MainWindow::on_btnTest_2_clicked()
+{
+    robots.back()->RotateAroundSelf(45);
+}
+
