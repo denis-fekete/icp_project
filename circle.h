@@ -2,7 +2,9 @@
 #define CIRCLE_H
 
 #include "point2d.h"
+#include <math.h>
 #include <cmath>
+#include <QtMath>
 
 class Circle : public Point
 {

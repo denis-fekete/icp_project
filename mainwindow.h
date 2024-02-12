@@ -7,7 +7,7 @@
 #include <QGraphicsItem>
 #include <vector>
 
-#include <robot.h>
+#include <autorobot.h>
 #include <rectangle.h>
 
 QT_BEGIN_NAMESPACE
@@ -24,11 +24,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_btnCreateRobot_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
-    std::vector<Robot*> robots;
+    std::vector<AutoRobot*> robots;
     std::vector<Rectangle*> obstacles;
 };
 #endif // MAINWINDOW_H

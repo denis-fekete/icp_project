@@ -4,14 +4,20 @@
 #include <robot.h>
 #include <QGraphicsItem>
 #include <QGraphicsView>
+#include <QGraphicsScene>
 
 class AutoRobot : public Robot
 {
 public:
     AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color);
-    //Robot(double x, double y, double radius, double rot, double detRadius);
-private:
+
     QGraphicsEllipseItem* graphics;
+    QColor color;
+
+
+    void Initialize(QGraphicsScene* scene);
+    void Move(double distance);
+    void Rotate(double angle);
 };
 
 #endif // AUTOROBOT_H
