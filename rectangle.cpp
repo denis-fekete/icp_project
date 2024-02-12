@@ -9,7 +9,7 @@ Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Point
 
     radius = sqrt( (w * w +  h * h) / 4);
 
-    UpdatePoints();   
+    UpdatePoints();
 }
 
 Rectangle::~Rectangle() {}
@@ -20,7 +20,7 @@ void Rectangle::MoveTo(Point p)
     x = p.x;
     y = p.y;
 
-    // Call UpdatePoints to update points based on rotation 
+    // Call UpdatePoints to update points based on rotation
     this->UpdatePoints();
 }
 
@@ -106,11 +106,11 @@ void Rectangle::UpdatePoints(double cosRad, double sinRad)
 void Rectangle::UpdatePoints()
 {
     CalcualteCornersWithNoRotation(this);
- 
+
     Point center(this->x, this->y);
 
     // Update stored sinus and cosinus values
-    this->CalculateSinCos();
+    this->CalculateSinCos(this->rot);
 
     const double cosRad = this->GetCosRad();
     const double sinRad = this->GetSinRad();
@@ -134,10 +134,10 @@ bool LineIntersects(Point* startA, Point* endA, Point* startB, Point* endB, Poin
     }
 
     double ua = (   (endB->x - startB->x) * (startA->y - startB->y)
-                -   (endB->y - startB->y) * (startA->x - startB->x))
+                 -   (endB->y - startB->y) * (startA->x - startB->x))
                 / denominator;
     double ub = (   (endA->x - startA->x) * (startA->y - startB->y)
-                -   (endA->y - startA->y) * (startA->x - startB->x))
+                 -   (endA->y - startA->y) * (startA->x - startB->x))
                 / denominator;
 
     // is the intersection along the segments
@@ -156,7 +156,7 @@ void BreakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge)
 {
     switch (edge)
     {
-    case 1: 
+    case 1:
         *pStart = rect->LB;
         *pEnd = rect->RB;
         break;
@@ -178,7 +178,7 @@ void BreakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge)
 
     // switch (edge)
     // {
-    // case 1: 
+    // case 1:
     //     *pStart = &(rect->LB);
     //     *pEnd = &(rect->RB);
     //     break;
@@ -203,7 +203,7 @@ bool OnLeftSideOfLine(Point S, Point A, Point B)
 {
     auto res = (B.x - A.x) * (S.y - A.y) - (S.x - A.x) * (B.y - A.y);
 
-    // If res >= 0 point is on the line, or on the left side 
+    // If res >= 0 point is on the line, or on the left side
     return (res >= 0) ? true : false;
 }
 
@@ -256,7 +256,7 @@ bool Rectangle::Intersects(Rectangle* other)
             // Check if lines intersect
             if(LineIntersects(&startA, &endA, &startB, &endB, &intersectionPoint))
             {
-                // std::cout << "IntPoint : (" << intersectionPoint.x << ", " << intersectionPoint.y << ")\n"; 
+                // std::cout << "IntPoint : (" << intersectionPoint.x << ", " << intersectionPoint.y << ")\n";
                 // Check if found point is in both rectangles
                 if(PointInRectangle(&intersectionPoint, this))
                 {

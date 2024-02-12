@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
+    // Apply world configuration
+    on_btn_applyWorldConfigSize_clicked();
+
     QPen pen(Qt::gray);
     pen.setWidth(1);
     scene->addRect(0, 0, 20, 20, pen);
@@ -51,5 +54,11 @@ void MainWindow::on_btnTest_clicked()
 void MainWindow::on_btnTest_2_clicked()
 {
     robots.back()->RotateAroundSelf(45);
+}
+
+
+void MainWindow::on_btn_applyWorldConfigSize_clicked()
+{
+    scene->setSceneRect(0, 0, ui->sBox_worldc_sizeX->value(), ui->sBox_worldc_sizeY->value());
 }
 

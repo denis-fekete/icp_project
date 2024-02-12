@@ -11,7 +11,7 @@ void AutoRobot::Initialize(QGraphicsScene* scene)
     QPen robotPen(color);
     robotPen.setWidth(1);
 
-    this->graphics = scene->addEllipse(x - radius, y - radius, radius, radius, robotPen, QBrush(color));
+    this->graphics = scene->addEllipse(x - radius / 2, y - radius / 2, radius, radius, robotPen, QBrush(color));
     this->graphics->setTransformOriginPoint(this->x, this->y);
 }
 
@@ -24,5 +24,9 @@ void AutoRobot::Move(double distance)
 void AutoRobot::RotateAroundSelf(double angle)
 {
     this->Rotate(angle);
+
+    const auto rad = this->radius / 2;
+    this->graphics->moveBy(rad, rad);
     this->graphics->setRotation(this->rot);
+    this->graphics->moveBy(-rad, -rad);
 }

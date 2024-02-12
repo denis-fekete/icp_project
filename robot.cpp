@@ -1,4 +1,4 @@
-#include <robot.h>
+#include "robot.h"
 
 // HELPING FUNCTIONS
 bool distanceBetweenTwoCircles(Point c1, double rad1, Point c2, double rad2);
@@ -15,7 +15,6 @@ Robot::Robot(double x, double y, double radius, double rot, double detRadius) : 
 
 Robot::~Robot() {}
 
-
 bool distanceBetweenTwoCircles(Point c1, double rad1, Point c2, double rad2)
 {
     auto radius = rad1 + rad2;
@@ -29,12 +28,14 @@ bool distanceBetweenTwoCircles(Point c1, double rad1, Point c2, double rad2)
             return true;
         }
     }
-                
+
     return false;
 }
 
 void Robot::MoveForward(double distance)
 {
+    this->CalculateSinCos (this->rot);
+
     // Calcualte delta value for moving in X and Y direction
     double xDelta = this->GetCosRad() * distance;
     double yDelta = this->GetSinRad() * distance;
@@ -55,25 +56,30 @@ void Robot::MoveForward(double distance)
     colliderFwd.LT = colliderFwd.LT + p;
 }
 
+double dAbs(double val)
+{
+    return (val > 0) ? val : -val;
+}
+
 void Robot::Rotate(double angle)
 {
-    rot += angle;
+    this->rot += angle;
 
     // Calculate whenever rotation is negative or positive number
-    const int sign = (rot < 0)? -1 : 1;
+    const int sign = (this->rot < 0)? -1 : 1;
 
     // Normalize rotation
-    while(abs(rot) >= 360.0)
+    while(dAbs(this->rot) >= 360.0)
     {
         // Subtract 360 from rotation
-        rot -= sign * 360;
+        this->rot -= sign * 360;
     }
 
-    this->CalculateSinCos();
+    this->CalculateSinCos(this->rot);
 
     const double cosRad = this->GetCosRad();
     const double sinRad = this->GetSinRad();
-    
+
     colliderFwd.rot = this->rot;
 
     // Calcualte delta value for moving in X and Y direction
@@ -88,7 +94,7 @@ void Robot::Rotate(double angle)
 
 bool Robot::ObstacleDetection(std::vector<Rectangle> validObstacles)
 {
-    // Go through list of all other objects 
+    // Go through list of all other objects
     for(unsigned i = 0; i < validObstacles.size(); i++)
     {
         // Store current other object

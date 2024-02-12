@@ -11,9 +11,27 @@ Point::Point(double x, double y, double rot)
 
 void Point::CalculateSinCos()
 {
-    double radians = rot * (M_PI / 180);
+    double radians = rot * (M_PI / 180.0);
     cosRad = cos(radians);
     sinRad = sin(radians);
+}
+
+void Point::CalculateSinCos(double rot)
+{
+    double radians = rot * (M_PI / 180.0);
+    cosRad = cos(radians);
+    sinRad = sin(radians);
+}
+
+void Point::CalculateSinCos(double* cosRad, double* sinRad, double* rot)
+{
+    double radians = this->rot * (M_PI / 180.0);
+    this->cosRad = cos(radians);
+    this->sinRad = sin(radians);
+
+    *cosRad = this->cosRad;
+    *sinRad = this->sinRad;
+    *rot = this->rot;
 }
 
 double Point::GetCosRad()

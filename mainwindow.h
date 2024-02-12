@@ -31,6 +31,8 @@ private slots:
 
     void on_btnTest_2_clicked();
 
+    void on_btn_applyWorldConfigSize_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
