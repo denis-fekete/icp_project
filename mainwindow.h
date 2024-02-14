@@ -7,8 +7,10 @@
 #include <QGraphicsItem>
 #include <vector>
 
-#include <autorobot.h>
-#include <rectangle.h>
+#include "autorobot.h"
+#include "rectangle.h"
+
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,11 +35,14 @@ private slots:
 
     void on_btn_applyWorldConfigSize_clicked();
 
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
     std::vector<AutoRobot*> robots;
     std::vector<Rectangle*> obstacles;
+
+    QTimer* timer;
 };
 #endif // MAINWINDOW_H

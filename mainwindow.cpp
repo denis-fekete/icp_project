@@ -12,12 +12,11 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
+    QGraphicsView view(scene);
+    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+
     // Apply world configuration
     on_btn_applyWorldConfigSize_clicked();
-
-    QPen pen(Qt::gray);
-    pen.setWidth(1);
-    scene->addRect(0, 0, 20, 20, pen);
 }
 
 MainWindow::~MainWindow()
@@ -37,7 +36,9 @@ void MainWindow::on_btnCreateRobot_clicked()
             QColor(
                 ui->input_robot_color_r->value(),
                 ui->input_robot_color_g->value(),
-                ui->input_robot_color_b->value())
+                ui->input_robot_color_b->value()),
+            10,
+            &obstacles
             ));
 
     robots.back()->Initialize(this->scene);
@@ -61,4 +62,3 @@ void MainWindow::on_btn_applyWorldConfigSize_clicked()
 {
     scene->setSceneRect(0, 0, ui->sBox_worldc_sizeX->value(), ui->sBox_worldc_sizeY->value());
 }
-

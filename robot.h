@@ -11,7 +11,6 @@ public:
     // Value of radius for collision detection
     double detRadius;
     //TODO: Speed at which will robot move
-    double speed;
     Rectangle colliderFwd;
 
     //
@@ -20,7 +19,7 @@ public:
 
     //
     void OnDetectedObstacle();
-    bool ObstacleDetection(std::vector<Rectangle> validObstacles);
+    bool ObstacleDetection(std::vector<Rectangle*> validObstacles);
 
     void MoveForward(double distance);
     void Rotate(double angle);

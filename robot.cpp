@@ -92,18 +92,17 @@ void Robot::Rotate(double angle)
     colliderFwd.UpdatePoints(cosRad, sinRad);
 }
 
-bool Robot::ObstacleDetection(std::vector<Rectangle> validObstacles)
+bool Robot::ObstacleDetection(std::vector<Rectangle*> validObstacles)
 {
     // Go through list of all other objects
     for(unsigned i = 0; i < validObstacles.size(); i++)
     {
         // Store current other object
-        auto other = validObstacles[i];
+        auto other = *validObstacles[i];
 
         // First check if robot and obstacles radiuses intersect
         if(distanceBetweenTwoCircles(Point(this->x, this->y), this->detRadius, Point(other.x, other.y), other.rot))
         {
-
             if(this->colliderFwd.Intersects(&other))
             {
                 return true;

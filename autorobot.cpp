@@ -1,8 +1,16 @@
 #include "autorobot.h"
 
-AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color) : Robot(x, y, radius, rot, detRadius)
+AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Rectangle*>* obstaclesPointer)
 {
+    this->sim = new Robot(x, y, radius, rot, detRadius);
+    this->speed = speed;
     this->color = color;
+
+    this->obstacles = obstaclesPointer;
+
+    timer = new QTimer();
+    connect(timer, SIGNAL(timeout()), this, SLOT(Simulate()));
+    timer->start(20);
 }
 
 
@@ -11,22 +19,33 @@ void AutoRobot::Initialize(QGraphicsScene* scene)
     QPen robotPen(color);
     robotPen.setWidth(1);
 
-    this->graphics = scene->addEllipse(x - radius / 2, y - radius / 2, radius, radius, robotPen, QBrush(color));
-    this->graphics->setTransformOriginPoint(this->x, this->y);
+    this->graphics = scene->addEllipse(sim->x - sim->radius / 2, sim->y - sim->radius / 2, sim->radius, sim->radius, robotPen, QBrush(color));
+    this->graphics->setTransformOriginPoint(sim->x, sim->y);
 }
 
 void AutoRobot::Move(double distance)
 {
-    this->MoveForward(distance);
-    this->graphics->setPos(this->x, this->y);
+    sim->MoveForward(distance);
+    this->graphics->setPos(sim->x, sim->y);
 }
 
 void AutoRobot::RotateAroundSelf(double angle)
 {
-    this->Rotate(angle);
+    sim->Rotate(angle);
 
-    const auto rad = this->radius / 2;
+    const auto rad = sim->radius / 2;
     this->graphics->moveBy(rad, rad);
-    this->graphics->setRotation(this->rot);
+    this->graphics->setRotation(sim->rot);
     this->graphics->moveBy(-rad, -rad);
+}
+
+void AutoRobot::Simulate()
+{
+    this->Move(1);
+    bool collision = this->sim->ObstacleDetection(*obstacles);
+
+    if(collision)
+    {
+        this->RotateAroundSelf(90);
+    }
 }
