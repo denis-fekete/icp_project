@@ -13,8 +13,11 @@
 class Simulator : public QObject
 {
     Q_OBJECT
+
 public:
     Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* obstacles, int numOfRobotsPerThread);
+    Simulator();
+
     void RunSimulation();
     void StopSimulation();
     void SetTimerPeriod(int milliSeconds);
@@ -23,14 +26,14 @@ protected:
     std::vector<Obstacle*>* obstacles;
     std::vector<AutoRobot*>* robots;
 
-    static int numOfRobotsPerThread;
+    int numOfRobotsPerThread;
     QTimer* timer;
     int timerPeriod_ms = 20;
 
-    bool simulationEnabled;
+    static void SimulateGroup(std::vector<AutoRobot*>* robots, const size_t start, const size_t end);
 
+protected slots:
     void SimulationCycle();
-    void SimulateRobots();
 };
 
 #endif // SIMULATOR_H

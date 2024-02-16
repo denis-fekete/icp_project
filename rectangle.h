@@ -1,11 +1,11 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include <point2d.h>
 #include <cmath>
-#include <iostream>
 #include <QDebug>
 #include <QtDebug>
+
+#include "point2d.h"
 
 class Rectangle : public Point
 {

@@ -10,9 +10,12 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRa
     this->obstacles = obstaclesPointer;
     this->clock = clock;
 
-    timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(Simulate()));
-    timer->start(1);
+    // timer = new QTimer();
+    // connect(timer, SIGNAL(timeout()), this, SLOT(Simulate()));
+    // timer->start(1);
+
+    connect(this, SIGNAL(qtDummyMove()), this, SLOT(MoveUpdateGraphics()), Qt::QueuedConnection);
+    connect(this, SIGNAL(qtDummyRotate()), this, SLOT(RotateUpdateGraphics()), Qt::QueuedConnection);
 }
 
 AutoRobot::~AutoRobot()
@@ -34,23 +37,30 @@ void AutoRobot::Initialize(QGraphicsScene* scene)
     this->collider->setTransformOriginPoint(sim->x, sim->y);
 }
 
-void AutoRobot::Move(double distance)
+void AutoRobot::MoveRobot(double distance)
 {
-    Point moveBy = this->sim->MoveForward(distance);
-
-    this->graphics->moveBy(moveBy.x, moveBy.y);
-    this->collider->moveBy(moveBy.x, moveBy.y);
+    lastMoveDelta = this->sim->MoveForward(distance);
+    emit qtDummyMove();
 }
 
-void AutoRobot::RotateAroundSelf(double angle)
+void AutoRobot::MoveUpdateGraphics()
 {
-    Point moveBy = sim->Rotate(angle);
+    this->graphics->moveBy(lastMoveDelta.x, lastMoveDelta.y);
+    this->collider->moveBy(lastMoveDelta.x, lastMoveDelta.y);
+}
 
+void AutoRobot::RotateRobot(double angle)
+{
+    sim->Rotate(angle);
+    emit qtDummyRotate();
+}
+
+void AutoRobot::RotateUpdateGraphics()
+{
     const auto rad = sim->radius / 2;
     this->graphics->moveBy(rad, rad);
     this->graphics->setRotation(sim->rot);
     this->graphics->moveBy(-rad, -rad);
-
 
     const auto w2 = sim->colliderFwd.w/2 + sim->radius;
     const auto h2 = sim->colliderFwd.h/2 + sim->radius;
@@ -61,12 +71,12 @@ void AutoRobot::RotateAroundSelf(double angle)
 
 void AutoRobot::Simulate()
 {
-    this->Move(this->speed);
+    this->MoveRobot(this->speed);
 
     bool collision = this->sim->ObstacleDetection(obstacles);
     if(collision)
     {
-        this->RotateAroundSelf(90);
+        this->RotateRobot(90);
     }
 }
 

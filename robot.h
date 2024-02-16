@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include <vector>
+
 #include "rectangle.h"
 #include "circle.h"
 #include "obstacle.h"

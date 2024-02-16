@@ -1,8 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <iostream>
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -18,31 +16,37 @@ MainWindow::MainWindow(QWidget *parent)
     // Apply world configuration
     on_btn_applyWorldConfigSize_clicked();
 
-
-    QPen gridPen(Qt::lightGray);
-    const auto xMax = ui->sBox_worldc_sizeX->value();
-    const auto yMax = ui->sBox_worldc_sizeY->value();
-    for(int y = 0; y <yMax; y+= 50)
-    {
-        scene->addLine(0, y , xMax , y, gridPen);
-    }
-
-    for(int x = 0; x < xMax; x+= 50)
-    {
-        scene->addLine(x, 0 ,x , yMax, gridPen);
-    }
+    DrawGrid(50);
 
     clock = new QTime();
     clock->start();
 
     activeRobot = nullptr;
-
-    simulator = new Simulator(robots, obstacles, 10);
+\
+    simulator = new Simulator(&robots, &obstacles, 50);
+    simulator->SetTimerPeriod(30);
+    simulator->RunSimulation();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::DrawGrid(unsigned density)
+{
+    QPen gridPen(Qt::lightGray);
+    const auto xMax = ui->sBox_worldc_sizeX->value();
+    const auto yMax = ui->sBox_worldc_sizeY->value();
+    for(int y = 0; y <yMax; y+= density)
+    {
+        scene->addLine(0, y , xMax , y, gridPen);
+    }
+
+    for(int x = 0; x < xMax; x+= density)
+    {
+        scene->addLine(x, 0 ,x , yMax, gridPen);
+    }
 }
 
 void MainWindow::on_btnCreateRobot_clicked()
@@ -89,19 +93,25 @@ void MainWindow::on_btnCreateRobot_clicked()
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
-    ui->input_robot_IDSelector->setMaximum(robots.size() - 1);
+    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
 }
 
 
 void MainWindow::on_btnTest_clicked()
 {
-    activeRobot->Move(10);
+    if(activeRobot != nullptr)
+    {
+        activeRobot->MoveRobot(25);
+    }
 }
 
 
 void MainWindow::on_btnTest_2_clicked()
 {
-    activeRobot->RotateAroundSelf(45);
+    if(activeRobot != nullptr)
+    {
+        activeRobot->RotateRobot(45);
+    }
 }
 
 
@@ -212,8 +222,6 @@ void MainWindow::on_btn_update_info_clicked()
 
     ui->info_gphx_coll_ltX->setNum(collider->rect().x());
     ui->info_gphx_coll_ltY->setNum(collider->rect().y() + collider->rect().height());
-
-    ui->info_sim_timeOfCycle->setNum(activeRobot->timeOfSimulationCicle);
 }
 
 

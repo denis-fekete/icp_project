@@ -63,5 +63,8 @@ protected:
 
     QTimer* timer;
     QTime*  clock;
+
+private:
+    void DrawGrid(unsigned density);
 };
 #endif // MAINWINDOW_H

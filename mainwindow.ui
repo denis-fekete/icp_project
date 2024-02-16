@@ -447,7 +447,7 @@
        <rect>
         <x>0</x>
         <y>230</y>
-        <width>201</width>
+        <width>211</width>
         <height>191</height>
        </rect>
       </property>
@@ -1279,7 +1279,7 @@
        <rect>
         <x>220</x>
         <y>130</y>
-        <width>211</width>
+        <width>181</width>
         <height>101</height>
        </rect>
       </property>
@@ -1341,32 +1341,6 @@
         <number>0</number>
        </property>
       </widget>
-     </widget>
-     <widget class="QLabel" name="label_36">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>430</y>
-        <width>171</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Time of one simulation cycle:</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="info_sim_timeOfCycle">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
-        <y>430</y>
-        <width>49</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>0</string>
-      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="_3ObstacleConfigaration">

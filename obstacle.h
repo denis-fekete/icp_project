@@ -6,7 +6,6 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
-
 #include "rectangle.h"
 
 class Obstacle : public QGraphicsItem

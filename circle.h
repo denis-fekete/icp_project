@@ -1,10 +1,11 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-#include "point2d.h"
 #include <math.h>
 #include <cmath>
 #include <QtMath>
+
+#include "point2d.h"
 
 class Circle : public Point
 {

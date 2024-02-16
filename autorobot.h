@@ -1,8 +1,7 @@
 #ifndef AUTOROBOT_H
 #define AUTOROBOT_H
 
-#include "robot.h"
-#include "obstacle.h"
+#include <QObject>
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -11,6 +10,9 @@
 #include <QDebug>
 
 #include <vector>
+
+#include "obstacle.h"
+#include "robot.h"
 
 class AutoRobot : public QObject
 {
@@ -25,12 +27,11 @@ protected:
     double speed;
     QTimer* timer;
     QTime* clock;
+
 public:
     AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
     ~AutoRobot();
     void Initialize(QGraphicsScene* scene);
-    void Move(double distance);
-    void RotateAroundSelf(double angle);
 
     Robot* GetSimatationInfo();
     QGraphicsEllipseItem* GetGraphics();
@@ -38,10 +39,22 @@ public:
 
     void SetUnselected();
     void SetSelected();
-    int timeOfSimulationCicle;
+
+    void Simulate();
+
+    void MoveRobot(double distance);
+    void RotateRobot(double angle);
+
+    Point lastMoveDelta;
+
+signals:
+    void qtDummyMove();
+    void qtDummyRotate();
+
 
 public slots:
-    void Simulate();
+    void MoveUpdateGraphics();
+    void RotateUpdateGraphics();
 };
 
 #endif // AUTOROBOT_H
