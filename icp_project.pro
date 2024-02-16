@@ -16,7 +16,8 @@ SOURCES += \
     robot.cpp \
     circle.cpp \
     rectangle.cpp \
-    point2d.cpp
+    point2d.cpp \
+    simulator.cpp
 
 
 HEADERS += \
@@ -26,7 +27,8 @@ HEADERS += \
     robot.h \
     circle.h \
     rectangle.h \
-    point2d.h
+    point2d.h \
+    simulator.h
 
 FORMS += \
     mainwindow.ui
