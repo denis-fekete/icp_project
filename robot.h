@@ -4,6 +4,7 @@
 #include <vector>
 #include "rectangle.h"
 #include "circle.h"
+#include "obstacle.h"
 
 class Robot : public Circle
 {
@@ -19,9 +20,9 @@ public:
 
     //
     void OnDetectedObstacle();
-    bool ObstacleDetection(std::vector<Rectangle*> validObstacles);
+    bool ObstacleDetection(std::vector<Obstacle*>* validObstacles);
 
-    void MoveForward(double distance);
-    void Rotate(double angle);
+    Point MoveForward(double distance);
+    Point Rotate(double angle);
 };
 #endif

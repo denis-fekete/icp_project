@@ -17,8 +17,8 @@ Rectangle::~Rectangle() {}
 void Rectangle::MoveTo(Point p)
 {
     // Update center point
-    x = p.x;
-    y = p.y;
+    this->x = p.x;
+    this->y = p.y;
 
     // Call UpdatePoints to update points based on rotation
     this->UpdatePoints();
@@ -116,10 +116,10 @@ void Rectangle::UpdatePoints()
     const double sinRad = this->GetSinRad();
 
     // Calculate corners with rotation
-    UpdateSinglePoint(&center, &LB, cosRad, sinRad);
-    UpdateSinglePoint(&center, &LT, cosRad, sinRad);
-    UpdateSinglePoint(&center, &RB, cosRad, sinRad);
-    UpdateSinglePoint(&center, &RT, cosRad, sinRad);
+    UpdateSinglePoint(&center, &(this->LB), cosRad, sinRad);
+    UpdateSinglePoint(&center, &(this->LT), cosRad, sinRad);
+    UpdateSinglePoint(&center, &(this->RB), cosRad, sinRad);
+    UpdateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
 bool LineIntersects(Point* startA, Point* endA, Point* startB, Point* endB, Point *intersectionPoint)
@@ -175,28 +175,6 @@ void BreakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge)
     default:
         break;
     }
-
-    // switch (edge)
-    // {
-    // case 1:
-    //     *pStart = &(rect->LB);
-    //     *pEnd = &(rect->RB);
-    //     break;
-    // case 2:
-    //     *pStart = &(rect->RB);
-    //     *pEnd = &(rect->RT);
-    //     break;
-    // case 3:
-    //     *pStart = &(rect->RT);
-    //     *pEnd = &(rect->LT);
-    //     break;
-    // case 4:
-    //     *pStart = &(rect->LT);
-    //     *pEnd = &(rect->LB);
-    //     break;
-    // default:
-    //     break;
-    // }
 }
 
 bool OnLeftSideOfLine(Point S, Point A, Point B)
@@ -211,16 +189,12 @@ bool PointInRectangle(Point* point, Rectangle* rect)
 {
     if(OnLeftSideOfLine(*point, rect->LB, rect->RB))
     {
-        // std::cout << "LB-RB\n";
         if(OnLeftSideOfLine(*point, rect->RB, rect->RT))
         {
-            // std::cout << "RB-RT\n";
             if(OnLeftSideOfLine(*point, rect->RT, rect->LT))
             {
-                // std::cout << "RT-LT\n";
                 if(OnLeftSideOfLine(*point, rect->LT, rect->LB))
                 {
-                    // std::cout << "LT-LB\n";
                     return true;
                 }
             }
@@ -233,7 +207,11 @@ bool PointInRectangle(Point* point, Rectangle* rect)
 #define POLYGON_EDGE_COUNT 4
 bool Rectangle::Intersects(Rectangle* other)
 {
-    // Check edges of rectangle
+    qDebug("Other: Center(x:%f, y:%f), Rect(w:%f, h:%f)\n", other->x, other->y, other->w, other->h);
+    qDebug("Other: LB(x:%f, y:%f), RT(x:%f, y:%f)\n", other->LB.x, other->LB.y, other->RT.x, other->RT.y);
+    qDebug("This: LB(x:%f, y:%f)\n", this->LB.x, this->LB.y);
+
+    // Check points of rectangle
     if(PointInRectangle(&(this->LB), other)) {return true; }
     if(PointInRectangle(&(this->RB), other)) {return true; }
     if(PointInRectangle(&(this->RT), other)) {return true; }
@@ -256,12 +234,12 @@ bool Rectangle::Intersects(Rectangle* other)
             // Check if lines intersect
             if(LineIntersects(&startA, &endA, &startB, &endB, &intersectionPoint))
             {
-                // std::cout << "IntPoint : (" << intersectionPoint.x << ", " << intersectionPoint.y << ")\n";
                 // Check if found point is in both rectangles
                 if(PointInRectangle(&intersectionPoint, this))
                 {
                     if(PointInRectangle(&intersectionPoint, other))
                     {
+                        qDebug("hello5");
                         return true;
                     }
                 }

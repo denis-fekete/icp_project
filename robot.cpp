@@ -8,9 +8,9 @@ Robot::Robot(double x, double y, double radius, double rot, double detRadius) : 
 {
     this->detRadius = detRadius;
 
-    this->colliderFwd = Rectangle(x+radius+detRadius/2, y, detRadius, 2*radius, rot);
+    this->colliderFwd = Rectangle(x + detRadius/2, y, detRadius, 2*radius, rot);
 
-    Rotate(0);
+    this->Rotate(0);
 }
 
 Robot::~Robot() {}
@@ -32,7 +32,7 @@ bool distanceBetweenTwoCircles(Point c1, double rad1, Point c2, double rad2)
     return false;
 }
 
-void Robot::MoveForward(double distance)
+Point Robot::MoveForward(double distance)
 {
     this->CalculateSinCos (this->rot);
 
@@ -54,6 +54,8 @@ void Robot::MoveForward(double distance)
     colliderFwd.RB = colliderFwd.RB + p;
     colliderFwd.RT = colliderFwd.RT + p;
     colliderFwd.LT = colliderFwd.LT + p;
+
+    return p;
 }
 
 double dAbs(double val)
@@ -61,7 +63,7 @@ double dAbs(double val)
     return (val > 0) ? val : -val;
 }
 
-void Robot::Rotate(double angle)
+Point Robot::Rotate(double angle)
 {
     this->rot += angle;
 
@@ -77,34 +79,36 @@ void Robot::Rotate(double angle)
 
     this->CalculateSinCos(this->rot);
 
-    const double cosRad = this->GetCosRad();
-    const double sinRad = this->GetSinRad();
+    const double cosRadConst = this->GetCosRad();
+    const double sinRadConst = this->GetSinRad();
 
     colliderFwd.rot = this->rot;
 
     // Calcualte delta value for moving in X and Y direction
-    double xDelta = cosRad * detRadius;
-    double yDelta = sinRad * detRadius;
+    double xDelta = cosRadConst * this->detRadius / 2;
+    double yDelta = sinRadConst * this->detRadius / 2;
 
     colliderFwd.x = this->x + xDelta;
     colliderFwd.y = this->y + yDelta;
 
-    colliderFwd.UpdatePoints(cosRad, sinRad);
+    colliderFwd.UpdatePoints(cosRadConst, sinRadConst);
+
+    return Point(xDelta, yDelta);
 }
 
-bool Robot::ObstacleDetection(std::vector<Rectangle*> validObstacles)
+bool Robot::ObstacleDetection(std::vector<Obstacle*>* validObstacles)
 {
     // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles.size(); i++)
+    for(unsigned i = 0; i < validObstacles->size(); i++)
     {
         // Store current other object
-        auto other = *validObstacles[i];
+        Rectangle* other = validObstacles->at(i)->GetSimulationRectangle();
 
         // First check if robot and obstacles radiuses intersect
-        if(distanceBetweenTwoCircles(Point(this->x, this->y), this->detRadius, Point(other.x, other.y), other.rot))
+        if(distanceBetweenTwoCircles(Point(this->x, this->y), this->detRadius, Point(other->x, other->y), other->radius))
         {
-            if(this->colliderFwd.Intersects(&other))
-            {
+            if(this->colliderFwd.Intersects(other))
+            {   
                 return true;
             }
         }

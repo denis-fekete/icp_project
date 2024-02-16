@@ -4,6 +4,8 @@
 #include <point2d.h>
 #include <cmath>
 #include <iostream>
+#include <QDebug>
+#include <QtDebug>
 
 class Rectangle : public Point
 {

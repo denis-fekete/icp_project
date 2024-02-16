@@ -2,10 +2,13 @@
 #define AUTOROBOT_H
 
 #include "robot.h"
+#include "obstacle.h"
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QTime>
+
 #include <vector>
 
 class AutoRobot : public QObject
@@ -14,19 +17,25 @@ class AutoRobot : public QObject
 protected:
     Robot* sim; // Simulation of physics for robot
     QGraphicsEllipseItem* graphics;
-    std::vector<Rectangle*>* obstacles;
+    QGraphicsRectItem* collider;
+    std::vector<Obstacle*>* obstacles;
 
     QColor color;
     double speed;
     QTimer* timer;
+    QTime* clock;
+    const int collisionCooldown = 5;
+    int lastCollisionTime;
 
 public:
-    AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Rectangle*>* obstaclesPointer);
+    AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
     void Initialize(QGraphicsScene* scene);
     void Move(double distance);
     void RotateAroundSelf(double angle);
 
-
+    Robot* GetSimatationInfo();
+    QGraphicsEllipseItem* GetGraphics();
+    QGraphicsRectItem* GetCollider();
 public slots:
     void Simulate();
 };

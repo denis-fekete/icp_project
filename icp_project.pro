@@ -12,6 +12,7 @@ SOURCES += \
     autorobot.cpp \
     main.cpp \
     mainwindow.cpp \
+    obstacle.cpp \
     robot.cpp \
     circle.cpp \
     rectangle.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     autorobot.h \
     mainwindow.h \
+    obstacle.h \
     robot.h \
     circle.h \
     rectangle.h \
