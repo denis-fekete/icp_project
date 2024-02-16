@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QTime>
+#include <QDebug>
 
 #include <vector>
 
@@ -24,11 +25,9 @@ protected:
     double speed;
     QTimer* timer;
     QTime* clock;
-    const int collisionCooldown = 5;
-    int lastCollisionTime;
-
 public:
     AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
+    ~AutoRobot();
     void Initialize(QGraphicsScene* scene);
     void Move(double distance);
     void RotateAroundSelf(double angle);
@@ -36,6 +35,11 @@ public:
     Robot* GetSimatationInfo();
     QGraphicsEllipseItem* GetGraphics();
     QGraphicsRectItem* GetCollider();
+
+    void SetUnselected();
+    void SetSelected();
+    int timeOfSimulationCicle;
+
 public slots:
     void Simulate();
 };

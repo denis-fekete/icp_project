@@ -12,6 +12,7 @@
 #include "autorobot.h"
 #include "rectangle.h"
 #include "obstacle.h"
+#include "simulator.h"
 
 
 #include <QTimer>
@@ -48,12 +49,17 @@ private slots:
 
     void on_btn_update_info_clicked();
 
-private:
+    void on_input_robot_IDSelector_valueChanged(int arg1);
+
+protected:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
     std::vector<AutoRobot*> robots;
     std::vector<Obstacle*> obstacles;
+    AutoRobot* activeRobot;
+    Obstacle* activeObstacle;
+    Simulator* simulator;
 
     QTimer* timer;
     QTime*  clock;

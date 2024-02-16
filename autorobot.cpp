@@ -1,5 +1,6 @@
 #include "autorobot.h"
 
+
 AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock)
 {
     this->sim = new Robot(x, y, radius, rot, detRadius);
@@ -11,25 +12,23 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRa
 
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(Simulate()));
-    timer->start(20);
-
-    lastCollisionTime = 0;
+    timer->start(1);
 }
 
+AutoRobot::~AutoRobot()
+{
+    delete this->sim;
+    delete this->timer;
+}
 
 void AutoRobot::Initialize(QGraphicsScene* scene)
 {
-    QPen robotPen(color);
-    robotPen.setWidth(1);
-
-    QPen colliderPen(QColor(60, 60, 60));
-
-    this->graphics = scene->addEllipse(sim->x - sim->radius / 2, sim->y - sim->radius / 2, sim->radius, sim->radius, robotPen, QBrush(color));
+    this->graphics = scene->addEllipse(sim->x - sim->radius / 2, sim->y - sim->radius / 2, sim->radius, sim->radius, QPen(color), QBrush(color));
     this->collider = scene->addRect(sim->colliderFwd.x - sim->colliderFwd.w/2,
                                     sim->colliderFwd.y - sim->colliderFwd.h/2,
                                     sim->colliderFwd.w,
                                     sim->colliderFwd.h,
-                                    colliderPen);
+                                    QPen(QColor(60, 60, 60), 1, Qt::DotLine));
 
     this->graphics->setTransformOriginPoint(sim->x, sim->y);
     this->collider->setTransformOriginPoint(sim->x, sim->y);
@@ -62,14 +61,12 @@ void AutoRobot::RotateAroundSelf(double angle)
 
 void AutoRobot::Simulate()
 {
-    // this->Move(this->speed);
+    this->Move(this->speed);
 
     bool collision = this->sim->ObstacleDetection(obstacles);
-
-    if(collision && (lastCollisionTime < clock->msec() + collisionCooldown))
+    if(collision)
     {
         this->RotateAroundSelf(90);
-        lastCollisionTime = clock->msec() + collisionCooldown;
     }
 }
 
@@ -86,4 +83,16 @@ QGraphicsEllipseItem* AutoRobot::GetGraphics()
 QGraphicsRectItem* AutoRobot::GetCollider()
 {
     return this->collider;
+}
+
+
+void AutoRobot::SetSelected()
+{
+    QColor highlightedColor = color.lighter(30);
+    this->graphics->setPen(QPen(highlightedColor, 5));
+}
+
+void AutoRobot::SetUnselected()
+{
+    this->graphics->setPen(QPen(color));
 }

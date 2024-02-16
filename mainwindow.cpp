@@ -33,6 +33,11 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     clock = new QTime();
+    clock->start();
+
+    activeRobot = nullptr;
+
+    simulator = new Simulator(robots, obstacles, 10);
 }
 
 MainWindow::~MainWindow()
@@ -48,8 +53,8 @@ void MainWindow::on_btnCreateRobot_clicked()
     {
         std::random_device device;
         std::mt19937 rng(device());
-        // RGB values from 0 - 245, not 255 in case three 255 were randomized
-        std::uniform_int_distribution<std::mt19937::result_type> distColor(0, 245);
+        // RGB values from 0 - 225, not 255 in case three 255 were randomized
+        std::uniform_int_distribution<std::mt19937::result_type> distColor(0, 225);
 
         newColor = new QColor(distColor(rng), distColor(rng), distColor(rng));
     }
@@ -75,19 +80,28 @@ void MainWindow::on_btnCreateRobot_clicked()
             ));
 
     robots.back()->Initialize(this->scene);
-}
 
+    // If ID selector is not enabled enable it
+    if(!ui->input_robot_IDSelector->isEnabled())
+    {
+        ui->input_robot_IDSelector->setEnabled(true);
+        activeRobot = robots.back();
+    }
+
+    // Set maximum value of robot selector to a size vector that stores robots
+    ui->input_robot_IDSelector->setMaximum(robots.size() - 1);
+}
 
 
 void MainWindow::on_btnTest_clicked()
 {
-    robots.back()->Move(10);
+    activeRobot->Move(10);
 }
 
 
 void MainWindow::on_btnTest_2_clicked()
 {
-    robots.back()->RotateAroundSelf(45);
+    activeRobot->RotateAroundSelf(45);
 }
 
 
@@ -103,7 +117,6 @@ void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
     ui->input_robot_color_b->setEnabled(!checked);
 }
 
-
 void MainWindow::on_btnCreateObstacle_clicked()
 {
     QColor* newColor;
@@ -111,8 +124,8 @@ void MainWindow::on_btnCreateObstacle_clicked()
     {
         std::random_device device;
         std::mt19937 rng(device());
-        // RGB values from 0 - 245, not 255 in case three 255 were randomized
-        std::uniform_int_distribution<std::mt19937::result_type> distColor(0, 245);
+        // RGB values from 0 - 225, not 255 in case three 255 were randomized
+        std::uniform_int_distribution<std::mt19937::result_type> distColor(0, 225);
 
         newColor = new QColor(distColor(rng), distColor(rng), distColor(rng));
     }
@@ -149,8 +162,12 @@ void MainWindow::on_input_obstacle_randomizeColors_toggled(bool checked)
 
 void MainWindow::on_btn_update_info_clicked()
 {
-    AutoRobot* currRobot = robots.back();
-    Robot* currSim = currRobot->GetSimatationInfo();
+    if(activeRobot == nullptr)
+    {
+        return;
+    }
+
+    Robot* currSim = activeRobot->GetSimatationInfo();
     ui->info_sim_main_posX->setNum(currSim->x);
     ui->info_sim_main_posY->setNum(currSim->y);
     ui->info_sim_main_rot->setNum(currSim->rot);
@@ -173,8 +190,8 @@ void MainWindow::on_btn_update_info_clicked()
 
     //-------------------------------------------------------
 
-    auto graphics = currRobot->GetGraphics();
-    auto collider = currRobot->GetCollider();
+    auto graphics = activeRobot->GetGraphics();
+    auto collider = activeRobot->GetCollider();
 
     ui->info_gphx_main_posX->setNum(graphics->x());
     ui->info_gphx_main_posY->setNum(graphics->y());
@@ -195,6 +212,17 @@ void MainWindow::on_btn_update_info_clicked()
 
     ui->info_gphx_coll_ltX->setNum(collider->rect().x());
     ui->info_gphx_coll_ltY->setNum(collider->rect().y() + collider->rect().height());
+
+    ui->info_sim_timeOfCycle->setNum(activeRobot->timeOfSimulationCicle);
 }
 
+
+
+void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
+{
+    // Unselect old active robot and set active the new
+    activeRobot->SetUnselected();
+    activeRobot = robots.at(arg1);
+    activeRobot->SetSelected();
+}
 

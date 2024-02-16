@@ -132,37 +132,11 @@
      <attribute name="label">
       <string>Robot Configuration</string>
      </attribute>
-     <widget class="QPushButton" name="btnTest">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>160</y>
-        <width>80</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Move</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btnTest_2">
-      <property name="geometry">
-       <rect>
-        <x>270</x>
-        <y>190</y>
-        <width>80</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Rotate</string>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>10</y>
+        <x>220</x>
+        <y>0</y>
         <width>131</width>
         <height>131</height>
        </rect>
@@ -267,8 +241,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>261</width>
-        <height>251</height>
+        <width>211</width>
+        <height>231</height>
        </rect>
       </property>
       <property name="title">
@@ -457,8 +431,8 @@
       <widget class="QPushButton" name="btnCreateRobot">
        <property name="geometry">
         <rect>
-         <x>140</x>
-         <y>160</y>
+         <x>20</x>
+         <y>190</y>
          <width>101</width>
          <height>41</height>
         </rect>
@@ -472,7 +446,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>250</y>
+        <y>230</y>
         <width>201</width>
         <height>191</height>
        </rect>
@@ -887,9 +861,9 @@
      <widget class="QGroupBox" name="groupBox_7">
       <property name="geometry">
        <rect>
-        <x>210</x>
-        <y>250</y>
-        <width>201</width>
+        <x>220</x>
+        <y>230</y>
+        <width>181</width>
         <height>191</height>
        </rect>
       </property>
@@ -1300,17 +1274,98 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="btn_update_info">
+     <widget class="QGroupBox" name="groupBox_5">
       <property name="geometry">
        <rect>
-        <x>270</x>
-        <y>220</y>
-        <width>80</width>
-        <height>24</height>
+        <x>220</x>
+        <y>130</y>
+        <width>211</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <widget class="QPushButton" name="btnTest_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Rotate</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnTest">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Move</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btn_update_info">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>80</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Update</string>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="input_robot_IDSelector">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>10</y>
+         <width>42</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>0</number>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="label_36">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>430</y>
+        <width>171</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Update</string>
+       <string>Time of one simulation cycle:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="info_sim_timeOfCycle">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>430</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>0</string>
       </property>
      </widget>
     </widget>

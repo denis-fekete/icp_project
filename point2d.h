@@ -1,6 +1,8 @@
 #ifndef POINT_2D_H
 #define POINT_2D_H
 
+
+#include <QDebug>
 #include <cmath>
 #define M_PI 3.14159265358979
 
