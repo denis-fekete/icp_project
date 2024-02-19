@@ -10,10 +10,10 @@
 #include <random>
 
 #include "autorobot.h"
-#include "rectangle.h"
 #include "obstacle.h"
 #include "simulator.h"
 
+#include <qDebug>
 
 #include <QTimer>
 
@@ -61,14 +61,14 @@ protected:
 
     std::vector<AutoRobot*> robots;
     std::vector<Obstacle*> obstacles;
-    AutoRobot* activeRobot;
+    AutoRobot* activeRobot = nullptr;
     Obstacle* activeObstacle;
     Simulator* simulator;
 
     QTimer* timer;
-    QTime*  clock;
 
 private:
     void DrawGrid(unsigned density);
+    void resizeEvent(QResizeEvent*);
 };
 #endif // MAINWINDOW_H

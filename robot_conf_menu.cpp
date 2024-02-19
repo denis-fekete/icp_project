@@ -33,8 +33,7 @@ void MainWindow::on_btnCreateRobot_clicked()
             ui->input_robot_speed->value(),
             ui->input_robot_collisionDetectionAngle->value(),
             ui->input_robot_onCollisionTurnRight->isChecked(),
-            &obstacles,
-            this->clock
+            &obstacles
             ));
 
     robots.back()->Initialize(this->scene);

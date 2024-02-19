@@ -31,13 +31,12 @@ protected:
 
     // Internal
     QTimer* timer;
-    QTime* clock;
 
 public:
     AutoRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
               double turnAngle, bool turnRight,
-              std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
+              std::vector<Obstacle*>* obstaclesPointer);
 
     ~AutoRobot();
     void Initialize(QGraphicsScene* scene);

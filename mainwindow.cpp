@@ -18,11 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     DrawGrid(50);
 
-    clock = new QTime();
-    clock->start();
-
-    activeRobot = nullptr;
-\
     simulator = new Simulator(&robots, &obstacles, 50);
     simulator->SetTimerPeriod(30);
     simulator->RunSimulation();
@@ -60,3 +55,20 @@ void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
     ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
 }
 
+#define VERTICAL_SPACING 10
+#define HORIZONTAL_SPACING 20
+void MainWindow::resizeEvent(QResizeEvent*)
+{
+    auto windowWidth = this->window()->size().width();
+    auto windowHeight = this->window()->size().height();
+
+    auto toolBoxGeo = ui->toolBox->geometry();
+
+    ui->graphicsView->setGeometry(toolBoxGeo.x() + toolBoxGeo.width() + VERTICAL_SPACING,
+                                  HORIZONTAL_SPACING,
+                                  windowWidth - (toolBoxGeo.width() + 2 * VERTICAL_SPACING),
+                                  windowHeight - 2 * HORIZONTAL_SPACING
+                                  );
+}
+#undef VERTICAL_SPACING
+#undef HORIZONTAL_SPACING

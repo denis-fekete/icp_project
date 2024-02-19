@@ -4,7 +4,7 @@
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                       double detRadius, QColor color, double speed,
                       double turnAngle, bool turnRight,
-                      std::vector<Obstacle*>* obstaclesPointer, QTime* clock)
+                      std::vector<Obstacle*>* obstaclesPointer)
 {
     this->sim = new Robot(x, y, radius, rot, detRadius);
     this->speed = speed;
@@ -13,11 +13,6 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot,
     this->turnDirection = (turnRight) ? 1 : -1;
 
     this->obstacles = obstaclesPointer;
-    this->clock = clock;
-
-    // timer = new QTimer();
-    // connect(timer, SIGNAL(timeout()), this, SLOT(Simulate()));
-    // timer->start(1);
 
     connect(this, SIGNAL(qtDummyMove()), this, SLOT(MoveUpdateGraphics()), Qt::QueuedConnection);
     connect(this, SIGNAL(qtDummyRotate()), this, SLOT(RotateUpdateGraphics()), Qt::QueuedConnection);
