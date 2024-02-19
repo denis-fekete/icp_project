@@ -51,6 +51,10 @@ private slots:
 
     void on_input_robot_IDSelector_valueChanged(int arg1);
 
+    void on_input_robot_onCollisionTurnLeft_clicked(bool checked);
+
+    void on_input_robot_onCollisionTurnRight_clicked(bool checked);
+
 protected:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;

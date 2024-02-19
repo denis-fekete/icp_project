@@ -13,11 +13,14 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     obstacle.cpp \
+    obstacle_conf_menu.cpp \
     robot.cpp \
     circle.cpp \
     rectangle.cpp \
     point2d.cpp \
-    simulator.cpp
+    robot_conf_menu.cpp \
+    simulator.cpp \
+    world_conf_menu.cpp
 
 
 HEADERS += \

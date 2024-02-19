@@ -1,11 +1,16 @@
 #include "autorobot.h"
 
 
-AutoRobot::AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock)
+AutoRobot::AutoRobot(double x, double y, double radius, double rot,
+                      double detRadius, QColor color, double speed,
+                      double turnAngle, bool turnRight,
+                      std::vector<Obstacle*>* obstaclesPointer, QTime* clock)
 {
     this->sim = new Robot(x, y, radius, rot, detRadius);
     this->speed = speed;
     this->color = color;
+    this->turnAngle = turnAngle;
+    this->turnDirection = (turnRight) ? 1 : -1;
 
     this->obstacles = obstaclesPointer;
     this->clock = clock;
@@ -76,7 +81,7 @@ void AutoRobot::Simulate()
     bool collision = this->sim->ObstacleDetection(obstacles);
     if(collision)
     {
-        this->RotateRobot(90);
+        this->RotateRobot(this->turnAngle * turnDirection);
     }
 }
 

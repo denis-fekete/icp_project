@@ -23,13 +23,22 @@ protected:
     QGraphicsRectItem* collider;
     std::vector<Obstacle*>* obstacles;
 
+    // Robot parameters
     QColor color;
     double speed;
+    double turnAngle;
+    short signed int turnDirection;
+
+    // Internal
     QTimer* timer;
     QTime* clock;
 
 public:
-    AutoRobot(double x, double y, double radius, double rot, double detRadius, QColor color, double speed, std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
+    AutoRobot(double x, double y, double radius, double rot,
+              double detRadius, QColor color, double speed,
+              double turnAngle, bool turnRight,
+              std::vector<Obstacle*>* obstaclesPointer, QTime* clock);
+
     ~AutoRobot();
     void Initialize(QGraphicsScene* scene);
 

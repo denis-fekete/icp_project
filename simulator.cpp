@@ -8,7 +8,6 @@ Simulator::Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* ob
 
     this->timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(SimulationCycle()));
-    // this->timer->start(this->numOfRobotsPerThread);
 }
 
 
@@ -19,16 +18,13 @@ void Simulator::SimulationCycle()
     const size_t vectorMaxSize = robots->size();
 
     // Split simulation calculating between threads
-    for(size_t i = 0; i < vectorMaxSize; i++)
+    for(size_t i = 0; i < vectorMaxSize; i += numOfRobotsPerThread)
     {
-
-        size_t end = ( (i + 1) * numOfRobotsPerThread ) - 1;
-        end = (end > vectorMaxSize)? vectorMaxSize : end;
 
         simThreads.push_back(new std::thread(SimulateGroup,
                                              robots,
-                                             i * numOfRobotsPerThread,
-                                             end
+                                             i,
+                                             (((i + numOfRobotsPerThread - 1) > vectorMaxSize)? vectorMaxSize : i + numOfRobotsPerThread - 1)
                                              ));
     }
 
