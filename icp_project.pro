@@ -9,6 +9,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Simulation/circle.cpp \
+    Simulation/obstacle.cpp \
+    Simulation/point2d.cpp \
+    Simulation/rectangle.cpp \
+    Simulation/robot.cpp \
+    Simulation/simulator.cpp \
+    Visualization/autorobot.cpp \
+    Visualization/mainwindow.cpp \
+    Visualization/obstacle_conf_menu.cpp \
+    Visualization/robot_conf_menu.cpp \
+    Visualization/world_conf_menu.cpp \
     autorobot.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -24,6 +35,14 @@ SOURCES += \
 
 
 HEADERS += \
+    Simulation/circle.h \
+    Simulation/obstacle.h \
+    Simulation/point2d.h \
+    Simulation/rectangle.h \
+    Simulation/robot.h \
+    Simulation/simulator.h \
+    Visualization/autorobot.h \
+    Visualization/mainwindow.h \
     autorobot.h \
     mainwindow.h \
     obstacle.h \
