@@ -2,7 +2,7 @@
 
 Circle::Circle() {}
 
-Circle::Circle(double x, double y, double radius, double rot) : Point (x, y, rot)
+Circle::Circle(double x, double y, double radius, double rot) : Point (x, y)
 {
     // this->x = x;
     // this->y = y;
@@ -45,4 +45,29 @@ void Circle::MoveForward(double distance)
     // Apply deltas to the current possition
     x += xDelta;
     y += yDelta;
+}
+
+void Circle::CalculateSinCos()
+{
+    double radians = rot * (MY_PI / 180.0);
+    cosRad = cos(radians);
+    sinRad = sin(radians);
+}
+
+void Circle::CalculateSinCos(double rot)
+{
+    double radians = rot * (MY_PI / 180.0);
+    cosRad = cos(radians);
+    sinRad = sin(radians);
+}
+
+void Circle::CalculateSinCos(double* cosRad, double* sinRad, double* rot)
+{
+    double radians = this->rot * (MY_PI / 180.0);
+    this->cosRad = cos(radians);
+    this->sinRad = sin(radians);
+
+    *cosRad = this->cosRad;
+    *sinRad = this->sinRad;
+    *rot = this->rot;
 }

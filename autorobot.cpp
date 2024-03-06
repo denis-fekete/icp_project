@@ -26,7 +26,8 @@ AutoRobot::~AutoRobot()
 
 void AutoRobot::Initialize(QGraphicsScene* scene)
 {
-    this->graphics = scene->addEllipse(sim->x - sim->radius / 2, sim->y - sim->radius / 2, sim->radius, sim->radius, QPen(color), QBrush(color));
+    const double circleRad = sim->GetRadius();
+    this->graphics = scene->addEllipse(sim->x -  circleRad / 2, sim->y - circleRad  / 2, circleRad , circleRad , QPen(color), QBrush(color));
     this->collider = scene->addRect(sim->colliderFwd.x - sim->colliderFwd.w/2,
                                     sim->colliderFwd.y - sim->colliderFwd.h/2,
                                     sim->colliderFwd.w,
@@ -57,15 +58,16 @@ void AutoRobot::RotateRobot(double angle)
 
 void AutoRobot::RotateUpdateGraphics()
 {
-    const auto rad = sim->radius / 2;
+    const double circleRad = sim->GetRadius();
+    const double rad = circleRad / 2;
     this->graphics->moveBy(rad, rad);
-    this->graphics->setRotation(sim->rot);
+    this->graphics->setRotation(sim->GetRotation());
     this->graphics->moveBy(-rad, -rad);
 
-    const auto w2 = sim->colliderFwd.w/2 + sim->radius;
-    const auto h2 = sim->colliderFwd.h/2 + sim->radius;
+    const auto w2 = sim->colliderFwd.w/2 + circleRad;
+    const auto h2 = sim->colliderFwd.h/2 + circleRad;
     this->collider->moveBy(w2, h2);
-    this->collider->setRotation(this->sim->colliderFwd.rot);
+    this->collider->setRotation(this->sim->colliderFwd.GetRotation());
     this->collider->moveBy(-w2, -h2);
 }
 

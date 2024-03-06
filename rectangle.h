@@ -6,15 +6,13 @@
 #include <QtDebug>
 
 #include "point2d.h"
+#include "circle.h"
 
-class Rectangle : public Point
+class Rectangle : public Circle
 {
 public:
     double w;
     double h;
-    double rot;
-
-    double radius;
 
     Point LB;
     Point LT;

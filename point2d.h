@@ -2,32 +2,17 @@
 #define POINT_2D_H
 
 #include <QDebug>
-#include <cmath>
 
-#define M_PI 3.14159265358979
+#define MY_PI 3.14159265358979323846264338327950288419716939937510
 
 class Point
 {
 public:
-    double cosRad;
-    double sinRad;
-
     double x; // Position on X-axis
     double y; // Position on Y-axis
-    double rot;
 
-    Point(double x = 0, double y = 0, double rot = 0);
+    Point(double x = 0, double y = 0);
     ~Point();
-
-    double GetCosRad();
-    double GetSinRad();
-
-    void SetCosRad(double val);
-    void SetSinRad(double val);
-
-    void CalculateSinCos();
-    void CalculateSinCos(double rot);
-    void CalculateSinCos(double* cosRad, double* sinRad, double* rot);
 
     Point operator*(Point const& point)
     {

@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <vector>
+#include <chrono>
 
 #include <QObject>
 #include <QTimer>
@@ -21,7 +22,7 @@ public:
     void RunSimulation();
     void StopSimulation();
     void SetTimerPeriod(int milliSeconds);
-
+    long long GetCycleTime();
 protected:
     std::vector<Obstacle*>* obstacles;
     std::vector<AutoRobot*>* robots;
@@ -29,6 +30,7 @@ protected:
     int numOfRobotsPerThread;
     QTimer* timer;
     int timerPeriod_ms = 20;
+    long long cycleTime = 0;
 
     static void SimulateGroup(std::vector<AutoRobot*>* robots, const size_t start, const size_t end);
 

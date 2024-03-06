@@ -15,7 +15,7 @@ Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor co
     this->color = color;
 
     this->setPos(this->sim->x, this->sim->y);
-    this->setRotation(this->sim->rot);
+    this->setRotation(this->sim->GetRotation());
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }

@@ -85,11 +85,11 @@ void MainWindow::on_btn_update_info_clicked()
     Robot* currSim = activeRobot->GetSimatationInfo();
     ui->info_sim_main_posX->setNum(currSim->x);
     ui->info_sim_main_posY->setNum(currSim->y);
-    ui->info_sim_main_rot->setNum(currSim->rot);
+    ui->info_sim_main_rot->setNum(currSim->GetRotation());
 
     ui->info_sim_coll_posX->setNum(currSim->colliderFwd.x);
     ui->info_sim_coll_posY->setNum(currSim->colliderFwd.y);
-    ui->info_sim_coll_rot->setNum(currSim->colliderFwd.rot);
+    ui->info_sim_coll_rot->setNum(currSim->colliderFwd.GetRotation());
 
     ui->info_sim_coll_lbX->setNum(currSim->colliderFwd.LB.x);
     ui->info_sim_coll_lbY->setNum(currSim->colliderFwd.LB.y);
@@ -102,7 +102,10 @@ void MainWindow::on_btn_update_info_clicked()
 
     ui->info_sim_coll_ltX->setNum(currSim->colliderFwd.LT.x);
     ui->info_sim_coll_ltY->setNum(currSim->colliderFwd.LT.y);
+    std::string s = std::to_string(simulator->GetCycleTime());
+    ui->info_sim_main_cycleTime->setText(QString::fromStdString(s));
 }
+
 
 
 

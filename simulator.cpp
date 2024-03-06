@@ -1,5 +1,7 @@
 #include "simulator.h"
 
+
+
 Simulator::Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* obstacles, int numOfRobotsPerThread)
 {
     this->robots = robots;
@@ -10,9 +12,10 @@ Simulator::Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* ob
     connect(timer, SIGNAL(timeout()), this, SLOT(SimulationCycle()));
 }
 
-
 void Simulator::SimulationCycle()
 {
+    auto beggining = std::chrono::high_resolution_clock::now();
+
     std::vector<std::thread*> simThreads;
 
     const size_t vectorMaxSize = robots->size();
@@ -33,8 +36,12 @@ void Simulator::SimulationCycle()
     {
         simThreads.at(i)->join();
     }
-}
 
+    auto end = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
+    this->cycleTime = duration.count();
+}
 
 void Simulator::SimulateGroup(std::vector<AutoRobot*>* robots, const size_t start, const size_t end)
 {
@@ -57,4 +64,9 @@ void Simulator::StopSimulation()
 void Simulator::SetTimerPeriod(int milliSeconds)
 {
     this->timerPeriod_ms = milliSeconds;
+}
+
+long long Simulator::GetCycleTime()
+{
+    return this->cycleTime;
 }

@@ -82,7 +82,7 @@ Point Robot::Rotate(double angle)
     const double cosRadConst = this->GetCosRad();
     const double sinRadConst = this->GetSinRad();
 
-    colliderFwd.rot = this->rot;
+    colliderFwd.SetRotation(this->GetRotation());
 
     // Calcualte delta value for moving in X and Y direction
     double xDelta = cosRadConst * this->detRadius / 2;
@@ -105,7 +105,7 @@ bool Robot::ObstacleDetection(std::vector<Obstacle*>* validObstacles)
         Rectangle* other = validObstacles->at(i)->GetSimulationRectangle();
 
         // First check if robot and obstacles radiuses intersect
-        if(distanceBetweenTwoCircles(Point(this->x, this->y), this->detRadius, Point(other->x, other->y), other->radius))
+        if(distanceBetweenTwoCircles(Point(this->x, this->y), this->detRadius, Point(other->x, other->y), other->GetRadius()))
         {
             if(this->colliderFwd.Intersects(other))
             {   
