@@ -5,7 +5,7 @@
 
 #include "rectangle.h"
 #include "circle.h"
-#include "obstacle.h"
+#include "../Visualization/obstacle.h"
 
 class Robot : public Circle
 {

@@ -12,8 +12,7 @@
 #include <vector>
 
 #include "obstacle.h"
-#include "circle.h"
-#include "robot.h"
+#include "../Simulation/robot.h"
 
 class AutoRobot : public QObject
 {

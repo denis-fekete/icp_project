@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <random>
+
 void MainWindow::on_btnCreateRobot_clicked()
 {
 

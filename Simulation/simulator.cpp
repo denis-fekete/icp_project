@@ -1,6 +1,6 @@
 #include "simulator.h"
-
-
+#include <thread>
+#include <chrono>
 
 Simulator::Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* obstacles, int numOfRobotsPerThread)
 {

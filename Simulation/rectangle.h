@@ -1,7 +1,6 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include <cmath>
 #include <QDebug>
 #include <QtDebug>
 

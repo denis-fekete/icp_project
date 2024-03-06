@@ -1,15 +1,13 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-#include <thread>
 #include <vector>
-#include <chrono>
 
 #include <QObject>
 #include <QTimer>
 
-#include "autorobot.h"
-#include "obstacle.h"
+#include "../Visualization/autorobot.h"
+#include "../Visualization/obstacle.h"
 
 class Simulator : public QObject
 {

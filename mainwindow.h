@@ -7,13 +7,11 @@
 #include <QGraphicsItem>
 
 #include <vector>
-#include <random>
 
-#include "autorobot.h"
-#include "obstacle.h"
-#include "simulator.h"
+#include "Visualization/autorobot.h"
+#include "Visualization/obstacle.h"
+#include "Simulation/simulator.h"
 
-#include <qDebug>
 
 #include <QTimer>
 
@@ -39,7 +37,6 @@ private slots:
     void on_btnTest_2_clicked();
 
     void on_btn_applyWorldConfigSize_clicked();
-
 
     void on_input_robot_randomizeColors_toggled(bool checked);
 

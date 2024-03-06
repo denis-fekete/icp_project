@@ -10,47 +10,28 @@ CONFIG += c++17
 
 SOURCES += \
     Simulation/circle.cpp \
-    Simulation/obstacle.cpp \
     Simulation/point2d.cpp \
     Simulation/rectangle.cpp \
     Simulation/robot.cpp \
     Simulation/simulator.cpp \
     Visualization/autorobot.cpp \
-    Visualization/mainwindow.cpp \
+    Visualization/obstacle.cpp \
     Visualization/obstacle_conf_menu.cpp \
     Visualization/robot_conf_menu.cpp \
     Visualization/world_conf_menu.cpp \
-    autorobot.cpp \
     main.cpp \
-    mainwindow.cpp \
-    obstacle.cpp \
-    obstacle_conf_menu.cpp \
-    robot.cpp \
-    circle.cpp \
-    rectangle.cpp \
-    point2d.cpp \
-    robot_conf_menu.cpp \
-    simulator.cpp \
-    world_conf_menu.cpp
+    mainwindow.cpp
 
 
 HEADERS += \
     Simulation/circle.h \
-    Simulation/obstacle.h \
     Simulation/point2d.h \
     Simulation/rectangle.h \
     Simulation/robot.h \
     Simulation/simulator.h \
     Visualization/autorobot.h \
-    Visualization/mainwindow.h \
-    autorobot.h \
-    mainwindow.h \
-    obstacle.h \
-    robot.h \
-    circle.h \
-    rectangle.h \
-    point2d.h \
-    simulator.h
+    Visualization/obstacle.h \
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui
