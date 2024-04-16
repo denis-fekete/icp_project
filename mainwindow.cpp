@@ -21,11 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
     // Apply world configuration
-    on_btn_applyWorldConfigSize_clicked();
+    on_btn_worldApplySize_clicked();
 
-    DrawGrid(50);
-
-    simulator = new Simulator(&robots, scene, 10);
+    simulator = std::make_unique<Simulator> (robots, *scene, 4);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
     simulator->runSimulation();
@@ -50,6 +48,8 @@ void MainWindow::DrawGrid(unsigned density)
     {
         scene->addLine(x, 0 ,x , yMax, gridPen);
     }
+
+    scene->update();
 }
 
 
@@ -68,6 +68,8 @@ void MainWindow::resizeEvent(QResizeEvent*)
                                   windowWidth - (toolBoxGeo.width() + 2 * VERTICAL_SPACING),
                                   windowHeight - 2 * HORIZONTAL_SPACING
                                   );
+
+    DrawGrid(ui->sBox_world_gridSize->value());
 }
 #undef VERTICAL_SPACING
 #undef HORIZONTAL_SPACING
@@ -79,6 +81,8 @@ QColor MainWindow::getRandomColor()
                     randColor->getRandomValue(),
                     randColor->getRandomValue());
 }
+
+
 
 
 

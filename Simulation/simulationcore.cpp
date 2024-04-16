@@ -1,10 +1,9 @@
 #include "simulationcore.h"
 
-SimulationCore::SimulationCore(std::vector<AutoRobot*>* allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate)
+SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate) : allRobots(allRobots)
 {
     myRobotsStart = 0;
     myRobotsEnd = 0;
-    this->allRobots = allRobots;
     this->simulate = simulate;
 
     this->wakeCondition = wakeCondition;
@@ -25,7 +24,7 @@ void SimulationCore::runSimulation()
 
         for(size_t index = myRobotsStart; index < myRobotsEnd; index++)
         {
-            allRobots->at(index)->simulate();
+            allRobots.at(index)->simulate();
         }
     }
 }

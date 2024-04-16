@@ -1,7 +1,7 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "../mainwindow.h"
+#include "../ui_mainwindow.h"
+
 #include "QDebug"
-#include <random>
 
 void MainWindow::on_btnCreateRobot_clicked()
 {
@@ -29,7 +29,7 @@ void MainWindow::on_btnCreateRobot_clicked()
             ui->input_robot_speed->value(),
             ui->input_robot_collisionDetectionAngle->value(),
             ui->input_robot_onCollisionTurnRight->isChecked(),
-            &obstacles,
+            obstacles,
             robots,
             *scene
             );
@@ -39,7 +39,7 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        activeRobot = robots.back();
+        activeRobot = &(robots.back());
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
@@ -51,7 +51,7 @@ void MainWindow::on_btnTest_clicked()
 {
     if(activeRobot != nullptr)
     {
-        activeRobot->moveRobot(25);
+        activeRobot->get()->moveRobot(25);
     }
 }
 
@@ -60,7 +60,7 @@ void MainWindow::on_btnTest_2_clicked()
 {
     if(activeRobot != nullptr)
     {
-        activeRobot->rotateRobot(45);
+        activeRobot->get()->rotateRobot(45);
     }
 }
 
@@ -79,28 +79,28 @@ void MainWindow::on_btn_update_info_clicked()
         return;
     }
 
-    Robot* currSim = activeRobot->getSimulationInfo();
-    ui->info_sim_main_posX->setNum(currSim->x);
-    ui->info_sim_main_posY->setNum(currSim->y);
-    ui->info_sim_main_rot->setNum(currSim->getRotation());
+    Robot currSim = activeRobot->get()->getSimulationInfo();
+    // ui->info_sim_main_posX->setNum(currsim.x);
+    // ui->info_sim_main_posY->setNum(currsim.y);
+    // ui->info_sim_main_rot->setNum(currsim.getRotation());
 
-    ui->info_sim_coll_posX->setNum(currSim->colliderFwd.x);
-    ui->info_sim_coll_posY->setNum(currSim->colliderFwd.y);
-    ui->info_sim_coll_rot->setNum(currSim->colliderFwd.getRotation());
+    // ui->info_sim_coll_posX->setNum(currsim.colliderFwd.x);
+    // ui->info_sim_coll_posY->setNum(currsim.colliderFwd.y);
+    // ui->info_sim_coll_rot->setNum(currsim.colliderFwd.getRotation());
 
-    ui->info_sim_coll_lbX->setNum(currSim->colliderFwd.LB.x);
-    ui->info_sim_coll_lbY->setNum(currSim->colliderFwd.LB.y);
+    // ui->info_sim_coll_lbX->setNum(currsim.colliderFwd.LB.x);
+    // ui->info_sim_coll_lbY->setNum(currsim.colliderFwd.LB.y);
 
-    ui->info_sim_coll_rbX->setNum(currSim->colliderFwd.RB.x);
-    ui->info_sim_coll_rbY->setNum(currSim->colliderFwd.RB.y);
+    // ui->info_sim_coll_rbX->setNum(currsim.colliderFwd.RB.x);
+    // ui->info_sim_coll_rbY->setNum(currsim.colliderFwd.RB.y);
 
-    ui->info_sim_coll_rtX->setNum(currSim->colliderFwd.RT.x);
-    ui->info_sim_coll_rtY->setNum(currSim->colliderFwd.RT.y);
+    // ui->info_sim_coll_rtX->setNum(currsim.colliderFwd.RT.x);
+    // ui->info_sim_coll_rtY->setNum(currsim.colliderFwd.RT.y);
 
-    ui->info_sim_coll_ltX->setNum(currSim->colliderFwd.LT.x);
-    ui->info_sim_coll_ltY->setNum(currSim->colliderFwd.LT.y);
-    std::string s = std::to_string(simulator->getCycleTime());
-    ui->info_sim_main_cycleTime->setText(QString::fromStdString(s));
+    // ui->info_sim_coll_ltX->setNum(currsim.colliderFwd.LT.x);
+    // ui->info_sim_coll_ltY->setNum(currsim.colliderFwd.LT.y);
+    // std::string s = std::to_string(simulator->getCycleTime());
+    // ui->info_sim_main_cycleTime->setText(QString::fromStdString(s));
 }
 
 
@@ -109,9 +109,9 @@ void MainWindow::on_btn_update_info_clicked()
 void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
 {
     // Unselect old active robot and set active the new
-    activeRobot->setUnselected();
-    activeRobot = robots.at(arg1);
-    activeRobot->setSelected();
+    activeRobot->get()->setUnselected();
+    activeRobot = &(robots.at(arg1));
+    activeRobot->get()->setSelected();
 }
 
 void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)

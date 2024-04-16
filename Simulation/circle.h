@@ -15,21 +15,19 @@ protected:
     double sinRad;
 
 public:
-    Circle();
     Circle(double x, double y, double radius, double rot);
-    ~Circle();
 
     void moveForward(double distance);
     void moveTo(Point p);
     void rotate(double angle);
 
-    inline double getCosRad() { return cosRad; }
-    inline double getSinRad() { return sinRad; }
+    inline double getCosRad() const { return cosRad; }
+    inline double getSinRad() const { return sinRad; }
+    inline double getRadius() const { return radius; }
+    inline double getRotation() const { return rot; }
+
     inline void setCosRad(double val) { this->cosRad = val; }
     inline void setSinRad(double val) { this->sinRad = val; }
-
-    inline double getRadius() { return radius; }
-    inline double getRotation() { return rot; }
     inline void setRotation(double rot) { this->rot = rot; }
     inline void setRadius(double rad) { this->radius = rad; }
 
@@ -47,6 +45,24 @@ public:
         {
             // Check if delta on Y-axis between objects is less than detection radius + radius of other object
             if((a->y - b->y) * (a->y - b->y) <= radius)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    inline static bool intersect(Circle& a, Circle& b)
+    {
+        auto radius = (a.radius + b.radius);
+        radius = radius * radius;
+
+        // Check if delta on X-axis between objects is less than detection radius + radius of other object
+        if((a.x - b.x) * (a.x - b.x) <= radius)
+        {
+            // Check if delta on Y-axis between objects is less than detection radius + radius of other object
+            if((a.y - b.y) * (a.y - b.y) <= radius)
             {
                 return true;
             }

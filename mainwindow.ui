@@ -51,7 +51,7 @@
      <widget class="QSpinBox" name="sBox_worldc_sizeX">
       <property name="geometry">
        <rect>
-        <x>1</x>
+        <x>0</x>
         <y>30</y>
         <width>71</width>
         <height>25</height>
@@ -109,14 +109,14 @@
      <widget class="QPushButton" name="btn_worldApplySize">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>250</x>
         <y>30</y>
-        <width>80</width>
+        <width>131</width>
         <height>24</height>
        </rect>
       </property>
       <property name="text">
-       <string>Set world size</string>
+       <string>Apply space settings</string>
       </property>
      </widget>
      <widget class="QPushButton" name="btn_loadBenchmark">
@@ -243,6 +243,35 @@
       </property>
       <property name="text">
        <string>Add more robots</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="sBox_world_gridSize">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>30</y>
+        <width>71</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+      <property name="value">
+       <number>50</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_24">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>10</y>
+        <width>51</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Grid size</string>
       </property>
      </widget>
     </widget>

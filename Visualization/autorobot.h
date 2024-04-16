@@ -17,11 +17,9 @@
 class AutoRobot : public QGraphicsItem
 {
     // Q_OBJECT
-protected:
-    Robot* sim; // Simulation of physics for robot
-    // QGraphicsEllipseItem* graphics;
-    // QGraphicsRectItem* collider;
-    std::vector<Obstacle*>* obstacles;
+private:
+    Robot sim; // Simulation of physics for robot
+    std::vector<std::unique_ptr<Obstacle>>& obstacles;
 
     // Robot parameters
     QColor color;
@@ -30,29 +28,24 @@ protected:
     short signed int turnDirection;
 
     // Internal
-    QTimer* timer;
+    QTimer timer;
 
 public:
     AutoRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
               double turnAngle, bool turnRight,
-              std::vector<Obstacle*>* obstaclesPointer);
+              std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer);
 
-    ~AutoRobot();
     void initialize(QGraphicsScene& scene);
 
-    Robot* getSimulationInfo();
-    QGraphicsEllipseItem* getGraphics();
-    QGraphicsRectItem* getCollider();
+    Robot& getSimulationInfo();
 
     void setUnselected();
     void setSelected();
 
-    inline void moveRobot(double distance) { sim->moveForward(distance); }
-    inline void rotateRobot(double angle) { sim->rotate(angle); }
+    inline void moveRobot(double distance) { sim.moveForward(distance); }
+    inline void rotateRobot(double angle) { sim.rotate(angle); }
     void simulate();
-
-    Point lastMoveDelta;
 
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
@@ -65,8 +58,8 @@ public:
     static void addRobotToWorld(double x, double y, double radius, double rot,
                                 double detRadius, QColor color, double speed,
                                 double turnAngle, bool turnRight,
-                                std::vector<Obstacle*>* obstaclesPointer,
-                                std::vector<AutoRobot*>& robots, QGraphicsScene& scene);
+                                std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
+                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene);
 };
 
 #endif // AUTOROBOT_H

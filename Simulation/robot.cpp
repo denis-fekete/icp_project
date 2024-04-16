@@ -1,15 +1,10 @@
 #include "robot.h"
 
-Robot::Robot(double x, double y, double radius, double rot, double detRadius) : Circle::Circle(x, y, radius, rot)
+Robot::Robot(double x, double y, double radius, double rot, double detRadius) : Circle::Circle(x, y, radius, rot), colliderFwd(x + detRadius/2, y, detRadius, 2*radius, rot)
 {
     this->detRadius = detRadius;
-
-    this->colliderFwd = Rectangle(x + detRadius/2, y, detRadius, 2*radius, rot);
-
     this->rotate(0);
 }
-
-Robot::~Robot() {}
 
 void Robot::moveForward(double distance)
 {
@@ -75,21 +70,21 @@ void Robot::rotate(double angle)
     colliderFwd.updatePoints(cosRadConst, sinRadConst);
 }
 
-bool Robot::obstacleDetection(std::vector<Obstacle*>* validObstacles)
+bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObstacles)
 {
     Circle* thisCircle = dynamic_cast<Circle*>(this);
 
     // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles->size(); i++)
+    for(unsigned i = 0; i < validObstacles.size(); i++)
     {
         // Store current other object
-        Rectangle* other = validObstacles->at(i)->getSimulationRectangle();
+        Rectangle* other = validObstacles.at(i)->getSimulationRectangle();
 
         Circle* c = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
         if(Circle::intersect(thisCircle, c))
         {
-            if(this->colliderFwd.intersects(other))
+            if(colliderFwd.intersects(other))
             {   
                 return true;
             }
@@ -99,22 +94,21 @@ bool Robot::obstacleDetection(std::vector<Obstacle*>* validObstacles)
     return false;
 }
 
-
-bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
+bool Robot::obstacleDetection(std::vector<std::unique_ptr<Rectangle>>& validObstacles)
 {
     Circle* thisCircle = dynamic_cast<Circle*>(this);
 
     // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles->size(); i++)
+    for(unsigned i = 0; i < validObstacles.size(); i++)
     {
         // Store current other object
-        Rectangle* other = validObstacles->at(i);
+        Rectangle* other = validObstacles.at(i).get();
 
         Circle* c = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
         if(Circle::intersect(thisCircle, c))
         {
-            if(this->colliderFwd.intersects(other))
+            if(colliderFwd.intersects(other))
             {
                 return true;
             }

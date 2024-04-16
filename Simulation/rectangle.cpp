@@ -1,7 +1,5 @@
 #include "rectangle.h"
 
-Rectangle::Rectangle() {}
-
 Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Circle(x, y, 1, rot)
 {
     this->w = w;

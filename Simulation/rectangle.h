@@ -32,6 +32,13 @@ public:
 
     bool intersects(Rectangle* other);
 
+    inline double getW() { return w; }
+    inline double getH() { return h; }
+
+    inline void setW(double w) { this->w = w; }
+    inline void setH(double h) { this->h = h; }
+
+
 protected:
     using RectLines = enum RectangleLines {bottom, left, top, right};
     static void updateSinglePoint(Point* center , Point* p, double cosRad, double sinRad);

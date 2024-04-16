@@ -26,9 +26,9 @@ public:
         this->y = y;
     }
 
-    inline Point getPos() { return *this;     }
-    inline double getX() { return x; }
-    inline double getY() { return y; }
+    inline const Point getPos() const { return *this; }
+    inline const double getX() const { return x; }
+    inline const double getY() const { return y; }
 
     Point operator*(Point const& point)
     {

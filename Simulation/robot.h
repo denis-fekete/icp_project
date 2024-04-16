@@ -14,18 +14,16 @@ public:
     double detRadius;
     Rectangle colliderFwd;
 
-    //
     Robot(double x, double y, double radius, double rot, double detRadius);
-    ~Robot();
 
     //
     void onDetectedObstacle();
-    bool obstacleDetection(std::vector<Obstacle*>* validObstacles);
-    bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
+    bool obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObstacles);
+    bool obstacleDetection(std::vector<std::unique_ptr<Rectangle>>& validObstacles);
 
     void moveForward(double distance);
     void rotate(double angle);
 
-    inline double getDetRadius() { return this->detRadius; }
+    inline double getDetRadius() const { return this->detRadius; }
 };
 #endif

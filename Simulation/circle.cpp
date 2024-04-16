@@ -1,7 +1,5 @@
 #include "circle.h"
 
-Circle::Circle() {}
-
 Circle::Circle(double x, double y, double radius, double rot) : Point (x, y)
 {
     // this->x = x;
@@ -9,8 +7,6 @@ Circle::Circle(double x, double y, double radius, double rot) : Point (x, y)
     this->radius = radius;
     this->rot = rot;
 }
-
-Circle::~Circle() {}
 
 void Circle::moveTo(Point p)
 {

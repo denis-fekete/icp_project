@@ -1,56 +1,44 @@
 #include "obstacle.h"
 #include "qpen.h"
 
-
-Obstacle::Obstacle() {}
-
-Obstacle::~Obstacle() {
-    delete this->sim;
-}
-
-Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color)
+Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color) : sim(x, y, w, h, rot)
 {
-    this->sim = new Rectangle(x, y, w, h, rot);
+    // this->sim = new Rectangle(x, y, w, h, rot);
 
     this->color = color;
 
-    this->setPos(this->sim->x, this->sim->y);
-    this->setRotation(this->sim->getRotation());
+    this->setPos(sim.getX(), sim.getY());
+    this->setRotation(sim.getRotation());
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
 void Obstacle::initialize(QGraphicsScene& scene)
 {
-    // this->setTransformOriginPoint(sim->x, sim->y);
+    // this->setTransformOriginPoint(sim.x, sim.y);
     this->setTransformOriginPoint(0, 0);
     scene.addItem(this);
 }
 
-Rectangle* Obstacle::getSimulationRectangle()
-{
-    return this->sim;
-}
-
 void Obstacle::rotateObstacle(double angle)
 {
-    this->sim->rotate(angle);
+    this->sim.rotate(angle);
     this->setRotation(angle);
 }
 
 QRectF Obstacle::boundingRect() const
 {
-    return QRect(-this->sim->w/2,
-                -this->sim->h/2,
-                this->sim->w,
-                this->sim->h);
+    return QRect(   -sim.w/2,
+                    -sim.h/2,
+                    sim.w,
+                    sim.h);
 }
 
 
 QPainterPath Obstacle::shape() const
 {
     QPainterPath path;
-    path.addRect(-this->sim->w/2, -this->sim->h/2, this->sim->w, this->sim->h);
+    path.addRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
     return path;
 }
 
@@ -59,7 +47,7 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     QBrush brush(color);
     painter->setBrush(brush);
 
-    painter->drawRect(- this->sim->w/2, - this->sim->h/2, this->sim->w, this->sim->h);
+    painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
 }
 
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -69,7 +57,7 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         QPointF newPosition = value.toPointF();
         Point p(newPosition.x(), newPosition.y());
-        this->sim->moveTo(p);
+        this->sim.moveTo(p);
 
         return newPosition;
     }
@@ -77,9 +65,10 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
     return QGraphicsItem::itemChange(change, value);
 }
 
-void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot, QColor& color, std::vector<Obstacle*>& obstacles, QGraphicsScene& scene)
+
+void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot, QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles, QGraphicsScene& scene)
 {
-    obstacles.push_back(new Obstacle( x, y, w, h, rot, color));
+    obstacles.push_back(std::make_unique<Obstacle> ( x, y, w, h, rot, color));
 
     obstacles.back()->initialize(scene);
 }

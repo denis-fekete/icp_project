@@ -39,8 +39,6 @@ private slots:
 
     void on_btnTest_2_clicked();
 
-    void on_btn_applyWorldConfigSize_clicked();
-
     void on_input_robot_randomizeColors_toggled(bool checked);
 
     void on_btnCreateObstacle_clicked();
@@ -59,16 +57,18 @@ private slots:
 
     void on_btn_worldAddMoreRobots_clicked();
 
+    void on_btn_worldApplySize_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
-    std::vector<AutoRobot*> robots;
-    std::vector<Obstacle*> obstacles;
-    AutoRobot* activeRobot = nullptr;
-    Obstacle* activeObstacle;
-    Simulator* simulator;
-    QTimer* timer;
+    std::vector<std::unique_ptr<AutoRobot>> robots;
+    std::vector<std::unique_ptr<Obstacle>> obstacles;
+    std::unique_ptr<AutoRobot>* activeRobot;
+    std::unique_ptr<Obstacle>* activeObstacle;
+    std::unique_ptr<Simulator> simulator;
+    std::unique_ptr<QTimer> timer;
 
     std::unique_ptr<RandomGenerator> randColor;
     std::unique_ptr<RandomGenerator> rand1000;

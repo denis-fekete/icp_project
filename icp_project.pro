@@ -10,11 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     Simulation/circle.cpp \
+    Simulation/circle.cpp \
+    Simulation/line.cpp \
     Simulation/line.cpp \
     Simulation/point.cpp \
+    Simulation/point.cpp \
+    Simulation/rectangle.cpp \
     Simulation/rectangle.cpp \
     Simulation/robot.cpp \
+    Simulation/robot.cpp \
     Simulation/simulationcore.cpp \
+    Simulation/simulationcore.cpp \
+    Simulation/simulator.cpp \
     Simulation/simulator.cpp \
     Tests/pointtest.cpp \
     Tests/robottest.cpp \
@@ -27,15 +34,22 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp
 
-
 HEADERS += \
     Simulation/circle.h \
+    Simulation/circle.h \
+    Simulation/line.h \
     Simulation/line.h \
     Simulation/point.h \
+    Simulation/point.h \
+    Simulation/randomgenerator.h \
     Simulation/randomgenerator.h \
     Simulation/rectangle.h \
+    Simulation/rectangle.h \
+    Simulation/robot.h \
     Simulation/robot.h \
     Simulation/simulationcore.h \
+    Simulation/simulationcore.h \
+    Simulation/simulator.h \
     Simulation/simulator.h \
     Tests/pointtest.h \
     Tests/robottest.h \
@@ -52,3 +66,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    .gitignore

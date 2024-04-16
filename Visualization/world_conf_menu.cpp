@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "../mainwindow.h"
+#include "../ui_mainwindow.h"
 
 void MainWindow::on_btn_loadBenchmark_clicked()
 {
@@ -96,13 +96,13 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         double turnAngle = (rand1000->getRandomValue() % 90) - 180;
         QColor color = getRandomColor();
 
-        AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, &obstacles, robots, *scene);
+        AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, obstacles, robots, *scene);
 
     }
 }
 
-void MainWindow::on_btn_applyWorldConfigSize_clicked()
+void MainWindow::on_btn_worldApplySize_clicked()
 {
     scene->setSceneRect(0, 0, ui->sBox_worldc_sizeX->value(), ui->sBox_worldc_sizeY->value());
+    MainWindow::DrawGrid(ui->sBox_world_gridSize->value());
 }
-
