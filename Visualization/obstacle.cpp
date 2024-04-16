@@ -8,26 +8,33 @@ Obstacle::~Obstacle() {
     delete this->sim;
 }
 
-Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor color)
+Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color)
 {
     this->sim = new Rectangle(x, y, w, h, rot);
 
     this->color = color;
 
     this->setPos(this->sim->x, this->sim->y);
-    this->setRotation(this->sim->GetRotation());
+    this->setRotation(this->sim->getRotation());
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
 }
 
-Rectangle* Obstacle::GetSimulationRectangle()
+void Obstacle::initialize(QGraphicsScene& scene)
+{
+    // this->setTransformOriginPoint(sim->x, sim->y);
+    this->setTransformOriginPoint(0, 0);
+    scene.addItem(this);
+}
+
+Rectangle* Obstacle::getSimulationRectangle()
 {
     return this->sim;
 }
 
-void Obstacle::RotateObstacle(double angle)
+void Obstacle::rotateObstacle(double angle)
 {
-    this->sim->Rotate(angle);
+    this->sim->rotate(angle);
     this->setRotation(angle);
 }
 
@@ -62,10 +69,17 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
     {
         QPointF newPosition = value.toPointF();
         Point p(newPosition.x(), newPosition.y());
-        this->sim->MoveTo(p);
+        this->sim->moveTo(p);
 
         return newPosition;
     }
 
     return QGraphicsItem::itemChange(change, value);
+}
+
+void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot, QColor& color, std::vector<Obstacle*>& obstacles, QGraphicsScene& scene)
+{
+    obstacles.push_back(new Obstacle( x, y, w, h, rot, color));
+
+    obstacles.back()->initialize(scene);
 }

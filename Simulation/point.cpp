@@ -1,4 +1,5 @@
-#include "point2d.h"
+#include "point.h"
+
 
 Point::~Point() {}
 

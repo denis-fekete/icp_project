@@ -1,72 +1,99 @@
 #include "simulator.h"
-#include <thread>
 #include <chrono>
 
-Simulator::Simulator(std::vector<AutoRobot*>* robots, std::vector<Obstacle*>* obstacles, int numOfRobotsPerThread)
+Simulator::Simulator(std::vector<AutoRobot*>* robots, QGraphicsScene* scene, size_t maxThreads)
 {
     this->robots = robots;
-    this->obstacles = obstacles;
-    this->numOfRobotsPerThread = numOfRobotsPerThread;
+    this->scene = scene;
+    this->maxThreads = maxThreads;
 
     this->timer = new QTimer();
-    connect(timer, SIGNAL(timeout()), this, SLOT(SimulationCycle()));
+    this->simCores = new std::vector<SimulationCore*>;
+    this->simThreads = new std::vector<std::thread*>;
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(simulationCycle()));
 }
 
-void Simulator::SimulationCycle()
+
+void Simulator::initializeCores()
 {
+
+    for(size_t i = 0; i < maxThreads; i++)
+    {
+        simThreads->push_back( new std::thread(createSimulationCore, simCores, robots, &wakeCores, &mutex, &keepSimulating) );
+    }
+}
+
+
+void Simulator::simulationCycle()
+{
+    if(robots->size() == 0 || simCores->size() == 0)
+    {
+        return;
+    }
+
     auto beggining = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::thread*> simThreads;
-
-    const size_t vectorMaxSize = robots->size();
-
-    // Split simulation calculating between threads
-    for(size_t i = 0; i < vectorMaxSize; i += numOfRobotsPerThread)
+    size_t workPerThread = robots->size() / maxThreads;
+    size_t overtime = robots->size() % maxThreads;
+    // set work for simulation cores
+    size_t lastEnd = 0;
+    size_t newEnd = 0;
+    for(size_t index = 0; index < maxThreads; index++)
     {
+        // set new as last end + work per one thread
+        newEnd = lastEnd + workPerThread;
 
-        simThreads.push_back(new std::thread(SimulateGroup,
-                                             robots,
-                                             i,
-                                             (((i + numOfRobotsPerThread - 1) > vectorMaxSize)? vectorMaxSize : i + numOfRobotsPerThread - 1)
-                                             ));
+        // if overtime is not 0, add robot to thread
+        if(overtime > 0)
+        {
+            // add to the end
+            newEnd++;
+            overtime--;
+        }
+
+        // set workforce for the cores
+        simCores->at(index)->setIndexes(lastEnd, newEnd);
+        lastEnd = newEnd;
     }
 
-    // Wait for all threads to end
-    for(size_t i = 0; i < simThreads.size(); i++)
-    {
-        simThreads.at(i)->join();
-    }
+    wakeCores.notify_all();
 
     auto end = std::chrono::high_resolution_clock::now();
-
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
     this->cycleTime = duration.count();
+
+    scene->update();
 }
 
-void Simulator::SimulateGroup(std::vector<AutoRobot*>* robots, const size_t start, const size_t end)
-{
-    for(size_t i = 0; start + i < end; i++)
-    {
-        robots->at(start+i)->Simulate();
-    }
-}
 
-void Simulator::RunSimulation()
+void Simulator::runSimulation()
 {
     this->timer->start(timerPeriod_ms);
 }
 
-void Simulator::StopSimulation()
+void Simulator::stopSimulation()
 {
     this->timer->stop();
 }
 
-void Simulator::SetTimerPeriod(int milliSeconds)
+void Simulator::setTimerPeriod(int milliSeconds)
 {
     this->timerPeriod_ms = milliSeconds;
 }
 
-long long Simulator::GetCycleTime()
+long long Simulator::getCycleTime()
 {
     return this->cycleTime;
+}
+
+void Simulator::createSimulationCore(   std::vector<SimulationCore*>* simCores,
+                                 std::vector<AutoRobot*>* robots,
+                                 std::condition_variable* wakeCores,
+                                 std::mutex* mutex,
+                                 bool* keepSimulating)
+{
+    SimulationCore* newCore = new SimulationCore(robots, wakeCores, mutex, keepSimulating);
+    simCores->push_back(newCore);
+    newCore->runSimulation();
 }

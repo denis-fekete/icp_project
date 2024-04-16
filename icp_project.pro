@@ -10,10 +10,15 @@ CONFIG += c++17
 
 SOURCES += \
     Simulation/circle.cpp \
-    Simulation/point2d.cpp \
+    Simulation/line.cpp \
+    Simulation/point.cpp \
     Simulation/rectangle.cpp \
     Simulation/robot.cpp \
+    Simulation/simulationcore.cpp \
     Simulation/simulator.cpp \
+    Tests/pointtest.cpp \
+    Tests/robottest.cpp \
+    Tests/test.cpp \
     Visualization/autorobot.cpp \
     Visualization/obstacle.cpp \
     Visualization/obstacle_conf_menu.cpp \
@@ -25,10 +30,17 @@ SOURCES += \
 
 HEADERS += \
     Simulation/circle.h \
-    Simulation/point2d.h \
+    Simulation/line.h \
+    Simulation/point.h \
+    Simulation/randomgenerator.h \
     Simulation/rectangle.h \
     Simulation/robot.h \
+    Simulation/simulationcore.h \
     Simulation/simulator.h \
+    Tests/pointtest.h \
+    Tests/robottest.h \
+    Tests/test.h \
+    Tests/testsRunner.h \
     Visualization/autorobot.h \
     Visualization/obstacle.h \
     mainwindow.h

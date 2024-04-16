@@ -3,7 +3,7 @@
 
 #include <QtMath>
 
-#include "point2d.h"
+#include "point.h"
 
 class Circle : public Point
 {
@@ -19,28 +19,41 @@ public:
     Circle(double x, double y, double radius, double rot);
     ~Circle();
 
-    void MoveForward(double distance);
-    void MoveTo(Point p);
-    void Rotate(double angle);
+    void moveForward(double distance);
+    void moveTo(Point p);
+    void rotate(double angle);
 
-    inline double GetCosRad() { return cosRad; }
-    inline double GetSinRad() { return sinRad; }
-    inline void SetCosRad(double val) { this->cosRad = val; }
-    inline void SetSinRad(double val) { this->sinRad = val; }
+    inline double getCosRad() { return cosRad; }
+    inline double getSinRad() { return sinRad; }
+    inline void setCosRad(double val) { this->cosRad = val; }
+    inline void setSinRad(double val) { this->sinRad = val; }
 
-    inline double GetRadius() { return this->radius; }
-    inline double GetRotation() { return this->rot; }
-    inline Point GetPosition() { return Point(this->x, this->y); }
-    inline double GetXPos() { return this->x; }
-    inline double GetYPos() { return this->y; }
-    inline void SetRotation(double rot) { this->rot = rot; }
-    inline void SetRadius(double rad) { this->radius = rad; }
-    inline void SetXPos(double x) { this->x = x; }
-    inline void SetYPos(double y) { this->y = y; }
-    inline void SetPosition(Point p) { this->x = p.x; this->y = p.y; }
+    inline double getRadius() { return radius; }
+    inline double getRotation() { return rot; }
+    inline void setRotation(double rot) { this->rot = rot; }
+    inline void setRadius(double rad) { this->radius = rad; }
 
-    void CalculateSinCos();
-    void CalculateSinCos(double rot);
-    void CalculateSinCos(double* cosRad, double* sinRad, double* rot);
+    void calculateSinCos();
+    void calculateSinCos(double rot);
+    void calculateSinCos(double* cosRad, double* sinRad, double* rot);
+
+    inline static bool intersect(Circle* a, Circle* b)
+    {
+        auto radius = (a->radius + b->radius);
+        radius = radius * radius;
+
+        // Check if delta on X-axis between objects is less than detection radius + radius of other object
+        if((a->x - b->x) * (a->x - b->x) <= radius)
+        {
+            // Check if delta on Y-axis between objects is less than detection radius + radius of other object
+            if((a->y - b->y) * (a->y - b->y) <= radius)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 };
 #endif

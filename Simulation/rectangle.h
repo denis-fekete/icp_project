@@ -4,7 +4,8 @@
 #include <QDebug>
 #include <QtDebug>
 
-#include "point2d.h"
+#include "point.h"
+#include "line.h"
 #include "circle.h"
 
 class Rectangle : public Circle
@@ -22,22 +23,24 @@ public:
     Rectangle(double x, double y, double w, double h, double rot);
     ~Rectangle();
 
-    void UpdatePoints();
-    void UpdatePoints(double cosRad, double sinRad);
+    void updatePoints();
+    void updatePoints(double cosRad, double sinRad);
 
-    void MoveTo(Point p);
-    void MoveForward(double distance);
-    void Rotate(double angle);
+    void moveTo(Point p);
+    void moveForward(double distance);
+    void rotate(double angle);
 
-    bool Intersects(Rectangle* other);
+    bool intersects(Rectangle* other);
 
 protected:
-    static void UpdateSinglePoint(Point* center , Point* p, double cosRad, double sinRad);
-    static void CalcualteCornersWithNoRotation(Rectangle* rect);
-    static bool LineIntersects(Point* startA, Point* endA, Point* startB, Point* endB, Point *intersectionPoint);
-    static void BreakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge);
-    static bool OnLeftSideOfLine(Point S, Point A, Point B);
-    static bool PointInRectangle(Point* point, Rectangle* rect);
+    using RectLines = enum RectangleLines {bottom, left, top, right};
+    static void updateSinglePoint(Point* center , Point* p, double cosRad, double sinRad);
+    static void calculateCornersWithNoRotation(Rectangle* rect);
+    // static bool lineIntersects(Point* startA, Point* endA, Point* startB, Point* endB, Point *intersectionPoint);
+    // static void breakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge);
+    // static bool onLeftSideOfLine(Point S, Point A, Point B);
+    Line breakIntoEdges(RectLines line);
+    static bool pointInRectangle(Point* point, Rectangle* rect);
 };
 
 #endif

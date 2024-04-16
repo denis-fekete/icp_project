@@ -1,5 +1,5 @@
 #include "autorobot.h"
-
+#include "QPen"
 
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                       double detRadius, QColor color, double speed,
@@ -13,9 +13,7 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot,
     this->turnDirection = (turnRight) ? 1 : -1;
 
     this->obstacles = obstaclesPointer;
-
-    connect(this, SIGNAL(qtDummyMove()), this, SLOT(MoveUpdateGraphics()), Qt::QueuedConnection);
-    connect(this, SIGNAL(qtDummyRotate()), this, SLOT(RotateUpdateGraphics()), Qt::QueuedConnection);
+    initialized = false;
 }
 
 AutoRobot::~AutoRobot()
@@ -24,87 +22,88 @@ AutoRobot::~AutoRobot()
     delete this->timer;
 }
 
-void AutoRobot::Initialize(QGraphicsScene* scene)
+void AutoRobot::initialize(QGraphicsScene& scene)
 {
-    const double circleRad = sim->GetRadius();
-    this->graphics = scene->addEllipse(sim->x -  circleRad / 2, sim->y - circleRad  / 2, circleRad , circleRad , QPen(color), QBrush(color));
-    this->collider = scene->addRect(sim->colliderFwd.x - sim->colliderFwd.w/2,
-                                    sim->colliderFwd.y - sim->colliderFwd.h/2,
-                                    sim->colliderFwd.w,
-                                    sim->colliderFwd.h,
-                                    QPen(QColor(60, 60, 60), 1, Qt::DotLine));
-
-    this->graphics->setTransformOriginPoint(sim->x, sim->y);
-    this->collider->setTransformOriginPoint(sim->x, sim->y);
+    this->setTransformOriginPoint(sim->x, sim->y);
+    scene.addItem(this);
+    initialized = true;
 }
 
-void AutoRobot::MoveRobot(double distance)
+QRectF AutoRobot::boundingRect() const
 {
-    lastMoveDelta = this->sim->MoveForward(distance);
-    emit qtDummyMove();
+    const double adjust = 1;
+    return QRectF( -sim->getRadius() - adjust,
+                   -sim->getRadius() - adjust,
+                    sim->getRadius() + adjust,
+                    sim->getRadius() + adjust);
 }
 
-void AutoRobot::MoveUpdateGraphics()
+QPainterPath AutoRobot::shape() const
 {
-    this->graphics->moveBy(lastMoveDelta.x, lastMoveDelta.y);
-    this->collider->moveBy(lastMoveDelta.x, lastMoveDelta.y);
+    QPainterPath path;
+    path.addRect(-sim->getRadius(),
+                 -sim->getRadius(),
+                 sim->getRadius(),
+                 sim->getRadius());
+    return path;
 }
 
-void AutoRobot::RotateRobot(double angle)
+void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    sim->Rotate(angle);
-    emit qtDummyRotate();
+    // Body
+    const auto halfRadius = sim->getRadius() / 2;
+    painter->setBrush(color);
+    painter->drawEllipse(sim->getX() - halfRadius, sim->getY() - halfRadius, sim->getRadius(), sim->getRadius());
+
+    // Collider
+    QPainterPath path(QPoint(sim->colliderFwd.LB.x, sim->colliderFwd.LB.y));
+    path.lineTo(QPoint(sim->colliderFwd.RB.x, sim->colliderFwd.RB.y));
+    path.lineTo(QPoint(sim->colliderFwd.RT.x, sim->colliderFwd.RT.y));
+    path.lineTo(QPoint(sim->colliderFwd.LT.x, sim->colliderFwd.LT.y));
+    path.lineTo(QPoint(sim->colliderFwd.LB.x, sim->colliderFwd.LB.y));
+    painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
+    painter->drawPath(path);
 }
 
-void AutoRobot::RotateUpdateGraphics()
+void AutoRobot::simulate()
 {
-    const double circleRad = sim->GetRadius();
-    const double rad = circleRad / 2;
-    this->graphics->moveBy(rad, rad);
-    this->graphics->setRotation(sim->GetRotation());
-    this->graphics->moveBy(-rad, -rad);
+    if(!initialized) return;
 
-    const auto w2 = sim->colliderFwd.w/2 + circleRad;
-    const auto h2 = sim->colliderFwd.h/2 + circleRad;
-    this->collider->moveBy(w2, h2);
-    this->collider->setRotation(this->sim->colliderFwd.GetRotation());
-    this->collider->moveBy(-w2, -h2);
-}
-
-void AutoRobot::Simulate()
-{
-    this->MoveRobot(this->speed);
-
-    bool collision = this->sim->ObstacleDetection(obstacles);
+    bool collision = this->sim->obstacleDetection(obstacles);
     if(collision)
     {
-        this->RotateRobot(this->turnAngle * turnDirection);
+        this->rotateRobot(turnAngle * turnDirection);
+    }
+    else
+    {
+        this->moveRobot(speed);
     }
 }
 
-Robot* AutoRobot::GetSimatationInfo()
+Robot* AutoRobot::getSimulationInfo()
 {
     return this->sim;
 }
 
-QGraphicsEllipseItem* AutoRobot::GetGraphics()
+
+void AutoRobot::setSelected()
 {
-    return this->graphics;
+    // QColor highlightedColor = color.lighter(30);
+    // this->setPen(QPen(highlightedColor, 5));
 }
 
-QGraphicsRectItem* AutoRobot::GetCollider()
+void AutoRobot::setUnselected()
 {
-    return this->collider;
+    // this->setPen(QPen(color));
 }
 
-
-void AutoRobot::SetSelected()
+void AutoRobot::addRobotToWorld( double x, double y, double radius, double rot,
+                                double detRadius, QColor color, double speed,
+                                double turnAngle, bool turnRight,
+                                std::vector<Obstacle*>* obstaclesPointer,
+                                std::vector<AutoRobot*>& robots, QGraphicsScene& scene)
 {
-    QColor highlightedColor = color.lighter(30);
-    this->graphics->setPen(QPen(highlightedColor, 5));
-}
+    robots.push_back(new AutoRobot( x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, obstaclesPointer));
 
-void AutoRobot::SetUnselected()
-{
-    this->graphics->setPen(QPen(color));
+    robots.back()->initialize(scene);
 }

@@ -7,6 +7,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    // value 235 means that values in RGB wont be too bright,
+    // potentialy resulting in white robot on white background
+    randColor = std::make_unique<RandomGenerator>(0, 235);
+    rand1000 = std::make_unique<RandomGenerator>(0, 1000);
+
     ui->setupUi(this);
 
     scene = new QGraphicsScene(this);
@@ -20,9 +25,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     DrawGrid(50);
 
-    simulator = new Simulator(&robots, &obstacles, 50);
-    simulator->SetTimerPeriod(30);
-    simulator->RunSimulation();
+    simulator = new Simulator(&robots, scene, 10);
+    simulator->initializeCores();
+    simulator->setTimerPeriod(30);
+    simulator->runSimulation();
 }
 
 MainWindow::~MainWindow()
@@ -46,16 +52,7 @@ void MainWindow::DrawGrid(unsigned density)
     }
 }
 
-void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
-{
-    ui->input_robot_onCollisionTurnRight->setChecked(!checked);
-}
 
-
-void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
-{
-    ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
-}
 
 #define VERTICAL_SPACING 10
 #define HORIZONTAL_SPACING 20
@@ -74,3 +71,14 @@ void MainWindow::resizeEvent(QResizeEvent*)
 }
 #undef VERTICAL_SPACING
 #undef HORIZONTAL_SPACING
+
+QColor MainWindow::getRandomColor()
+{
+    // RGB values from 0 - 235, not 255 in case three 255 were randomized
+    return QColor(  randColor->getRandomValue(),
+                    randColor->getRandomValue(),
+                    randColor->getRandomValue());
+}
+
+
+

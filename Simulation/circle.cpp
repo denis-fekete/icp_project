@@ -12,13 +12,13 @@ Circle::Circle(double x, double y, double radius, double rot) : Point (x, y)
 
 Circle::~Circle() {}
 
-void Circle::MoveTo(Point p)
+void Circle::moveTo(Point p)
 {
     x = p.x;
     y = p.y;
 }
 
-void Circle::Rotate(double angle)
+void Circle::rotate(double angle)
 {
     rot += angle;
 
@@ -31,37 +31,35 @@ void Circle::Rotate(double angle)
         // Subtract 360 from rotation
         rot -= sign * 360;
     }
+
+    calculateSinCos();
 }
 
-void Circle::MoveForward(double distance)
+void Circle::moveForward(double distance)
 {
-    // function cos() and sin() from cmath takes radians
-    double radians = rot * (M_PI / 180);
-
     // Calcualte delta value for moving in X and Y direction
-    double xDelta = cos(radians) * distance;
-    double yDelta = sin(radians) * distance;
+    double xDelta = getCosRad() * distance;
+    double yDelta = getSinRad() * distance;
 
     // Apply deltas to the current possition
-    x += xDelta;
-    y += yDelta;
+    this->setPos(xDelta, yDelta);
 }
 
-void Circle::CalculateSinCos()
+void Circle::calculateSinCos()
 {
     double radians = rot * (MY_PI / 180.0);
     cosRad = cos(radians);
     sinRad = sin(radians);
 }
 
-void Circle::CalculateSinCos(double rot)
+void Circle::calculateSinCos(double rot)
 {
     double radians = rot * (MY_PI / 180.0);
     cosRad = cos(radians);
     sinRad = sin(radians);
 }
 
-void Circle::CalculateSinCos(double* cosRad, double* sinRad, double* rot)
+void Circle::calculateSinCos(double* cosRad, double* sinRad, double* rot)
 {
     double radians = this->rot * (MY_PI / 180.0);
     this->cosRad = cos(radians);

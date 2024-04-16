@@ -34,7 +34,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="_1WorldConfiguration">
      <property name="geometry">
@@ -106,7 +106,7 @@
        <string>Y</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btn_applyWorldConfigSize">
+     <widget class="QPushButton" name="btn_worldApplySize">
       <property name="geometry">
        <rect>
         <x>160</x>
@@ -117,6 +117,132 @@
       </property>
       <property name="text">
        <string>Set world size</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_loadBenchmark">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>360</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Benchmark</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="sBox_world_benchMarkSizeX">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>360</y>
+        <width>71</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+      <property name="value">
+       <number>500</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="sBox_world_benchMarkSizeY">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>360</y>
+        <width>71</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+      <property name="value">
+       <number>500</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="sBox_world_robotsCount">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>360</y>
+        <width>71</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <number>99999</number>
+      </property>
+      <property name="value">
+       <number>250</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_63">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>320</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Benchmark</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_64">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>340</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>X size</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_65">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>340</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Y size</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_66">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>340</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Robots</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_worldAddMoreRobots">
+      <property name="geometry">
+       <rect>
+        <x>260</x>
+        <y>390</y>
+        <width>111</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add more robots</string>
       </property>
      </widget>
     </widget>
@@ -505,10 +631,13 @@
          </rect>
         </property>
         <property name="minimum">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="maximum">
          <number>99999</number>
+        </property>
+        <property name="value">
+         <number>1</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_3">

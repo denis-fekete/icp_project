@@ -9,27 +9,26 @@ Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Circl
     this->rot = rot;
     radius = sqrt( (w * w +  h * h) / 4);
 \
-    UpdatePoints();
+    updatePoints();
 }
 
 Rectangle::~Rectangle() {}
 
-void Rectangle::MoveTo(Point p)
+void Rectangle::moveTo(Point p)
 {
     // Update center point
     this->x = p.x;
     this->y = p.y;
 
-    // Call UpdatePoints to update points based on rotation
-    this->UpdatePoints();
+    // Call updatePoints to update points based on rotation
+    this->updatePoints();
 }
 
-
-void Rectangle::MoveForward(double distance)
+void Rectangle::moveForward(double distance)
 {
     // Calcualte delta value for moving in X and Y direction
-    double xDelta = GetCosRad() * distance;
-    double yDelta = GetSinRad() * distance;
+    double xDelta = getCosRad() * distance;
+    double yDelta = getSinRad() * distance;
 
     // Apply deltas to the current possition
     x += xDelta;
@@ -43,7 +42,7 @@ void Rectangle::MoveForward(double distance)
     LT = LT + p;
 }
 
-void Rectangle::Rotate(double angle)
+void Rectangle::rotate(double angle)
 {
     rot += angle;
 
@@ -58,10 +57,10 @@ void Rectangle::Rotate(double angle)
     }
 
     // Update points / corners
-    UpdatePoints();
+    updatePoints();
 }
 
-void Rectangle::UpdateSinglePoint(Point* center , Point* p, double cosRad, double sinRad)
+void Rectangle::updateSinglePoint(Point* center , Point* p, double cosRad, double sinRad)
 {
     // Calculate translated position
     double tmpX = p->x - center->x;
@@ -74,7 +73,7 @@ void Rectangle::UpdateSinglePoint(Point* center , Point* p, double cosRad, doubl
     p->y = rotatedY + center->y;
 }
 
-void Rectangle::CalcualteCornersWithNoRotation(Rectangle* rect)
+void Rectangle::calculateCornersWithNoRotation(Rectangle* rect)
 {
     // Calculate constants width/2 and heigth/2
     const auto w2 = rect->w / 2;
@@ -87,113 +86,65 @@ void Rectangle::CalcualteCornersWithNoRotation(Rectangle* rect)
     rect->RT = Point(rect->x + w2, rect->y + h2);
 }
 
-void Rectangle::UpdatePoints(double cosRad, double sinRad)
+void Rectangle::updatePoints(double cosRad, double sinRad)
 {
-    CalcualteCornersWithNoRotation(this);
+    calculateCornersWithNoRotation(this);
     Point center(this->x, this->y);
 
     // Update stored sinus and cosinus values
-    this->SetCosRad(cosRad);
-    this->SetSinRad(sinRad);
+    this->setCosRad(cosRad);
+    this->setSinRad(sinRad);
 
     // Calculate corners with rotation
-    UpdateSinglePoint(&center, &LB, cosRad, sinRad);
-    UpdateSinglePoint(&center, &LT, cosRad, sinRad);
-    UpdateSinglePoint(&center, &RB, cosRad, sinRad);
-    UpdateSinglePoint(&center, &RT, cosRad, sinRad);
+    updateSinglePoint(&center, &LB, cosRad, sinRad);
+    updateSinglePoint(&center, &LT, cosRad, sinRad);
+    updateSinglePoint(&center, &RB, cosRad, sinRad);
+    updateSinglePoint(&center, &RT, cosRad, sinRad);
 }
 
-void Rectangle::UpdatePoints()
+void Rectangle::updatePoints()
 {
-    CalcualteCornersWithNoRotation(this);
+    calculateCornersWithNoRotation(this);
 
     Point center(this->x, this->y);
 
     // Update stored sinus and cosinus values
-    this->CalculateSinCos(this->rot);
+    this->calculateSinCos(this->rot);
 
-    const double cosRad = this->GetCosRad();
-    const double sinRad = this->GetSinRad();
+    const double cosRad = this->getCosRad();
+    const double sinRad = this->getSinRad();
 
     // Calculate corners with rotation
-    UpdateSinglePoint(&center, &(this->LB), cosRad, sinRad);
-    UpdateSinglePoint(&center, &(this->LT), cosRad, sinRad);
-    UpdateSinglePoint(&center, &(this->RB), cosRad, sinRad);
-    UpdateSinglePoint(&center, &(this->RT), cosRad, sinRad);
+    updateSinglePoint(&center, &(this->LB), cosRad, sinRad);
+    updateSinglePoint(&center, &(this->LT), cosRad, sinRad);
+    updateSinglePoint(&center, &(this->RB), cosRad, sinRad);
+    updateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
-bool Rectangle::LineIntersects(Point* startA, Point* endA, Point* startB, Point* endB, Point *intersectionPoint)
+Line Rectangle::breakIntoEdges(RectLines line)
 {
-    double denominator = (  (endB->y - startB->y) * (endA->x - startA->x)
-                          - (endB->x - startB->x) * (endA->y - startA->y)  );
-
-    // Lines are parallel
-    if(denominator == 0)
+    switch (line)
     {
-        return false;
-    }
-
-    double ua = (   (endB->x - startB->x) * (startA->y - startB->y)
-                 -   (endB->y - startB->y) * (startA->x - startB->x))
-                / denominator;
-    double ub = (   (endA->x - startA->x) * (startA->y - startB->y)
-                 -   (endA->y - startA->y) * (startA->x - startB->x))
-                / denominator;
-
-    // is the intersection along the segments
-    if(ua < 0 || ua > 1 || ub < 0 || ub > 1)
-    {
-        return false;
-    }
-
-    intersectionPoint->x = startA->x + ua * (endA->x - startA->x);
-    intersectionPoint->y = startA->y + ua * (endA->y - startA->y);
-
-    return true;
-}
-
-void Rectangle::BreakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge)
-{
-    switch (edge)
-    {
-    case 1:
-        *pStart = rect->LB;
-        *pEnd = rect->RB;
-        break;
-    case 2:
-        *pStart = rect->RB;
-        *pEnd = rect->RT;
-        break;
-    case 3:
-        *pStart = rect->RT;
-        *pEnd = rect->LT;
-        break;
-    case 4:
-        *pStart = rect->LT;
-        *pEnd = rect->LB;
-        break;
+    case RectLines::bottom:
+        return Line(this->LB, this->RB);
+    case RectLines::right:
+        return Line(this->RB, this->RT);
+    case RectLines::top:
+        return Line(this->RT, this->LT);
     default:
-        break;
+        return Line(this->LT, this->LB);
     }
 }
 
-bool Rectangle::OnLeftSideOfLine(Point S, Point A, Point B)
+bool Rectangle::pointInRectangle(Point* point, Rectangle* rect)
 {
-    auto res = (B.x - A.x) * (S.y - A.y) - (S.x - A.x) * (B.y - A.y);
-
-    // If res >= 0 point is on the line, or on the left side
-    return (res >= 0) ? true : false;
-}
-
-bool Rectangle::PointInRectangle(Point* point, Rectangle* rect)
-{
-    if(OnLeftSideOfLine(*point, rect->LB, rect->RB))
+    if(Line::pointOnLeftSide(*point, rect->LB, rect->RB))
     {
-        if(OnLeftSideOfLine(*point, rect->RB, rect->RT))
+        if(Line::pointOnLeftSide(*point, rect->RB, rect->RT))
         {
-            if(OnLeftSideOfLine(*point, rect->RT, rect->LT))
+            if(Line::pointOnLeftSide(*point, rect->RT, rect->LT))
             {
-                if(OnLeftSideOfLine(*point, rect->LT, rect->LB))
+                if(Line::pointOnLeftSide(*point, rect->LT, rect->LB))
                 {
                     return true;
                 }
@@ -205,35 +156,31 @@ bool Rectangle::PointInRectangle(Point* point, Rectangle* rect)
 }
 
 #define POLYGON_EDGE_COUNT 4
-bool Rectangle::Intersects(Rectangle* other)
+bool Rectangle::intersects(Rectangle* other)
 {
     // Check points of rectangle
-    if(PointInRectangle(&(this->LB), other)) {return true; }
-    if(PointInRectangle(&(this->RB), other)) {return true; }
-    if(PointInRectangle(&(this->RT), other)) {return true; }
-    if(PointInRectangle(&(this->LT), other)) {return true; }
+    if(pointInRectangle(&(this->LB), other)) {return true; }
+    if(pointInRectangle(&(this->RB), other)) {return true; }
+    if(pointInRectangle(&(this->RT), other)) {return true; }
+    if(pointInRectangle(&(this->LT), other)) {return true; }
 
     // Check whenever edges of rectangle intesect
     for(int i = 0; i < POLYGON_EDGE_COUNT; i++)
     {
-        Point startA;
-        Point endA;
-        BreakIntoEdges(&startA, &endA, this, i);
+        Line lineA = breakIntoEdges(static_cast<RectLines>(i));
 
         for (int j = 0; j < POLYGON_EDGE_COUNT; j++)
         {
-            Point startB;
-            Point endB;
-            BreakIntoEdges(&startB, &endB, other, j);
+            Line lineB = breakIntoEdges(static_cast<RectLines>(j));
 
             Point intersectionPoint;
             // Check if lines intersect
-            if(LineIntersects(&startA, &endA, &startB, &endB, &intersectionPoint))
+            if(Line::linesIntersects(lineA, lineB, &intersectionPoint))
             {
                 // Check if found point is in both rectangles
-                if(PointInRectangle(&intersectionPoint, this))
+                if(pointInRectangle(&intersectionPoint, this))
                 {
-                    if(PointInRectangle(&intersectionPoint, other))
+                    if(pointInRectangle(&intersectionPoint, other))
                     {
                         return true;
                     }

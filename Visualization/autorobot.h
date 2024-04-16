@@ -14,13 +14,13 @@
 #include "obstacle.h"
 #include "../Simulation/robot.h"
 
-class AutoRobot : public QObject
+class AutoRobot : public QGraphicsItem
 {
-    Q_OBJECT
+    // Q_OBJECT
 protected:
     Robot* sim; // Simulation of physics for robot
-    QGraphicsEllipseItem* graphics;
-    QGraphicsRectItem* collider;
+    // QGraphicsEllipseItem* graphics;
+    // QGraphicsRectItem* collider;
     std::vector<Obstacle*>* obstacles;
 
     // Robot parameters
@@ -39,30 +39,34 @@ public:
               std::vector<Obstacle*>* obstaclesPointer);
 
     ~AutoRobot();
-    void Initialize(QGraphicsScene* scene);
+    void initialize(QGraphicsScene& scene);
 
-    Robot* GetSimatationInfo();
-    QGraphicsEllipseItem* GetGraphics();
-    QGraphicsRectItem* GetCollider();
+    Robot* getSimulationInfo();
+    QGraphicsEllipseItem* getGraphics();
+    QGraphicsRectItem* getCollider();
 
-    void SetUnselected();
-    void SetSelected();
+    void setUnselected();
+    void setSelected();
 
-    void Simulate();
-
-    void MoveRobot(double distance);
-    void RotateRobot(double angle);
+    inline void moveRobot(double distance) { sim->moveForward(distance); }
+    inline void rotateRobot(double angle) { sim->rotate(angle); }
+    void simulate();
 
     Point lastMoveDelta;
 
-signals:
-    void qtDummyMove();
-    void qtDummyRotate();
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
 
+    inline QPoint point2QPoint(Point point) { return QPoint(point.getX(), point.getY()); };
+    bool initialized;
 
-public slots:
-    void MoveUpdateGraphics();
-    void RotateUpdateGraphics();
+    static void addRobotToWorld(double x, double y, double radius, double rot,
+                                double detRadius, QColor color, double speed,
+                                double turnAngle, bool turnRight,
+                                std::vector<Obstacle*>* obstaclesPointer,
+                                std::vector<AutoRobot*>& robots, QGraphicsScene& scene);
 };
 
 #endif // AUTOROBOT_H

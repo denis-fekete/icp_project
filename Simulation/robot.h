@@ -12,7 +12,6 @@ class Robot : public Circle
 public:
     // Value of radius for collision detection
     double detRadius;
-    //TODO: Speed at which will robot move
     Rectangle colliderFwd;
 
     //
@@ -20,10 +19,13 @@ public:
     ~Robot();
 
     //
-    void OnDetectedObstacle();
-    bool ObstacleDetection(std::vector<Obstacle*>* validObstacles);
+    void onDetectedObstacle();
+    bool obstacleDetection(std::vector<Obstacle*>* validObstacles);
+    bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
 
-    Point MoveForward(double distance);
-    Point Rotate(double angle);
+    void moveForward(double distance);
+    void rotate(double angle);
+
+    inline double getDetRadius() { return this->detRadius; }
 };
 #endif

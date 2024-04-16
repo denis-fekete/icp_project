@@ -7,11 +7,12 @@
 #include <QGraphicsItem>
 
 #include <vector>
+#include <random>
 
 #include "Visualization/autorobot.h"
 #include "Visualization/obstacle.h"
 #include "Simulation/simulator.h"
-
+#include "Simulation/randomgenerator.h"
 
 #include <QTimer>
 
@@ -28,6 +29,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    QColor getRandomColor();
 
 private slots:
     void on_btnCreateRobot_clicked();
@@ -52,7 +55,11 @@ private slots:
 
     void on_input_robot_onCollisionTurnRight_clicked(bool checked);
 
-protected:
+    void on_btn_loadBenchmark_clicked();
+
+    void on_btn_worldAddMoreRobots_clicked();
+
+private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
 
@@ -61,10 +68,11 @@ protected:
     AutoRobot* activeRobot = nullptr;
     Obstacle* activeObstacle;
     Simulator* simulator;
-
     QTimer* timer;
 
-private:
+    std::unique_ptr<RandomGenerator> randColor;
+    std::unique_ptr<RandomGenerator> rand1000;
+
     void DrawGrid(unsigned density);
     void resizeEvent(QResizeEvent*);
 };
