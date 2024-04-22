@@ -14,6 +14,7 @@ public:
     void simpleRotate();
     void simpleMovement();
     void collisionDetection1();
+    void collisionDetection2();
 
     bool run() override;
 };

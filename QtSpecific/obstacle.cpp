@@ -26,10 +26,16 @@ void Obstacle::rotateObstacle(double angle)
 
 QRectF Obstacle::boundingRect() const
 {
-    return QRect(   -sim.w/2,
-                    -sim.h/2,
-                    sim.w,
-                    sim.h);
+    // return QRect(   -sim.w/2,
+    //                 -sim.h/2,
+    //                 sim.w,
+    //                 sim.h);
+
+    return QRect(   -sim.w,
+                    -sim.h,
+                    2*sim.w,
+                    2*sim.h);
+
 }
 
 
@@ -47,6 +53,9 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     painter->setBrush(brush);
 
     painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
+
+    painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
+    painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
 }
 
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)

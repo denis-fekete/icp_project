@@ -132,33 +132,38 @@ Line Rectangle::breakIntoEdges(RectLines line)
     }
 }
 
-bool Rectangle::pointInRectangle(Point* point, Rectangle* rect)
+bool Rectangle::pointInRectangle(Point& point)
 {
-    if(Line::pointOnLeftSide(*point, rect->LB, rect->RB))
-    {
-        if(Line::pointOnLeftSide(*point, rect->RB, rect->RT))
-        {
-            if(Line::pointOnLeftSide(*point, rect->RT, rect->LT))
-            {
-                if(Line::pointOnLeftSide(*point, rect->LT, rect->LB))
-                {
-                    return true;
-                }
-            }
-        }
-    }
+    return (Line::pointOnLeftSide(point, this->LB, this->RB) &&
+            Line::pointOnLeftSide(point, this->RB, this->RT) &&
+            Line::pointOnLeftSide(point, this->RT, this->LT) &&
+            Line::pointOnLeftSide(point, this->LT, this->LB));
 
-    return false;
+    // if(Line::pointOnLeftSide(point, this->LB, this->RB))
+    // {
+    //     if(Line::pointOnLeftSide(point, this->RB, this->RT))
+    //     {
+    //         if(Line::pointOnLeftSide(point, this->RT, this->LT))
+    //         {
+    //             if(Line::pointOnLeftSide(point, this->LT, this->LB))
+    //             {
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    // }
+
+    // return false;
 }
 
 #define POLYGON_EDGE_COUNT 4
 bool Rectangle::intersects(Rectangle* other)
 {
     // Check points of rectangle
-    if(pointInRectangle(&(this->LB), other)) {return true; }
-    if(pointInRectangle(&(this->RB), other)) {return true; }
-    if(pointInRectangle(&(this->RT), other)) {return true; }
-    if(pointInRectangle(&(this->LT), other)) {return true; }
+    if(other->pointInRectangle(this->LB)) {return true; }
+    if(other->pointInRectangle(this->RB)) {return true; }
+    if(other->pointInRectangle(this->RT)) {return true; }
+    if(other->pointInRectangle(this->LT)) {return true; }
 
     // Check whenever edges of rectangle intesect
     Point intersectionPoint;
@@ -170,19 +175,15 @@ bool Rectangle::intersects(Rectangle* other)
 
         for (int j = 0; j < POLYGON_EDGE_COUNT; j++)
         {
-            lineB = breakIntoEdges(static_cast<RectLines>(j));
+            lineB = other->breakIntoEdges(static_cast<RectLines>(j));
 
             // Check if lines intersect
-            if(Line::linesIntersects(lineA, lineB, &intersectionPoint))
+            if(Line::linesIntersects(lineA, lineB, intersectionPoint))
             {
-                qDebug("jahallo");
                 // Check if found point is in both rectangles
-                if(pointInRectangle(&intersectionPoint, this))
+                if(this->pointInRectangle(intersectionPoint) && other->pointInRectangle(intersectionPoint))
                 {
-                    if(pointInRectangle(&intersectionPoint, other))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }

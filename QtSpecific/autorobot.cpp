@@ -16,53 +16,82 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot,
 
 void AutoRobot::initialize(QGraphicsScene& scene)
 {
-    this->setTransformOriginPoint(sim.x, sim.y);
+    this->setFlag(QGraphicsItem::ItemIsMovable);
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    this->setTransformOriginPoint(0, 0);
     scene.addItem(this);
     initialized = true;
 }
 
 QRectF AutoRobot::boundingRect() const
 {
-    const double adjust = 1;
-    return QRectF( -sim.getRadius() - adjust,
-                   -sim.getRadius() - adjust,
-                    sim.getRadius() + adjust,
-                    sim.getRadius() + adjust);
+    const double adj = 1;
+    // const auto halfRadius = sim.getRadius() / 2;
+    return QRectF(-sim.getRadius() - adj, -sim.getRadius() - adj, sim.getRadius() + adj, sim.getRadius() + adj);
 }
 
 QPainterPath AutoRobot::shape() const
 {
     QPainterPath path;
+    // const auto halfRadius = sim.getRadius() / 2;
+    // path.addEllipse(-halfRadius, -halfRadius, sim.getRadius(), sim.getRadius());
+    // path.addRect(-halfRadius, -halfRadius, sim.getRadius(), sim.getRadius());
     path.addEllipse(-sim.getRadius(), -sim.getRadius(), sim.getRadius(), sim.getRadius());
-
-    path.lineTo(QPoint(sim.colliderFwd.RB.x, sim.colliderFwd.RB.y));
-    path.lineTo(QPoint(sim.colliderFwd.RT.x, sim.colliderFwd.RT.y));
-    path.lineTo(QPoint(sim.colliderFwd.LT.x, sim.colliderFwd.LT.y));
-    path.lineTo(QPoint(sim.colliderFwd.LB.x, sim.colliderFwd.LB.y));
+    path.addRect(-sim.getDetRadius(), -sim.getDetRadius(), sim.getRadius(), sim.getRadius());
     return path;
 }
 
 void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+    // Correctly rotate
+    this->setPos(0, 0);
+    this->setRotation(sim.getRotation());
+    this->setPos(sim.getX(), sim.getY());
+
+    // Division is "costly", store it
+    // const auto halfRadius = sim.getRadius() / 2;
+
     // Body
-    const auto halfRadius = sim.getRadius() / 2;
     painter->setBrush(color);
-    // -halfRadius is to fix centering in Qt which is from bottom left corner, where 2DSimulationLib counts with center as its center
-    painter->drawEllipse(sim.getX() - halfRadius, sim.getY() - halfRadius, sim.getRadius(), sim.getRadius());
+    // painter->drawEllipse(-halfRadius, -halfRadius, sim.getRadius(), sim.getRadius());
+    painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
+
     // Collider
-    QPainterPath path(QPoint(sim.colliderFwd.LB.x, sim.colliderFwd.LB.y));
-    path.lineTo(QPoint(sim.colliderFwd.RB.x, sim.colliderFwd.RB.y));
-    path.lineTo(QPoint(sim.colliderFwd.RT.x, sim.colliderFwd.RT.y));
-    path.lineTo(QPoint(sim.colliderFwd.LT.x, sim.colliderFwd.LT.y));
-    path.lineTo(QPoint(sim.colliderFwd.LB.x, sim.colliderFwd.LB.y));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
-    painter->drawPath(path);
+
+    // painter->drawRect(-halfRadius, -halfRadius, sim.colliderFwd.getW(), sim.colliderFwd.getH());
+    // painter->drawRect(-sim.getRadius(), -sim.getRadius(), sim.colliderFwd.getW(), sim.colliderFwd.getH());
+    painter->drawRect(-sim.getRadius(), -sim.getRadius(),  sim.getRadius() + sim.getDetRadius(), 2 * sim.getRadius());
+
+    painter->drawEllipse(-sim.getDetRadius(), -sim.getDetRadius(), 2 * sim.getDetRadius(), 2 * sim.getDetRadius()); //DEBUG:
 }
 
 void AutoRobot::simulate()
 {
+#ifdef USE_QT_COLLISION
     if(!initialized) return;
 
+    bool collision = false;
+    for(size_t i = 0; i < obstacles.size(); i++)
+    {
+        Obstacle* obs = obstacles.at(i).get();
+        if(this->collidesWithItem(obs))
+        {
+            collision = true;
+            break;
+        }
+    }
+
+    if(collision)
+    {
+        this->rotateRobot(turnAngle * turnDirection);
+    }
+    else
+    {
+        this->moveRobot(speed);
+    }
+
+#else
     bool collision = this->sim.obstacleDetection(obstacles);
     if(collision)
     {

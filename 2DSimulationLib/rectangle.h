@@ -47,7 +47,7 @@ protected:
     // static void breakIntoEdges(Point* pStart, Point* pEnd, Rectangle* rect, unsigned edge);
     // static bool onLeftSideOfLine(Point S, Point A, Point B);
     Line breakIntoEdges(RectLines line);
-    static bool pointInRectangle(Point* point, Rectangle* rect);
+    bool pointInRectangle(Point& point);
 };
 
 #endif

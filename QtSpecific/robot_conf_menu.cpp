@@ -18,6 +18,7 @@ void MainWindow::on_btnCreateRobot_clicked()
                        ui->input_obstacle_color_b->value());
     }
 
+    color = MainWindow::getRandomColor();
 
     AutoRobot::addRobotToWorld(
             ui->input_robot_xPos->value(),

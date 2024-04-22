@@ -13,12 +13,12 @@ public:
     Line(Point start, Point end);
     Line(double startX, double startY, double endX, double endY);
 
-    bool intersectsWith(Line other, Point* intersectionPoint);
-    static bool linesIntersects(Line a, Line b, Point* intersectionPoint);
+    bool intersectsWith(Line& other, Point& intersectionPoint);
+    static bool linesIntersects(Line& a, Line& b, Point& intersectionPoint);
 
-    bool pointOnLeftSide(Point p);
-    static bool pointOnLeftSide(Point p, Line line);
-    static bool pointOnLeftSide(Point p, Point lineStart, Point lineEnd);
+    bool pointOnLeftSide(Point& p);
+    static bool pointOnLeftSide(Point& p, Point& lineStart, Point& lineEnd);
+    static bool pointOnLeftSide(Point& p, Line& line);
 };
 
 #endif // LINE_H

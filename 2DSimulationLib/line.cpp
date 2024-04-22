@@ -16,12 +16,12 @@ Line::Line(double startX, double startY, double endX, double endY)
     this->end.y = endY;
 }
 
-bool Line::intersectsWith(Line other, Point* intersectionPoint)
+bool Line::intersectsWith(Line &other, Point& intersectionPoint)
 {
     return Line::linesIntersects(*this, other, intersectionPoint);
 }
 
-bool Line::linesIntersects(Line a, Line b, Point* intersectionPoint)
+bool Line::linesIntersects(Line& a, Line& b, Point& intersectionPoint)
 {
     double denominator = (  (b.end.y - b.start.y) * (a.end.x - a.start.x)
                           - (b.end.x - b.start.x) * (a.end.y - a.start.y)  );
@@ -45,25 +45,31 @@ bool Line::linesIntersects(Line a, Line b, Point* intersectionPoint)
         return false;
     }
 
-    intersectionPoint->x = a.start.x + ua * (a.end.x - a.start.x);
-    intersectionPoint->y = a.start.y + ua * (a.end.y - a.start.y);
+    intersectionPoint.x = a.start.x + ua * (a.end.x - a.start.x);
+    intersectionPoint.y = a.start.y + ua * (a.end.y - a.start.y);
 
     return true;
 }
 
 
-bool Line::pointOnLeftSide(Point p)
+bool Line::pointOnLeftSide(Point& p)
 {
-    return Line::pointOnLeftSide(p, *this);
+    auto res = (this->end.x - this->start.x) * (p.y - this->start.y) - (p.x - this->start.x) * (this->end.y - this->start.y);
+
+    // If res >= 0 point is on the line, or on the left side
+    return (res >= 0) ? true : false;
 }
 
 
-bool Line::pointOnLeftSide(Point p, Point lineStart, Point lineEnd)
+bool Line::pointOnLeftSide(Point& p, Point& lineStart, Point& lineEnd)
 {
-    return Line::pointOnLeftSide(p, Line(lineStart, lineEnd));
+    auto res = (lineEnd.x - lineStart.x) * (p.y - lineStart.y) - (p.x - lineStart.x) * (lineEnd.y - lineStart.y);
+
+    // If res >= 0 point is on the line, or on the left side
+    return (res >= 0) ? true : false;
 }
 
-bool Line::pointOnLeftSide(Point p, Line line)
+bool Line::pointOnLeftSide(Point& p, Line& line)
 {
     auto res = (line.end.x - line.start.x) * (p.y - line.start.y) - (p.x - line.start.x) * (line.end.y - line.start.y);
 

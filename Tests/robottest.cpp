@@ -123,14 +123,27 @@ void RobotTest::collisionDetection1()
     Robot robot1{0, 0, 1, 0, 2};
 
     std::vector<std::unique_ptr<Rectangle>> obstacles;
-    obstacles.push_back(std::make_unique<Rectangle> (1.5, 1.5, 2, 2, 0));
+    obstacles.push_back(std::make_unique<Rectangle> (4.1, 2, 4, 4, 0));
     bool result = robot1.obstacleDetection(obstacles);
     assert(result, false, result, "collision detected when unexpected");
 
     obstacles.pop_back();
 
+    obstacles.push_back(std::make_unique<Rectangle> (4, 2, 4, 4, 0));
     result = robot1.obstacleDetection(obstacles);
-    obstacles.push_back(std::make_unique<Rectangle> (0, 0, 4, 4, 0));
+    assert(result, true, result, "collision not detected when expected");
+}
+
+void RobotTest::collisionDetection2()
+{
+    testName = "collisionDetection2";
+    Robot robot1{0, 0, 1, 0, 2};
+
+    std::vector<std::unique_ptr<Rectangle>> obstacles;
+
+    obstacles.push_back(std::make_unique<Rectangle> (3, 0, std::sqrt(2), std::sqrt(2), 0));
+    obstacles.at(0).get()->rotate(45);
+    bool result = robot1.obstacleDetection(obstacles);
     assert(result, true, result, "collision not detected when expected");
 }
 
@@ -142,5 +155,6 @@ bool RobotTest::run()
     simpleMoveTo();
     simpleRotate();
     collisionDetection1();
+    collisionDetection2();
     return failed;
 }

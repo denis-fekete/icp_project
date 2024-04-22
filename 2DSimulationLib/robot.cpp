@@ -1,6 +1,7 @@
 #include "robot.h"
+
 #include <iostream>
-#include <chrono>
+
 
 Robot::Robot(double x, double y, double radius, double rot, double detRadius) : Circle::Circle(x, y, radius, rot), colliderFwd(x + detRadius/2, y, detRadius, radius, rot)
 {
@@ -84,10 +85,9 @@ bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObsta
         // First check if robot and obstacles radiuses intersect
         if(this->intersect(otherCircle))
         {
-            auto b = std::chrono::high_resolution_clock::now();
-            std::cout << b.time_since_epoch().count() << std::endl;
+            std::cout << "circle intersects" << std::endl;
             if(colliderFwd.intersects(other))
-            {   
+            {
                 return true;
             }
         }
@@ -120,17 +120,13 @@ bool Robot::obstacleDetection(std::vector<std::unique_ptr<Rectangle>>& validObst
 
 bool Robot::intersect(Circle* other)
 {
-    auto radius = (this->detRadius+ other->getRadius());
-    radius = radius * radius;
-
-    // Check if delta on X-axis between objects is less than detection radius + radius of other object
-    if((this->x - other->getX()) * (this->x - other->getX()) <= radius)
+    auto radius = (this->detRadius + other->getRadius());
+    auto left = (this->x - other->getX()) * (this->x - other->getX()) +
+                (this->y - other->getY()) * (this->y - other->getY());
+    auto right = radius * radius;
+    if( left <= right)
     {
-        // Check if delta on Y-axis between objects is less than detection radius + radius of other object
-        if((this->y - other->getY()) * (this->y - other->getY()) <= radius)
-        {
-            return true;
-        }
+        return true;
     }
 
     return false;
