@@ -13,7 +13,7 @@ public:
     void simpleMoveTo();
     void simpleRotate();
     void simpleMovement();
-    void collisionDetection();
+    void collisionDetection1();
 
     bool run() override;
 };

@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent)
     rand1000 = std::make_unique<RandomGenerator>(0, 1000);
 
     ui->setupUi(this);
-
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
 
@@ -23,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Apply world configuration
     on_btn_worldApplySize_clicked();
 
-    simulator = std::make_unique<Simulator> (robots, *scene, 4);
+    simulator = std::make_unique<Simulator> (robots, *scene, 1);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
     simulator->runSimulation();
@@ -82,7 +81,9 @@ QColor MainWindow::getRandomColor()
                     randColor->getRandomValue());
 }
 
-
-
-
-
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    simulator->stopSimulation();
+    simulator.release();
+    exit(0);
+}

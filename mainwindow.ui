@@ -34,7 +34,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="_1WorldConfiguration">
      <property name="geometry">
@@ -42,7 +42,7 @@
        <x>0</x>
        <y>0</y>
        <width>450</width>
-       <height>450</height>
+       <height>420</height>
       </rect>
      </property>
      <attribute name="label">
@@ -281,7 +281,7 @@
        <x>0</x>
        <y>0</y>
        <width>450</width>
-       <height>450</height>
+       <height>420</height>
       </rect>
      </property>
      <attribute name="label">
@@ -798,7 +798,7 @@
        <x>0</x>
        <y>0</y>
        <width>450</width>
-       <height>450</height>
+       <height>420</height>
       </rect>
      </property>
      <attribute name="label">
@@ -1087,6 +1087,45 @@
         <string>Randomize colors</string>
        </property>
       </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="_4SaveManager">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>450</width>
+       <height>420</height>
+      </rect>
+     </property>
+     <attribute name="label">
+      <string>Page</string>
+     </attribute>
+     <widget class="QPushButton" name="saveManger_btn_load">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>20</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Load file</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="saveManager_btn_save">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save file</string>
+      </property>
      </widget>
     </widget>
    </widget>

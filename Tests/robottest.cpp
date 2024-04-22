@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "../Simulation/robot.h"
-#include "../Simulation/rectangle.h"
+#include "../2DSimulationLib/robot.h"
+#include "../2DSimulationLib/rectangle.h"
 
 RobotTest::RobotTest(const std::string &testName) : Test(testName) {}
 
@@ -84,7 +84,6 @@ void RobotTest::simpleMoveTo()
     assert(20, robot.getY(), "bad y position");
 }
 
-
 void RobotTest::simpleRotate()
 {
     testName = "simpleRotate";
@@ -116,12 +115,23 @@ void RobotTest::simpleRotate()
 
 void RobotTest::simpleMovement()
 {
-
 }
 
-void RobotTest::collisionDetection()
+void RobotTest::collisionDetection1()
 {
+    testName = "collisionDetection1";
+    Robot robot1{0, 0, 1, 0, 2};
 
+    std::vector<std::unique_ptr<Rectangle>> obstacles;
+    obstacles.push_back(std::make_unique<Rectangle> (1.5, 1.5, 2, 2, 0));
+    bool result = robot1.obstacleDetection(obstacles);
+    assert(result, false, result, "collision detected when unexpected");
+
+    obstacles.pop_back();
+
+    result = robot1.obstacleDetection(obstacles);
+    obstacles.push_back(std::make_unique<Rectangle> (0, 0, 4, 4, 0));
+    assert(result, true, result, "collision not detected when expected");
 }
 
 bool RobotTest::run()
@@ -131,6 +141,6 @@ bool RobotTest::run()
     simpleMoveForward();
     simpleMoveTo();
     simpleRotate();
-    collisionDetection();
+    collisionDetection1();
     return failed;
 }

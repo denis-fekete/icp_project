@@ -9,10 +9,10 @@
 #include <vector>
 #include <random>
 
-#include "Visualization/autorobot.h"
-#include "Visualization/obstacle.h"
-#include "Simulation/simulator.h"
-#include "Simulation/randomgenerator.h"
+#include "QtSpecific/autorobot.h"
+#include "QtSpecific/obstacle.h"
+#include "2DSimulationLib/simulator.h"
+#include "2DSimulationLib/randomgenerator.h"
 
 #include <QTimer>
 
@@ -59,6 +59,12 @@ private slots:
 
     void on_btn_worldApplySize_clicked();
 
+    void closeEvent(QCloseEvent *event);
+
+    void on_saveManger_btn_load_clicked();
+
+    void on_saveManager_btn_save_clicked();
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -75,5 +81,7 @@ private:
 
     void DrawGrid(unsigned density);
     void resizeEvent(QResizeEvent*);
+    void saveSimulation();
+    void loadSimulation();
 };
 #endif // MAINWINDOW_H
