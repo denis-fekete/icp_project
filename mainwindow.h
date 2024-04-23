@@ -92,5 +92,8 @@ private:
 // Save/Load
     void saveSimulation();
     void loadSimulation();
+// Analytics
+public slots:
+    void updateAnalytics();
 };
 #endif // MAINWINDOW_H

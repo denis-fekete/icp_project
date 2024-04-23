@@ -36,9 +36,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (robots, *scene, 4, &timer);
+    simulator = std::make_unique<Simulator> (robots, *scene, 0, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(1000/30);
+
+    // ------------------------------------------------------------------------
+    // Analyitics
+    connect(&timer, SIGNAL(timeout()), this, SLOT(updateAnalytics()));
 }
 
 MainWindow::~MainWindow()
@@ -133,5 +137,10 @@ void MainWindow::on_program_btn_pause_clicked()
 void MainWindow::on_program_btn_resume_clicked()
 {
     simulator.get()->runSimulation();
+}
+
+void MainWindow::updateAnalytics()
+{
+    ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
 }
 

@@ -7,8 +7,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
     this->simulate = simulate;
 
     this->wakeCondition = wakeCondition;
-    this->lock = new std::unique_lock<std::mutex>(*mutex);
-    lock->unlock();
+    this->mutex = mutex;
     lastDuration = 0;
 }
 
@@ -16,6 +15,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
 
 void SimulationCore::runSimulation()
 {
+    auto lock = new std::unique_lock<std::mutex>(*mutex);
     while(*simulate)
     {
         // wait until i am notified
@@ -37,4 +37,7 @@ void SimulationCore::runSimulation()
         lastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining).count();
 #endif
     }
+
+    // delete lock;
+    // lock->release();
 }

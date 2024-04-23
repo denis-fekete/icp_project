@@ -98,6 +98,8 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, obstacles, robots, *scene);
 
     }
+
+    simulator.get()->balanceCores();
 }
 
 void MainWindow::on_btn_worldApplySize_clicked()

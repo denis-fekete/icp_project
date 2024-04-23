@@ -18,7 +18,7 @@ void Simulator::simulationCycle()
         return;
     }
 
-    if(maxThreads <= 1)
+    if(maxThreads == 0)
     {
 #ifdef LOG_PERFORMACE
         auto beggining = std::chrono::high_resolution_clock::now();
@@ -30,50 +30,21 @@ void Simulator::simulationCycle()
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
-        std::cout << duration.count() << "ms" << std::endl;
+        cycleTime = duration.count();
 #endif
     }
     else
     {
-        if(simCores.size() != maxThreads)
-        {
-            exit(-3);
-        }
-
-        size_t workPerThread = robots.size() / maxThreads;
-        size_t overtime = robots.size() % maxThreads;
-        // set work for simulation cores
-        size_t lastEnd = 0;
-        size_t newEnd = 0;
-        for(size_t index = 0; index < maxThreads; index++)
-        {
-            // set new as last end + work per one thread
-            newEnd = lastEnd + workPerThread;
-
-            // if overtime is not 0, add robot to thread
-            if(overtime > 0)
-            {
-                // add to the end
-                newEnd++;
-                overtime--;
-            }
-
-            // set workforce for the cores
-            simCores.at(index)->setIndexes(lastEnd, newEnd);
-            lastEnd = newEnd;
-        }
-
         wakeCores.notify_all();
 #ifdef LOG_PERFORMACE
-        double avrg = 0;
+        cycleTime = 0;
         for(size_t index = 0; index < maxThreads; index++)
         {
-            avrg += simCores.at(index).get()->lastDuration;
+            cycleTime += simCores.at(index).get()->lastDuration;
         }
-        std::cout << "avrg: " <<avrg / maxThreads << "ms\n";
+        cycleTime /= 4;
 #endif
     }
-
 
 
     scene.update();
@@ -88,6 +59,7 @@ void Simulator::initializeCores()
         for(size_t i = 0; i < maxThreads; i++)
         {
             simThreads.push_back(std::make_unique<std::thread> (&Simulator::createSimulationCore, std::ref(simCores), std::ref(robots), &wakeCores, &mutex, &keepSimCoresRunning));
+            std::this_thread::sleep_for(std::chrono::duration<double>(1));
         }
     }
 }
@@ -98,7 +70,6 @@ void Simulator::createSimulationCore(std::vector<std::unique_ptr<SimulationCore>
                                      std::mutex* mutex,
                                      bool* keepSimulating)
 {
-
     simCores.push_back(std::make_unique<SimulationCore> (robots, wakeCores, mutex, keepSimulating));
     simCores.back().get()->runSimulation();
 }
@@ -133,5 +104,36 @@ Simulator::~Simulator()
 
 void Simulator::balanceCores()
 {
+    if(maxThreads == 0)
+    {
+        return;
+    }
+    if(simCores.size() != maxThreads)
+    {
+        exit(-1);
+    }
 
+    size_t workPerThread = robots.size() / maxThreads;
+    size_t overtime = robots.size() % maxThreads;
+    // set work for simulation cores
+    size_t lastEnd = 0;
+    size_t newEnd = 0;
+    for(size_t index = 0; index < maxThreads; index++)
+    {
+        // set new as last end + work per one thread
+        newEnd = lastEnd + workPerThread;
+
+        // if overtime is not 0, add robot to thread
+        if(overtime > 0)
+        {
+            // add to the end
+            newEnd++;
+            overtime--;
+        }
+
+        // set workforce for the cores
+        simCores.at(index)->setIndexes(lastEnd, newEnd);
+        std::cout << "core=" << index << " , start=" << lastEnd << ", end=" << newEnd << std::endl;
+        lastEnd = newEnd;
+    }
 }

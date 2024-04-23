@@ -18,8 +18,8 @@ private:
     size_t myRobotsEnd;
     // condition for waking this simulation core
     std::condition_variable* wakeCondition;
-    // lock for waiting
-    std::unique_lock<std::mutex>* lock;
+    // mutex for lock creation
+    std::mutex* mutex;
     // whenever simulation core should end
     bool* simulate;
 public:
