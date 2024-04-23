@@ -12,7 +12,6 @@
 #include <QGraphicsScene>
 
 #include "../QtSpecific/autorobot.h"
-#include "../QtSpecific/obstacle.h"
 #include "simulationcore.h"
 
 class Simulator : public QObject
@@ -21,41 +20,36 @@ class Simulator : public QObject
 
 public:
     Simulator(std::vector<std::unique_ptr<AutoRobot>> &robots, QGraphicsScene &scene, size_t maxThreads, QTimer* timer);
-    Simulator();
-    void initialize();
     ~Simulator();
     void initializeCores();
     void runSimulation();
     void stopSimulation();
     void setTimerPeriod(int milliSeconds);
     long long getCycleTime();
-
     void balanceCores();
 private:
     QGraphicsScene& scene;
     std::vector<std::unique_ptr<AutoRobot>>& robots;
     std::vector<std::unique_ptr<SimulationCore>> simCores;
     std::vector<std::unique_ptr<std::thread>> simThreads;
-    std::mutex simCoreInit;
+
     QTimer* timer;
 
     // datatypes for synchornization
     std::mutex mutex;
     std::condition_variable wakeCores;
-    bool keepSimulating;
+    bool keepSimCoresRunning;
 
     // performence parameters
     size_t maxThreads;
     int timerPeriod_ms = 20;
     long long cycleTime = 0;
 
-
     static void createSimulationCore(   std::vector<std::unique_ptr<SimulationCore>>& simCores,
-                                        std::vector<std::unique_ptr<AutoRobot>>& robots,
-                                        std::condition_variable* wakeCores,
-                                        std::mutex* mutex,
-                                        bool* keepSimulating,
-                                        std::mutex* simCoreInit);
+                                     std::vector<std::unique_ptr<AutoRobot>>& robots,
+                                     std::condition_variable* wakeCores,
+                                     std::mutex* mutex,
+                                     bool* keepSimulating);
 
 protected slots:
     void simulationCycle();

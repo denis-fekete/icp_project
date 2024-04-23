@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     // potentialy resulting in white robot on white background
     randColor = std::make_unique<RandomGenerator>(0, 235);
     rand1000 = std::make_unique<RandomGenerator>(0, 1000);
-
     // ------------------------------------------------------------------------
     // Setup graphics view
     ui->setupUi(this);

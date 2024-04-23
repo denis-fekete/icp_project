@@ -8,6 +8,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
 
     this->wakeCondition = wakeCondition;
     this->lock = new std::unique_lock<std::mutex>(*mutex);
+    lock->unlock();
     lastDuration = 0;
 }
 
@@ -17,11 +18,11 @@ void SimulationCore::runSimulation()
 {
     while(*simulate)
     {
+        // wait until i am notified
+        wakeCondition->wait(*lock);
 #ifdef LOG_PERFORMACE
         auto beggining = std::chrono::high_resolution_clock::now();
 #endif
-        // wait until i am notified
-        wakeCondition->wait(*lock);
 
         // if start and end are same, reset loop
         if(myRobotsStart == myRobotsEnd)
