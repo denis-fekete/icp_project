@@ -10,30 +10,68 @@
 class SimulationCore
 {
 private:
-    // pointer to the vector of all robots
+    /**
+     * @brief allRobots Pointer to the vector of all robots
+     */
     std::vector<std::unique_ptr<AutoRobot>>& allRobots;
-    // index from which this core will call simulation on robots
+
+    /**
+     * @brief myRobotsStart Index from which this core will call simulation on robots
+     */
     size_t myRobotsStart;
-    // index to which this core will call simulation on robots
+
+    /**
+     * @brief myRobotsEnd Index to which this core will call simulation on robots
+     */
     size_t myRobotsEnd;
-    // condition for waking this simulation core
+
+    /**
+     * @brief wakeCondition Condition for waking this simulation core
+     */
     std::condition_variable* wakeCondition;
-    // mutex for lock creation
+
+    /**
+     * @brief mutex Mutex for lock creation
+     */
     std::mutex* mutex;
-    // whenever simulation core should end
+
+    /**
+     * @brief simulate Whenever simulation core should keep going
+     */
     bool* simulate;
 public:
-    double lastDuration;
-    SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
-    void create(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
 
+    /**
+     * @brief Constructor of SimulationCore object
+     * @param allRobots Reference to vector of all robots
+     * @param wakeCondition Condition for waking this SimulationCore  when suspended
+     * @param mutex Mutex for suspending this SimulationCore
+     * @param simulate Bool value for checking if SimulationCore should
+     * keep simulating
+     */
+    SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
+
+    /**
+     * @brief Loops and simulates robots it is pointing to until `simulate`
+     * is set to false
+     */
     void runSimulation();
 
+    /**
+     * @brief Sets stard and end indexes that this SimulationCore will simulate
+     * @param start Start index
+     * @param end End index
+     */
     inline void setIndexes(size_t start, size_t end )
     {
         myRobotsStart = start;
         myRobotsEnd = end;
     }
+
+    /**
+     * @brief lastDuration Last duration of the simulation cycle
+     */
+    double lastDuration;
 };
 
 #endif // SIMULATIONCORE_H

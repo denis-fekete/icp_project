@@ -3,6 +3,7 @@
 #include <iostream>
 #define LOG_PERFORMACE
 
+
 Simulator::Simulator(std::vector<std::unique_ptr<AutoRobot>> &robots, QGraphicsScene &scene, size_t maxThreads, QTimer* timer) : scene(scene), robots(robots)
 {
     this->maxThreads = maxThreads;

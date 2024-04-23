@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Setup simulation
     simulator = std::make_unique<Simulator> (robots, *scene, 0, &timer);
     simulator->initializeCores();
-    simulator->setTimerPeriod(1000/30);
+    simulator->setTimerPeriod(30);
 
     // ------------------------------------------------------------------------
     // Analyitics
