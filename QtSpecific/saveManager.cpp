@@ -93,5 +93,14 @@ void MainWindow::on_saveManger_btn_load_clicked()
                                      QDir::currentPath() + "/debug/saves/",
                                      tr("XBEL Files (*.xbel *.xml)"));
 
+    QFile file(fileName);
+
+    if(!file.open(QIODevice::ReadWrite))
+    {
+        qDebug("Failed to open XML file for reading");
+    }
+
+    QXmlStreamReader xmlReader(&file);
+
 
 }

@@ -45,8 +45,6 @@ private slots:
 
     void on_input_obstacle_randomizeColors_toggled(bool checked);
 
-    void on_btn_update_info_clicked();
-
     void on_input_robot_IDSelector_valueChanged(int arg1);
 
     void on_input_robot_onCollisionTurnLeft_clicked(bool checked);
@@ -65,22 +63,33 @@ private slots:
 
     void on_saveManager_btn_save_clicked();
 
+    void on_btnDeleteRobot_clicked();
+
+    void on_program_btn_hide_clicked();
+
+    void on_program_btn_pause_clicked();
+
+    void on_program_btn_resume_clicked();
+
 private:
+// UI elements
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-
+// Objects in 2D space
     std::vector<std::unique_ptr<AutoRobot>> robots;
     std::vector<std::unique_ptr<Obstacle>> obstacles;
     std::unique_ptr<AutoRobot>* activeRobot;
     std::unique_ptr<Obstacle>* activeObstacle;
+// Simulation
     std::unique_ptr<Simulator> simulator;
     QTimer timer;
-
+// Generation of pseudo random numbers
     std::unique_ptr<RandomGenerator> randColor;
     std::unique_ptr<RandomGenerator> rand1000;
 
     void DrawGrid(unsigned density);
     void resizeEvent(QResizeEvent*);
+// Save/Load
     void saveSimulation();
     void loadSimulation();
 };

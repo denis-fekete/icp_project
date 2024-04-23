@@ -23,15 +23,15 @@ SOURCES += \
     2DSimulationLib/simulationcore.cpp \
     2DSimulationLib/simulator.cpp \
     2DSimulationLib/simulator.cpp \
+    QtSpecific/obstacle_menu.cpp \
+    QtSpecific/robot_menu.cpp \
     QtSpecific/saveManager.cpp \
+    QtSpecific/world_menu.cpp \
     Tests/pointtest.cpp \
     Tests/robottest.cpp \
     Tests/test.cpp \
     QtSpecific/autorobot.cpp \
     QtSpecific/obstacle.cpp \
-    QtSpecific/obstacle_conf_menu.cpp \
-    QtSpecific/robot_conf_menu.cpp \
-    QtSpecific/world_conf_menu.cpp \
     main.cpp \
     mainwindow.cpp
 

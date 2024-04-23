@@ -10,6 +10,7 @@
 class SimulationCore
 {
 private:
+public:
     // pointer to the vector of all robots
     std::vector<std::unique_ptr<AutoRobot>>& allRobots;
     // index from which this core will call simulation on robots
@@ -22,7 +23,6 @@ private:
     std::unique_lock<std::mutex>* lock;
     // whenever simulation core should end
     bool* simulate;
-public:
     double lastDuration;
     SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
 

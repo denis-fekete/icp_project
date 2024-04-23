@@ -48,6 +48,27 @@ void MainWindow::on_btnCreateRobot_clicked()
     ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
     ui->input_robot_IDSelector->setValue(old);
     on_input_robot_IDSelector_valueChanged(old);
+
+    simulator.get()->balanceCores();
+}
+
+void MainWindow::on_btnDeleteRobot_clicked()
+{
+    auto robotId = ui->input_robot_IDSelector->value();
+    robots.erase(robots.begin() + robotId);
+
+    if(robotId > 0)
+    {
+        ui->input_robot_IDSelector->setValue(robotId - 1);
+    }
+    else
+    {
+        ui->input_robot_IDSelector->setValue(0);
+    }
+
+    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
+
+    scene->update();
 }
 
 
@@ -68,43 +89,11 @@ void MainWindow::on_btnTest_2_clicked()
     }
 }
 
-
 void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
 {
     ui->input_robot_color_r->setEnabled(!checked);
     ui->input_robot_color_g->setEnabled(!checked);
     ui->input_robot_color_b->setEnabled(!checked);
-}
-
-void MainWindow::on_btn_update_info_clicked()
-{
-    if(activeRobot == nullptr)
-    {
-        return;
-    }
-
-    auto currSim = activeRobot->get()->getSim();
-    ui->info_sim_main_posX->setNum(currSim.getX());
-    ui->info_sim_main_posY->setNum(currSim.getY());
-    ui->info_sim_main_rot->setNum(currSim.getRotation());
-
-    ui->info_sim_coll_posX->setNum(currSim.colliderFwd.x);
-    ui->info_sim_coll_posY->setNum(currSim.colliderFwd.y);
-    ui->info_sim_coll_rot->setNum(currSim.colliderFwd.getRotation());
-
-    ui->info_sim_coll_lbX->setNum(currSim.colliderFwd.LB.x);
-    ui->info_sim_coll_lbY->setNum(currSim.colliderFwd.LB.y);
-
-    ui->info_sim_coll_rbX->setNum(currSim.colliderFwd.RB.x);
-    ui->info_sim_coll_rbY->setNum(currSim.colliderFwd.RB.y);
-
-    ui->info_sim_coll_rtX->setNum(currSim.colliderFwd.RT.x);
-    ui->info_sim_coll_rtY->setNum(currSim.colliderFwd.RT.y);
-
-    ui->info_sim_coll_ltX->setNum(currSim.colliderFwd.LT.x);
-    ui->info_sim_coll_ltY->setNum(currSim.colliderFwd.LT.y);
-    std::string s = std::to_string(simulator->getCycleTime());
-    ui->info_sim_main_cycleTime->setText(QString::fromStdString(s));
 }
 
 void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
@@ -125,4 +114,5 @@ void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
 {
     ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
 }
+
 

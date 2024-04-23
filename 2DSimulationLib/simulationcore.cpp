@@ -11,7 +11,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
     lastDuration = 0;
 }
 
-// #define LOG_PERFORMACE
+#define LOG_PERFORMACE
 
 void SimulationCore::runSimulation()
 {

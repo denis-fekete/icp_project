@@ -103,5 +103,6 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
 void MainWindow::on_btn_worldApplySize_clicked()
 {
     scene->setSceneRect(0, 0, ui->sBox_worldc_sizeX->value(), ui->sBox_worldc_sizeY->value());
+
     MainWindow::DrawGrid(ui->sBox_world_gridSize->value());
 }
