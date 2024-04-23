@@ -9,13 +9,13 @@ public:
     RobotTest(const std::string &testName);
 
     void initPosition();
+    void initSize();
     void simpleMoveForward();
     void simpleMoveTo();
     void simpleRotate();
     void simpleMovement();
     void collisionDetection1();
     void collisionDetection2();
-
     bool run() override;
 };
 

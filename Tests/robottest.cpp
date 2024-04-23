@@ -35,6 +35,14 @@ void RobotTest::initPosition()
     assert(59, robot1.getDetRadius(), "bad detaction radius value");
 }
 
+void RobotTest::initSize()
+{
+    testName = "initPosition";
+    Robot robot{65, 50, 35, 0, 85};
+
+    Robot robot1{9, 3, 3, 0, 12};
+}
+
 void RobotTest::simpleMoveForward()
 {
     testName = "simpleMoveForward";
@@ -147,10 +155,11 @@ void RobotTest::collisionDetection2()
     assert(result, true, result, "collision not detected when expected");
 }
 
+
 bool RobotTest::run()
 {
-
     initPosition();
+    initSize();
     simpleMoveForward();
     simpleMoveTo();
     simpleRotate();

@@ -22,10 +22,12 @@ MainWindow::MainWindow(QWidget *parent)
     // Apply world configuration
     on_btn_worldApplySize_clicked();
 
-    simulator = std::make_unique<Simulator> (robots, *scene, 4);
+    simulator = std::make_unique<Simulator> (robots, *scene, 1);
     simulator->initializeCores();
+    // timer.setInterval(1000/10);
     simulator->setTimerPeriod(30);
     simulator->runSimulation();
+
 }
 
 MainWindow::~MainWindow()

@@ -8,13 +8,18 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
 
     this->wakeCondition = wakeCondition;
     this->lock = new std::unique_lock<std::mutex>(*mutex);
+    lastDuration = 0;
 }
 
+// #define LOG_PERFORMACE
 
 void SimulationCore::runSimulation()
 {
     while(*simulate)
     {
+#ifdef LOG_PERFORMACE
+        auto beggining = std::chrono::high_resolution_clock::now();
+#endif
         // wait until i am notified
         wakeCondition->wait(*lock);
 
@@ -26,5 +31,9 @@ void SimulationCore::runSimulation()
         {
             allRobots.at(index)->simulate();
         }
+#ifdef LOG_PERFORMACE
+        auto end = std::chrono::high_resolution_clock::now();
+        lastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining).count();
+#endif
     }
 }

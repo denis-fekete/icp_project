@@ -160,10 +160,15 @@ bool Rectangle::pointInRectangle(Point& point)
 bool Rectangle::intersects(Rectangle* other)
 {
     // Check points of rectangle
-    if(other->pointInRectangle(this->LB)) {return true; }
-    if(other->pointInRectangle(this->RB)) {return true; }
-    if(other->pointInRectangle(this->RT)) {return true; }
-    if(other->pointInRectangle(this->LT)) {return true; }
+    // if(other->pointInRectangle(this->LB)) {return true; }
+    // if(other->pointInRectangle(this->RB)) {return true; }
+    // if(other->pointInRectangle(this->RT)) {return true; }
+    // if(other->pointInRectangle(this->LT)) {return true; }
+    // Check if other rectangle is not inside this rectaangle
+    // if(pointInRectangle(other->LB)) {return true; }
+    // if(pointInRectangle(other->RB)) {return true; }
+    // if(pointInRectangle(other->RT)) {return true; }
+    // if(pointInRectangle(other->LT)) {return true; }
 
     // Check whenever edges of rectangle intesect
     Point intersectionPoint;

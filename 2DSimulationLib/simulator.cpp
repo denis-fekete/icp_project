@@ -1,14 +1,16 @@
 #include "simulator.h"
 #include <chrono>
+#include <iostream>
 
 Simulator::Simulator(std::vector<std::unique_ptr<AutoRobot>> &robots, QGraphicsScene &scene, size_t maxThreads) : scene(scene), robots(robots)
 {
     this->maxThreads = maxThreads;
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(simulationCycle()));
+    timer.setInterval(1000/10);
 }
 
-
+// #define LOG_PERFORMACE
 void Simulator::simulationCycle()
 {
     if(robots.size() == 0)
@@ -18,14 +20,21 @@ void Simulator::simulationCycle()
 
     if(maxThreads <= 1)
     {
+#ifdef LOG_PERFORMACE
+        auto beggining = std::chrono::high_resolution_clock::now();
+#endif
         for(size_t index = 0; index < robots.size(); index++)
         {
             robots.at(index)->simulate();
         }
+#ifdef LOG_PERFORMACE
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
+        std::cout << duration.count() << "ms" << std::endl;
+#endif
     }
     else
     {
-        // auto beggining = std::chrono::high_resolution_clock::now();
 
         size_t workPerThread = robots.size() / maxThreads;
         size_t overtime = robots.size() % maxThreads;
@@ -51,11 +60,17 @@ void Simulator::simulationCycle()
         }
 
         wakeCores.notify_all();
-
-        // auto end = std::chrono::high_resolution_clock::now();
-        // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
-        // this->cycleTime = duration.count();
+#ifdef LOG_PERFORMACE
+        double avrg = 0;
+        for(size_t index = 0; index < maxThreads; index++)
+        {
+            avrg += simCores.at(index).get()->lastDuration;
+        }
+        std::cout << "avrg: " <<avrg / maxThreads << "ms\n";
+#endif
     }
+
+
 
     scene.update();
 }

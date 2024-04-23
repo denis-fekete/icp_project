@@ -74,7 +74,7 @@ private:
     std::unique_ptr<AutoRobot>* activeRobot;
     std::unique_ptr<Obstacle>* activeObstacle;
     std::unique_ptr<Simulator> simulator;
-    std::unique_ptr<QTimer> timer;
+    QTimer timer;
 
     std::unique_ptr<RandomGenerator> randColor;
     std::unique_ptr<RandomGenerator> rand1000;

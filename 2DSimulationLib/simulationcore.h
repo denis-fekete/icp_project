@@ -23,6 +23,7 @@ private:
     // whenever simulation core should end
     bool* simulate;
 public:
+    double lastDuration;
     SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
 
     void runSimulation();

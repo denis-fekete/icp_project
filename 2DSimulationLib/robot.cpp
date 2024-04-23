@@ -3,7 +3,10 @@
 #include <iostream>
 
 
-Robot::Robot(double x, double y, double radius, double rot, double detRadius) : Circle::Circle(x, y, radius, rot), colliderFwd(x + detRadius/2, y, detRadius, radius, rot)
+Robot::Robot(double x, double y, double radius, double rot, double detRadius) :
+    Circle::Circle(x, y, radius, rot),
+    // x + (rad + detRad) / 2 - rad = center of collider rectangle
+    colliderFwd(x + (radius + detRadius)/2 - radius, y, radius + detRadius, 2 * radius, rot)
 {
     this->detRadius = detRadius;
     this->rotate(0);
@@ -56,21 +59,25 @@ void Robot::rotate(double angle)
         this->rot -= sign * 360;
     }
 
-    this->calculateSinCos(this->rot);
+    colliderFwd.setRotation(getRotation());
 
-    const double cosRadConst = this->getCosRad();
-    const double sinRadConst = this->getSinRad();
-
-    colliderFwd.setRotation(this->getRotation());
-
-    // Calcualte delta value for moving in X and Y direction
-    double xDelta = cosRadConst * this->detRadius / 2;
-    double yDelta = sinRadConst * this->detRadius / 2;
-
+    // Fix colliderFwd position, rotate point around point
+    calculateSinCos(rot);
+    // Reset collider position as if it was not rotated
+    colliderFwd.x = x + (radius + detRadius)/2 - radius;
+    colliderFwd.y = y;
+    // Translate back to origin
+    colliderFwd.x -= this->x;
+    colliderFwd.y -= this->y;
+    // rotate it
+    double xDelta = colliderFwd.x * cosRad - colliderFwd.y * sinRad;
+    double yDelta = colliderFwd.x * sinRad + colliderFwd.y * cosRad;
+    // translate point back
     colliderFwd.x = this->x + xDelta;
     colliderFwd.y = this->y + yDelta;
 
-    colliderFwd.updatePoints(cosRadConst, sinRadConst);
+
+    colliderFwd.updatePoints(cosRad, sinRad);
 }
 
 bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObstacles)
@@ -85,7 +92,7 @@ bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObsta
         // First check if robot and obstacles radiuses intersect
         if(this->intersect(otherCircle))
         {
-            std::cout << "circle intersects" << std::endl;
+            // std::cout << std::chrono::high_resolution_clock::now().time_since_epoch().count() << std::endl;
             if(colliderFwd.intersects(other))
             {
                 return true;
