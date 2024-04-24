@@ -99,6 +99,19 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
 
     }
 
+    // If ID selector is not enabled enable it
+    if(!ui->input_robot_IDSelector->isEnabled())
+    {
+        ui->input_robot_IDSelector->setEnabled(true);
+        activeRobot = robots.back().get();
+    }
+
+    // Set maximum value of robot selector to a size vector that stores robots
+    auto old = ui->input_robot_IDSelector->value();
+    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
+    ui->input_robot_IDSelector->setValue(old);
+    on_input_robot_IDSelector_valueChanged(old);
+
     simulator.get()->balanceCores();
 }
 

@@ -21,6 +21,8 @@ void AutoRobot::initialize(QGraphicsScene& scene)
     this->setTransformOriginPoint(0, 0);
     scene.addItem(this);
     initialized = true;
+
+    this->brush = QBrush(color);
 }
 
 QRectF AutoRobot::boundingRect() const
@@ -47,7 +49,7 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     this->setPos(sim.getX(), sim.getY());
 
     // Body
-    painter->setBrush(color);
+    painter->setBrush(brush);
     painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
 
     // Collider
@@ -114,13 +116,13 @@ void AutoRobot::simulate()
 
 void AutoRobot::setSelected()
 {
-    // QColor highlightedColor = color.lighter(30);
-    // this->setPen(QPen(highlightedColor, 5));
+    brush.setStyle(Qt::DiagCrossPattern);
 }
 
 void AutoRobot::setUnselected()
 {
-    // this->setPen(QPen(color));
+    brush.setStyle(Qt::SolidPattern);
+
 }
 
 void AutoRobot::addRobotToWorld( double x, double y, double radius, double rot,

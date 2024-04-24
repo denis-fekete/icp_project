@@ -25,7 +25,7 @@ SOURCES += \
     2DSimulationLib/simulator.cpp \
     QtSpecific/obstacle_menu.cpp \
     QtSpecific/robot_menu.cpp \
-    QtSpecific/saveManager.cpp \
+    QtSpecific/savemanager.cpp \
     QtSpecific/world_menu.cpp \
     Tests/pointtest.cpp \
     Tests/robottest.cpp \
@@ -52,6 +52,7 @@ HEADERS += \
     2DSimulationLib/simulationcore.h \
     2DSimulationLib/simulator.h \
     2DSimulationLib/simulator.h \
+    QtSpecific/savemanager.h \
     Tests/pointtest.h \
     Tests/robottest.h \
     Tests/test.h \

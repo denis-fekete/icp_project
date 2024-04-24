@@ -144,3 +144,25 @@ void MainWindow::updateAnalytics()
     ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
 }
 
+void MainWindow::on_saveManger_btn_load_clicked()
+{
+    // check if manager was initialzied
+    if(!saveManager)
+    {
+        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene);
+    }
+
+    saveManager.get()->loadFromFile();
+}
+
+void MainWindow::on_saveManager_btn_save_clicked()
+{
+    // check if manager was initialzied
+    if(!saveManager)
+    {
+        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene);
+    }
+
+    saveManager.get()->saveToFile();
+}
+

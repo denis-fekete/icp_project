@@ -13,6 +13,7 @@
 #include "QtSpecific/obstacle.h"
 #include "2DSimulationLib/simulator.h"
 #include "2DSimulationLib/randomgenerator.h"
+#include "QtSpecific/savemanager.h"
 
 #include <QTimer>
 
@@ -31,6 +32,31 @@ public:
     ~MainWindow();
 
     QColor getRandomColor();
+private:
+    // UI elements
+    Ui::MainWindow *ui;
+    QGraphicsScene *scene;
+    // Objects in 2D space
+    std::vector<std::unique_ptr<AutoRobot>> robots;
+    std::vector<std::unique_ptr<Obstacle>> obstacles;
+    AutoRobot* activeRobot;
+    Obstacle* activeObstacle;
+    // Simulation
+    std::unique_ptr<Simulator> simulator;
+    QTimer timer;
+    // Generation of pseudo random numbers
+    std::unique_ptr<RandomGenerator> randColor;
+    std::unique_ptr<RandomGenerator> rand1000;
+
+    void DrawGrid(unsigned density);
+    void resizeEvent(QResizeEvent*);
+    // Save/Load
+    std::unique_ptr<SaveManager> saveManager;
+
+
+// Analytics
+public slots:
+    void updateAnalytics();
 
 private slots:
     void on_btnCreateRobot_clicked();
@@ -70,30 +96,5 @@ private slots:
     void on_program_btn_pause_clicked();
 
     void on_program_btn_resume_clicked();
-
-private:
-// UI elements
-    Ui::MainWindow *ui;
-    QGraphicsScene *scene;
-// Objects in 2D space
-    std::vector<std::unique_ptr<AutoRobot>> robots;
-    std::vector<std::unique_ptr<Obstacle>> obstacles;
-    std::unique_ptr<AutoRobot>* activeRobot;
-    std::unique_ptr<Obstacle>* activeObstacle;
-// Simulation
-    std::unique_ptr<Simulator> simulator;
-    QTimer timer;
-// Generation of pseudo random numbers
-    std::unique_ptr<RandomGenerator> randColor;
-    std::unique_ptr<RandomGenerator> rand1000;
-
-    void DrawGrid(unsigned density);
-    void resizeEvent(QResizeEvent*);
-// Save/Load
-    void saveSimulation();
-    void loadSimulation();
-// Analytics
-public slots:
-    void updateAnalytics();
 };
 #endif // MAINWINDOW_H

@@ -40,7 +40,7 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        activeRobot = &(robots.back());
+        activeRobot = robots.back().get();
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
@@ -76,7 +76,7 @@ void MainWindow::on_btnTest_clicked()
 {
     if(activeRobot != nullptr)
     {
-        activeRobot->get()->moveRobot(25);
+        activeRobot->moveRobot(25);
     }
 }
 
@@ -85,7 +85,7 @@ void MainWindow::on_btnTest_2_clicked()
 {
     if(activeRobot != nullptr)
     {
-        activeRobot->get()->rotateRobot(45);
+        activeRobot->rotateRobot(45);
     }
 }
 
@@ -99,9 +99,9 @@ void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
 void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
 {
     // Unselect old active robot and set active the new
-    activeRobot->get()->setUnselected();
-    activeRobot = &(robots.at(arg1));
-    activeRobot->get()->setSelected();
+    activeRobot->setUnselected();
+    activeRobot = robots.at(arg1).get();
+    activeRobot->setSelected();
 }
 
 void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
