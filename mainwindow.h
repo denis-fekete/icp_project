@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
-#include <QgraphicsView>
+#include <QGraphicsView>
 #include <QGraphicsItem>
+#include <QTimer>
 
 #include <vector>
 #include <random>
@@ -15,7 +16,6 @@
 #include "2DSimulationLib/randomgenerator.h"
 #include "QtSpecific/savemanager.h"
 
-#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
