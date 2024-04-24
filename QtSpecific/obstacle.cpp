@@ -1,10 +1,10 @@
 #include "obstacle.h"
 #include "qpen.h"
 
-Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color) : sim(x, y, w, h, rot)
+Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color, Obstacle** activeObstacle) : sim(x, y, w, h, rot)
 {
     this->color = color;
-
+    this->activeObstacle = activeObstacle;
     this->setPos(sim.getX(), sim.getY());
     this->setRotation(sim.getRotation());
     this->setFlag(QGraphicsItem::ItemIsMovable);
@@ -16,6 +16,7 @@ void Obstacle::initialize(QGraphicsScene& scene)
     // this->setTransformOriginPoint(sim.x, sim.y);
     this->setTransformOriginPoint(0, 0);
     scene.addItem(this);
+    brush = QBrush(color);
 }
 
 void Obstacle::rotateObstacle(double angle)
@@ -26,16 +27,10 @@ void Obstacle::rotateObstacle(double angle)
 
 QRectF Obstacle::boundingRect() const
 {
-    // return QRect(   -sim.w/2,
-    //                 -sim.h/2,
-    //                 sim.w,
-    //                 sim.h);
-
     return QRect(   -sim.w,
                     -sim.h,
                     2*sim.w,
                     2*sim.h);
-
 }
 
 
@@ -49,7 +44,6 @@ QPainterPath Obstacle::shape() const
 
 void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    QBrush brush(color);
     painter->setBrush(brush);
 
     painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
@@ -66,17 +60,29 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
         QPointF newPosition = value.toPointF();
         Point p(newPosition.x(), newPosition.y());
         this->sim.moveTo(p);
-
+        *activeObstacle = this;
         return newPosition;
     }
 
     return QGraphicsItem::itemChange(change, value);
 }
 
-
-void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot, QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles, QGraphicsScene& scene)
+void Obstacle::setSelected()
 {
-    obstacles.push_back(std::make_unique<Obstacle> ( x, y, w, h, rot, color));
+    brush.setStyle(Qt::Dense3Pattern);
+}
+
+void Obstacle::setUnselected()
+{
+    brush.setStyle(Qt::SolidPattern);
+
+}
+
+void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot,
+                               QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles,
+                               QGraphicsScene& scene, Obstacle** activeObstacle)
+{
+    obstacles.push_back(std::make_unique<Obstacle> ( x, y, w, h, rot, color, activeObstacle));
 
     obstacles.back()->initialize(scene);
 }

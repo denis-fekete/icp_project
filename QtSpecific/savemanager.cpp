@@ -101,12 +101,21 @@ void SaveManager::loadFromFile()
 
     QFile file(fileName);
 
+    std::cout << "file size=" << file.size() << std::endl;
+
     if(!file.open(QIODevice::ReadOnly))
     {
         qDebug("Failed to open XML file for reading");
     }
 
     xmlReader.setDevice(&file);
+
+
+    while(!xmlReader.atEnd() && !xmlReader.hasError())
+    {
+        xmlReader.readNextStartElement();
+        qDebug("works");
+    }
 
     if(xmlReader.readNextStartElement())
     {

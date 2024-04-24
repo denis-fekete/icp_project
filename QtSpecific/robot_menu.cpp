@@ -54,23 +54,23 @@ void MainWindow::on_btnCreateRobot_clicked()
 
 void MainWindow::on_btnDeleteRobot_clicked()
 {
+    // get active robot id
     auto robotId = ui->input_robot_IDSelector->value();
+    // erase robot
     robots.erase(robots.begin() + robotId);
+    // set activeRobot pointer to null
+    activeRobot = nullptr;
+    // calculate new val
+    auto val = (int) robots.size() - 1;
 
-    if(robotId > 0)
-    {
-        ui->input_robot_IDSelector->setValue(robotId - 1);
-    }
-    else
-    {
-        ui->input_robot_IDSelector->setValue(0);
-    }
+    if(val <= 0)
+        val = 0;
 
-    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
+    ui->input_robot_IDSelector->setMaximum(val);
+    ui->input_robot_IDSelector->setValue(val);
 
     scene->update();
 }
-
 
 void MainWindow::on_btnTest_clicked()
 {
@@ -79,7 +79,6 @@ void MainWindow::on_btnTest_clicked()
         activeRobot->moveRobot(25);
     }
 }
-
 
 void MainWindow::on_btnTest_2_clicked()
 {
@@ -98,8 +97,15 @@ void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
 
 void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
 {
+    if(robots.size() <= 0)
+    {
+        return;
+    }
     // Unselect old active robot and set active the new
-    activeRobot->setUnselected();
+    if(activeRobot != nullptr)
+    {
+        activeRobot->setUnselected();
+    }
     activeRobot = robots.at(arg1).get();
     activeRobot->setSelected();
 }
@@ -109,10 +115,7 @@ void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
     ui->input_robot_onCollisionTurnRight->setChecked(!checked);
 }
 
-
 void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
 {
     ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
 }
-
-

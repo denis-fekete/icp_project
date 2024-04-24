@@ -13,9 +13,12 @@
 class Obstacle : public QGraphicsItem
 {
 public:
-    Obstacle(double x, double y, double w, double h, double rot, QColor& color);
+    Obstacle(double x, double y, double w, double h, double rot, QColor& color, Obstacle** activeObstacle);
+
     void initialize(QGraphicsScene& scene);
-    static void addObstacleToWorld(double x, double y, double w, double h, double rot, QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles, QGraphicsScene& scene);
+    static void addObstacleToWorld(double x, double y, double w, double h, double rot,
+                                   QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles,
+                                   QGraphicsScene& scene, Obstacle** activeObstacle);
 
     void rotateObstacle(double angle);
     inline Rectangle* getSimulationRectangle() { return &this->sim; };
@@ -30,9 +33,14 @@ public:
 //getters
     inline Rectangle& getSim() { return this->sim; }
     inline QColor& getColor() { return this->color; }
+
+    void setSelected();
+    void setUnselected();
 private:
+    Obstacle** activeObstacle;
     Rectangle sim;
     QColor color;
+    QBrush brush;
 };
 
 #endif // OBSTACLE_H

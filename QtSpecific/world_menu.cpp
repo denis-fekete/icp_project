@@ -26,7 +26,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(x + xPosOffset, 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene);
+        Obstacle::addObstacleToWorld(x + xPosOffset, 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
 
     }
     // fil bottom layer
@@ -39,7 +39,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(x + xPosOffset, benchmarkHeigth - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene);
+        Obstacle::addObstacleToWorld(x + xPosOffset, benchmarkHeigth - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
 
     }
 
@@ -52,7 +52,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene);
+        Obstacle::addObstacleToWorld(10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
 
     }
 
@@ -65,7 +65,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(benchmarkWidth - 10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene);
+        Obstacle::addObstacleToWorld(benchmarkWidth - 10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
 
     }
 }

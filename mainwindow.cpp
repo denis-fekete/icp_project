@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (robots, *scene, 0, &timer);
+    simulator = std::make_unique<Simulator> (robots, *scene, 4, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 
@@ -69,9 +69,6 @@ void MainWindow::DrawGrid(unsigned density)
     scene->update();
 }
 
-
-
-
 void MainWindow::resizeEvent(QResizeEvent*)
 {
     #define VERTICAL_SPACING 5
@@ -85,18 +82,11 @@ void MainWindow::resizeEvent(QResizeEvent*)
                                   windowHeight - HORIZONTAL_SPACING);
     DrawGrid(ui->sBox_world_gridSize->value());
 
-    const auto resumeBtn = ui->program_btn_resume->geometry();
-    ui->program_btn_resume->setGeometry(windowWidth / 2- resumeBtn.width(),
+    const auto resumepause = ui->program_btn_resumepause->geometry();
+    ui->program_btn_resumepause->setGeometry(windowWidth / 2- resumepause.width() / 2,
                                         0,
-                                        resumeBtn.width(),
-                                        resumeBtn.height()
-                                        );
-
-    const auto pauseBtn = ui->program_btn_pause->geometry();
-    ui->program_btn_pause->setGeometry(windowWidth / 2,
-                                        0,
-                                        pauseBtn.width(),
-                                        pauseBtn.height()
+                                        resumepause.width(),
+                                        resumepause.height()
                                         );
 
     #undef VERTICAL_SPACING
@@ -127,18 +117,6 @@ void MainWindow::on_program_btn_hide_clicked()
     ui->program_btn_hide->setText((ui->controlTab->isVisible())? "Hide controls" : "Show controls");
 }
 
-
-void MainWindow::on_program_btn_pause_clicked()
-{
-    simulator.get()->stopSimulation();
-}
-
-
-void MainWindow::on_program_btn_resume_clicked()
-{
-    simulator.get()->runSimulation();
-}
-
 void MainWindow::updateAnalytics()
 {
     ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
@@ -164,5 +142,21 @@ void MainWindow::on_saveManager_btn_save_clicked()
     }
 
     saveManager.get()->saveToFile();
+}
+
+void MainWindow::on_program_btn_resumepause_clicked(bool checked)
+{
+    if(ui->controlTab->isEnabled())
+    {
+        ui->program_btn_resumepause->setText("Pause");
+        simulator.get()->runSimulation();
+        ui->controlTab->setEnabled(false);
+    }
+    else
+    {
+        ui->program_btn_resumepause->setText("Resume");
+        simulator.get()->stopSimulation();
+        ui->controlTab->setEnabled(true);
+    }
 }
 

@@ -116,7 +116,7 @@ void AutoRobot::simulate()
 
 void AutoRobot::setSelected()
 {
-    brush.setStyle(Qt::DiagCrossPattern);
+    brush.setStyle(Qt::Dense3Pattern);
 }
 
 void AutoRobot::setUnselected()
