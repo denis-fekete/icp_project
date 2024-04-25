@@ -120,6 +120,19 @@ public:
      */
     inline void setH(double h) { this->h = h; }
 
+    /**
+     * @brief Moves all points in rectangle in given deltas
+     * @param deltaX Value to move in x axis
+     * @param deltaY Value to move in y axis
+     */
+    inline void moveInDirection(double deltaX, double deltaY)
+    {
+        x += deltaX; y += deltaY;
+        LB.x += deltaX; LB.y += deltaY;
+        RB.x += deltaX; RB.y += deltaY;
+        RT.x += deltaX; RT.y += deltaY;
+        LT.x += deltaX; LT.y += deltaY;
+    }
 
 protected:
     /**

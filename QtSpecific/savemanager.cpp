@@ -3,13 +3,9 @@
 #include <QCoreApplication>
 #include <iostream>
 
-SaveManager::SaveManager(std::vector<std::unique_ptr<AutoRobot> > &robots,
-            std::vector<std::unique_ptr<Obstacle> > &obstacles, QWidget* widget,
-                         QGraphicsScene &scene, AutoRobot **activeRobot, Obstacle **activeObstacle) : robots(robots), obstacles(obstacles), scene(scene)
+SaveManager::SaveManager(Simulator& simulator, QWidget* widget) : simulator(simulator)
 {
     this->widget = widget;
-    this->activeRobot = activeRobot;
-    this->activeObstacle = activeObstacle;
 }
 
 void SaveManager::saveToFile()
@@ -37,10 +33,10 @@ void SaveManager::saveToFile()
 
     xmlWriter.writeStartElement("Robots");
 
-    for(size_t i = 0; i < robots.size(); i++)
+    for(size_t i = 0; i < simulator.getRobotsCount(); i++)
     {
-        auto& robSim = robots.at(i).get()->getSim();
-        auto rob = robots.at(i).get();
+        Robot robSim = simulator.getRobot(i)->getSim();
+        AutoRobot* rob = simulator.getRobot(i);
 
         xmlWriter.writeStartElement("Robot");
         xmlWriter.writeAttribute("id", QString::number(i));
@@ -67,20 +63,20 @@ void SaveManager::saveToFile()
 
     xmlWriter.writeStartElement("Obstacles");
 
-    for(size_t i = 0; i < obstacles.size(); i++)
+    for(size_t i = 0; i < simulator.getObstaclesCount(); i++)
     {
-        auto& obsSim = obstacles.at(i).get()->getSim();
-        auto obstacle = obstacles.at(i).get();
+        Rectangle* obsSim = simulator.getObstacle(i)->getSim();
+        Obstacle* obstacle = simulator.getObstacle(i);
 
         xmlWriter.writeStartElement("Obstacle");
         xmlWriter.writeAttribute("id", QString::number(i));
 
-        xmlWriter.writeTextElement("x", QString::number(obsSim.getX()));
-        xmlWriter.writeTextElement("y", QString::number(obsSim.getY()));
-        xmlWriter.writeTextElement("width", QString::number(obsSim.getW()));
-        xmlWriter.writeTextElement("heigth", QString::number(obsSim.getH()));
+        xmlWriter.writeTextElement("x", QString::number(obsSim->getX()));
+        xmlWriter.writeTextElement("y", QString::number(obsSim->getY()));
+        xmlWriter.writeTextElement("width", QString::number(obsSim->getW()));
+        xmlWriter.writeTextElement("heigth", QString::number(obsSim->getH()));
 
-        xmlWriter.writeTextElement("rotation", QString::number(obsSim.getRotation()));
+        xmlWriter.writeTextElement("rotation", QString::number(obsSim->getRotation()));
 
         xmlWriter.writeTextElement("color_red", QString::number(obstacle->getColor().red()));
         xmlWriter.writeTextElement("color_green", QString::number(obstacle->getColor().green()));
@@ -274,16 +270,12 @@ returnType SaveManager::readRobot()
         rotRead && colorRedRead && colorGreenRead &&
         colorBlueRead && turnAngleRead && turnDirectionRead)
     {
-        AutoRobot::addRobotToWorld(
+        simulator.addAutomaticRobot(
             x, y, radius, rot, detRad,
             color,
             speed,
             turnAngle,
-            (turnDirection == 1) ? true : false,
-            obstacles,
-            robots,
-            scene,
-            activeRobot);
+            (turnDirection == 1) ? true : false);
     }
 
     if(xmlReader.name() == "Obstacles")
@@ -386,12 +378,7 @@ returnType SaveManager::readObstacle()
         rotRead && colorRedRead && colorGreenRead &&
         colorBlueRead)
     {
-        Obstacle::addObstacleToWorld(
-            x, y, w, h, rot,
-            color,
-            obstacles,
-            scene,
-            activeObstacle);
+        simulator.addObstacle(x, y, w, h, rot, color);
     }
 
     return readNext;

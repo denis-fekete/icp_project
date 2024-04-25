@@ -2,6 +2,7 @@
 #define ROBOT_H
 
 #include <vector>
+#include <memory>
 
 #include "rectangle.h"
 #include "circle.h"
@@ -20,6 +21,12 @@ class Robot : public Circle
      * collision detection
      */
     Rectangle colliderFwd;
+
+    /**
+     * @brief colliderInner Collider for other robots to know that they are too close
+     * to this robot
+     */
+    Rectangle colliderInner;
 public:
 
     /**
@@ -37,14 +44,14 @@ public:
      * @param validObstacles Vector of obstacles that Robot can collide with
      * @return True if Robot collides with one of the Obstacles
      */
-    bool obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObstacles);
+    bool obstacleDetection(std::vector<std::unique_ptr<Obstacle>>* obstacles);
 
     /**
      * @brief Checks if Robots collides with any Rectangle from vector of obstacles
      * @param validObstacles Vector of obstacles that Robot can collide with
      * @return True if Robot collides with one of the Rectangle
      */
-    bool obstacleDetection(std::vector<std::unique_ptr<Rectangle>>& validObstacles);
+    bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
 
     /**
      * @brief Moves this Robot forward in direction it is facing (based on `rotation`)
@@ -62,6 +69,16 @@ public:
      * @return Returns this detection radius of this Robot
      */
     inline double getDetRadius() const { return this->detRadius; }
+
+    /**
+     * @return Returns pointer to forward facing rectangle
+     */
+    inline Rectangle* getColliderFwd() { return &(this->colliderFwd); }
+
+    /**
+     * @return Return pointer to inner rectangle
+     */
+    inline Rectangle* getColliderInner() { return &(this->colliderInner); }
 
     /**
      * @brief Checks if this Robot intersects with other Circle

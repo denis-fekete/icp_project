@@ -10,6 +10,7 @@
 #include <QDebug>
 
 #include <vector>
+#include <memory>
 
 #include "obstacle.h"
 #include "../2DSimulationLib/robot.h"
@@ -25,7 +26,7 @@ private:
     /**
      * @brief Vector of all obstacles that robot can collide with
      */
-    std::vector<std::unique_ptr<Obstacle>>& obstacles;
+    std::vector<Rectangle*>* colliders;
 
     /**
      * @brief Color of this robot
@@ -74,37 +75,15 @@ public:
      * @param obstaclesPointer Refernce to vector of obstacles
      */
     AutoRobot(double x, double y, double radius, double rot,
-              double detRadius, QColor color, double speed,
-              double turnAngle, bool turnRight,
-              std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer, AutoRobot** activeRobot);
-
-    /*
-     * @brief Creates and adds new AutoRobot to the scene
-     * @param x Center X position to be set
-     * @param y Center Y position to be set
-     * @param radius Radius if this Robot
-     * @param rot Rotation of this robot
-     * @param detRadius Detection radius of this robot
-     * @param color Color of the AutoRobot
-     * @param speed Speed of the AutoRobot
-     * @param turnAngle Turn angle on collision detection
-     * @param turnRight Turn direction
-     * @param obstaclesPointer Refernce to vector of obstacles
-     * @param robots Reference to vector of AutoRobots
-     * @param scene Scene to which AutoRobot will be added to
-     */
-    static void addRobotToWorld(double x, double y, double radius, double rot,
-                                double detRadius, QColor color, double speed,
-                                double turnAngle, bool turnRight,
-                                std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
-                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene, AutoRobot** activeRobot);
+                         double detRadius, QColor color, double speed,
+                         double turnAngle, bool turnRight,
+                         std::vector<Rectangle*>* colliders, AutoRobot **activeRobot);
 
     /**
      * @brief Adds AutoRobot object to the scene
      * @param scene
      */
-    void initialize(QGraphicsScene& scene);
-
+    void initialize();
 
 
     void setUnselected();
@@ -121,6 +100,7 @@ public:
      * @param angle Angle to be added to rotation
      */
     inline void rotateRobot(double angle) { sim.rotate(angle); }
+
 
     /**
      * @brief Simulates robot once, check if collision is occuring, if not
@@ -169,6 +149,7 @@ public:
      * @return Turn angle of the AutoRobot
      */
     inline double getTurnAngle() { return this->turnAngle; }
+
 
     /**
      * @return Turn direction of the AutoRobot

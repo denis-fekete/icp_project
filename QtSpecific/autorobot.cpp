@@ -6,35 +6,20 @@
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
                      double turnAngle, bool turnRight,
-                     std::vector<std::unique_ptr<Obstacle>>& obstacles, AutoRobot **activeRobot) : sim(x, y, radius, rot, detRadius), obstacles(obstacles)
+                     std::vector<Rectangle*>* colliders, AutoRobot **activeRobot) :
+    sim(x, y, radius, rot, detRadius), colliders(colliders), color(color), speed(speed),
+    turnAngle(turnAngle), turnDirection((turnRight)? 1 : -1), activeRobot(activeRobot)
 {
-    this->speed = speed;
-    this->color = color;
-    this->turnAngle = turnAngle;
-    this->turnDirection = (turnRight) ? 1 : -1;
-    this->activeRobot = activeRobot;
     initialized = false;
 }
 
-void AutoRobot::addRobotToWorld( double x, double y, double radius, double rot,
-                                double detRadius, QColor color, double speed,
-                                double turnAngle, bool turnRight,
-                                std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
-                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene, AutoRobot** activeRobot)
-{
-    robots.push_back(std::make_unique<AutoRobot> ( x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, obstaclesPointer, activeRobot));
 
-    robots.back()->initialize(scene);
-}
-
-void AutoRobot::initialize(QGraphicsScene& scene)
+void AutoRobot::initialize()
 {
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     this->setTransformOriginPoint(0, 0);
-    scene.addItem(this);
     initialized = true;
-
     this->brush = QBrush(color);
 }
 
@@ -117,7 +102,7 @@ void AutoRobot::simulate()
     }
 
 #else
-    bool collision = this->sim.obstacleDetection(obstacles);
+    bool collision = this->sim.obstacleDetection(colliders);
     if(collision)
     {
         this->rotateRobot(turnAngle * turnDirection);

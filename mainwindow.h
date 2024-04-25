@@ -10,8 +10,6 @@
 #include <vector>
 #include <random>
 
-#include "QtSpecific/autorobot.h"
-#include "QtSpecific/obstacle.h"
 #include "2DSimulationLib/simulator.h"
 #include "2DSimulationLib/randomgenerator.h"
 #include "QtSpecific/savemanager.h"
@@ -36,14 +34,11 @@ private:
     // UI elements
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-    // Objects in 2D space
-    std::vector<std::unique_ptr<AutoRobot>> robots;
-    std::vector<std::unique_ptr<Obstacle>> obstacles;
-    AutoRobot* activeRobot;
-    Obstacle* activeObstacle;
+
     // Simulation
     std::unique_ptr<Simulator> simulator;
     QTimer timer;
+
     // Generation of pseudo random numbers
     std::unique_ptr<RandomGenerator> randColor;
     std::unique_ptr<RandomGenerator> rand1000;
@@ -60,10 +55,6 @@ public slots:
 
 private slots:
     void on_btnCreateRobot_clicked();
-
-    void on_btnTest_clicked();
-
-    void on_btnTest_2_clicked();
 
     void on_input_robot_randomizeColors_toggled(bool checked);
 

@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (robots, *scene, 8, &timer);
+    simulator = std::make_unique<Simulator> (*scene, 4, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 
@@ -102,6 +102,7 @@ QColor MainWindow::getRandomColor()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    if(event){}
     simulator->stopSimulation();
     simulator.release();
     exit(0);
@@ -147,7 +148,7 @@ void MainWindow::on_saveManger_btn_load_clicked()
     // check if manager was initialzied
     if(!saveManager)
     {
-        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene, &activeRobot, &activeObstacle);
+        saveManager = std::make_unique<SaveManager> (*simulator.get(), this);
     }
 
     saveManager.get()->loadFromFile();
@@ -161,7 +162,7 @@ void MainWindow::on_saveManager_btn_save_clicked()
     // check if manager was initialzied
     if(!saveManager)
     {
-        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene, &activeRobot, &activeObstacle);
+        saveManager = std::make_unique<SaveManager> (*simulator.get(), this);
     }
 
     saveManager.get()->saveToFile();
@@ -192,7 +193,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(x + xPosOffset, 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
+        simulator->addObstacle(x + xPosOffset, 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
 
     }
     // fil bottom layer
@@ -205,7 +206,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(x + xPosOffset, benchmarkHeigth - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
+        simulator->addObstacle(x + xPosOffset, benchmarkHeigth - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
 
     }
 
@@ -218,8 +219,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
-
+        simulator->addObstacle(10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
     }
 
     for(size_t y = 0; y < benchmarkHeigth; y += sizeConst)
@@ -231,8 +231,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        Obstacle::addObstacleToWorld(benchmarkWidth - 10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color, obstacles, *scene, &activeObstacle);
-
+        simulator->addObstacle(benchmarkWidth - 10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
     }
 }
 
@@ -261,20 +260,19 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         double turnAngle = (rand1000->getRandomValue() % 7) - 14;
         QColor color = getRandomColor();
 
-        AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, obstacles, robots, *scene, &activeRobot);
-
+        simulator->addAutomaticRobot(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true);
     }
 
     // If ID selector is not enabled enable it
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        activeRobot = robots.back().get();
+        simulator->setActiveRobot(simulator->getRobotsCount() -1);
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
     auto old = ui->input_robot_IDSelector->value();
-    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
+    ui->input_robot_IDSelector->setMaximum(static_cast<int>(simulator->getRobotsCount()) -1);
     ui->input_robot_IDSelector->setValue(old);
     on_input_robot_IDSelector_valueChanged(old);
 
@@ -310,7 +308,7 @@ void MainWindow::on_btnCreateRobot_clicked()
 
     color = MainWindow::getRandomColor();
 
-    AutoRobot::addRobotToWorld(
+    simulator->addAutomaticRobot(
             ui->input_robot_xPos->value(),
             ui->input_robot_yPos->value(),
             ui->input_robot_radius->value(),
@@ -319,11 +317,7 @@ void MainWindow::on_btnCreateRobot_clicked()
             color,
             ui->input_robot_speed->value(),
             ui->input_robot_collisionDetectionAngle->value(),
-            ui->input_robot_onCollisionTurnRight->isChecked(),
-            obstacles,
-            robots,
-            *scene,
-            &activeRobot
+            ui->input_robot_onCollisionTurnRight->isChecked()
             );
 
 
@@ -331,16 +325,14 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        activeRobot = robots.back().get();
+        simulator->setActiveRobot(simulator->getRobotsCount() -1);
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
     auto old = ui->input_robot_IDSelector->value();
-    ui->input_robot_IDSelector->setMaximum((int) robots.size() - 1);
+    ui->input_robot_IDSelector->setMaximum(static_cast<int>(simulator->getRobotsCount()) -1);
     ui->input_robot_IDSelector->setValue(old);
     on_input_robot_IDSelector_valueChanged(old);
-
-    simulator.get()->balanceCores();
 }
 
 void MainWindow::on_btnDeleteRobot_clicked()
@@ -348,11 +340,9 @@ void MainWindow::on_btnDeleteRobot_clicked()
     // get active robot id
     auto robotId = ui->input_robot_IDSelector->value();
     // erase robot
-    robots.erase(robots.begin() + robotId);
-    // set activeRobot pointer to null
-    activeRobot = nullptr;
+    simulator->deleteRobot(robotId);
     // calculate new val
-    auto val = (int) robots.size() - 1;
+    auto val = static_cast<int> (simulator->getRobotsCount()) - 1;
 
     if(val <= 0)
         val = 0;
@@ -361,22 +351,6 @@ void MainWindow::on_btnDeleteRobot_clicked()
     ui->input_robot_IDSelector->setValue(val);
 
     scene->update();
-}
-
-void MainWindow::on_btnTest_clicked()
-{
-    if(activeRobot != nullptr)
-    {
-        activeRobot->moveRobot(25);
-    }
-}
-
-void MainWindow::on_btnTest_2_clicked()
-{
-    if(activeRobot != nullptr)
-    {
-        activeRobot->rotateRobot(45);
-    }
 }
 
 void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
@@ -388,27 +362,17 @@ void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
 
 void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
 {
-        if(robots.size() <= 0)
-        {
-            return;
-        }
-        // Unselect old active robot and set active the new
-        if(activeRobot != nullptr)
-        {
-            activeRobot->setUnselected();
-        }
-        activeRobot = robots.at(arg1).get();
-        activeRobot->setSelected();
-}
-
-void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
-{
-    ui->input_robot_onCollisionTurnRight->setChecked(!checked);
+    simulator->setActiveRobot(arg1);
 }
 
 void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
 {
     ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
+}
+
+void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
+{
+    ui->input_robot_onCollisionTurnLeft->setChecked(checked);
 }
 
 //----------------------------------------------------------------------------
@@ -430,32 +394,26 @@ void MainWindow::on_btnCreateObstacle_clicked()
                        ui->input_obstacle_color_b->value());
     }
 
-    Obstacle::addObstacleToWorld(
+    simulator->addObstacle(
             ui->input_obstacle_xPos->value(),
             ui->input_obstacle_yPos->value(),
             ui->input_obstacle_width->value(),
             ui->input_obstacle_heigth->value(),
             ui->input_obstacle_rotation->value(),
-            color,
-            obstacles,
-            *scene,
-            &activeObstacle);
-
+            color);
 
     // If ID selector is not enabled enable it
     if(!ui->input_obstacle_IDSelector->isEnabled())
     {
         ui->input_obstacle_IDSelector->setEnabled(true);
-        activeObstacle = obstacles.back().get();
+        simulator->setActiveObstacle(simulator->getObstaclesCount() -1);
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
     auto old = ui->input_obstacle_IDSelector->value();
-    ui->input_obstacle_IDSelector->setMaximum((int) obstacles.size() - 1);
+    ui->input_obstacle_IDSelector->setMaximum(static_cast<int>(simulator->getObstaclesCount()) -1);
     ui->input_obstacle_IDSelector->setValue(old);
     on_input_obstacle_IDSelector_valueChanged(old);
-
-    scene->update();
 }
 
 void MainWindow::on_input_obstacle_randomizeColors_toggled(bool checked)
@@ -470,11 +428,9 @@ void MainWindow::on_btnDeleteObstacle_clicked()
     // get active robot id
     auto obstacleId = ui->input_obstacle_IDSelector->value();
     // erase robot
-    obstacles.erase(obstacles.begin() + obstacleId);
-    // set activeRobot pointer to null
-    activeObstacle = nullptr;
+    simulator->deleteObstacle(obstacleId);
     // calculate new val
-    auto val = (int) obstacles.size() - 1;
+    auto val = static_cast<int> (simulator->getObstaclesCount()) - 1;
 
     if(val <= 0)
         val = 0;
@@ -487,20 +443,5 @@ void MainWindow::on_btnDeleteObstacle_clicked()
 
 void MainWindow::on_input_obstacle_IDSelector_valueChanged(int arg1)
 {
-
-    if(obstacles.size() <= 0)
-    {
-        return;
-    }
-    // Unselect old active robot and set active the new
-    if(activeObstacle != nullptr)
-    {
-        activeObstacle->setUnselected();
-    }
-    activeObstacle = obstacles.at(arg1).get();
-    activeObstacle->setSelected();
-
-    scene->update();
+    simulator->setActiveObstacle(arg1);
 }
-
-

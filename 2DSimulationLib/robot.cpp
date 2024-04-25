@@ -6,7 +6,8 @@
 Robot::Robot(double x, double y, double radius, double rot, double detRadius) :
     Circle::Circle(x, y, radius, rot),
     // x + (rad + detRad) / 2 - rad = center of collider rectangle
-    colliderFwd(x + (radius + detRadius)/2 - radius, y, radius + detRadius, 2 * radius, rot)
+    colliderFwd(x + (radius + detRadius)/2 - radius, y, radius + detRadius, 2 * radius, rot),
+    colliderInner (x, y, radius, radius, 0)
 {
     this->detRadius = detRadius;
     this->rotate(0);
@@ -14,10 +15,6 @@ Robot::Robot(double x, double y, double radius, double rot, double detRadius) :
 
 void Robot::moveForward(double distance)
 {
-    // TODO:
-    // Circle::moveForward(distance);
-    // colliderFwd.moveForward(distance);
-
     this->calculateSinCos (rot);
 
     // Calcualte delta value for moving in X and Y direction
@@ -28,16 +25,8 @@ void Robot::moveForward(double distance)
     x += xDelta;
     y += yDelta;
 
-    colliderFwd.x += xDelta;
-    colliderFwd.y += yDelta;
-    colliderFwd.LB.x += xDelta;
-    colliderFwd.LB.y += yDelta;
-    colliderFwd.RB.x += xDelta;
-    colliderFwd.RB.y += yDelta;
-    colliderFwd.RT.x += xDelta;
-    colliderFwd.RT.y += yDelta;
-    colliderFwd.LT.x += xDelta;
-    colliderFwd.LT.y += yDelta;
+    colliderFwd.moveInDirection(xDelta, yDelta);
+    colliderInner.moveInDirection(xDelta, yDelta);
 }
 
 double dAbs(double val)
@@ -80,19 +69,18 @@ void Robot::rotate(double angle)
     colliderFwd.updatePoints(cosRad, sinRad);
 }
 
-bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObstacles)
+bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>* validObstacles)
 {
     // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles.size(); i++)
+    for(unsigned i = 0; i < validObstacles->size(); i++)
     {
         // Store current other object
-        Rectangle* other = validObstacles.at(i)->getSimulationRectangle();
+        Rectangle* other = validObstacles->at(i)->getSimulationRectangle();
 
         Circle* otherCircle = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
         if(this->intersect(otherCircle))
         {
-            // std::cout << std::chrono::high_resolution_clock::now().time_since_epoch().count() << std::endl;
             if(colliderFwd.intersects(other))
             {
                 return true;
@@ -103,17 +91,17 @@ bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>& validObsta
     return false;
 }
 
-bool Robot::obstacleDetection(std::vector<std::unique_ptr<Rectangle>>& validObstacles)
+bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
 {
     // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles.size(); i++)
+    for(unsigned i = 0; i < validObstacles->size(); i++)
     {
         // Store current other object
-        Rectangle* other = validObstacles.at(i).get();
+        Rectangle* other = validObstacles->at(i);
 
         Circle* otherCircle = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
-        if(this->intersect(otherCircle))
+        if(other != &this->colliderInner && this->intersect(otherCircle))
         {
             if(colliderFwd.intersects(other))
             {

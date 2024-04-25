@@ -13,7 +13,7 @@ private:
     /**
      * @brief allRobots Pointer to the vector of all robots
      */
-    std::vector<std::unique_ptr<AutoRobot>>& allRobots;
+    std::vector<std::unique_ptr<AutoRobot>>* allRobots;
 
     /**
      * @brief myRobotsStart Index from which this core will call simulation on robots
@@ -49,7 +49,7 @@ public:
      * @param simulate Bool value for checking if SimulationCore should
      * keep simulating
      */
-    SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
+    SimulationCore(std::vector<std::unique_ptr<AutoRobot>>* allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate);
 
     /**
      * @brief Loops and simulates robots it is pointing to until `simulate`

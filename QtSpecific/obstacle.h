@@ -6,8 +6,6 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
-#include <memory>
-
 #include "../2DSimulationLib/rectangle.h"
 
 class Obstacle : public QGraphicsItem
@@ -15,10 +13,7 @@ class Obstacle : public QGraphicsItem
 public:
     Obstacle(double x, double y, double w, double h, double rot, QColor& color, Obstacle** activeObstacle);
 
-    void initialize(QGraphicsScene& scene);
-    static void addObstacleToWorld(double x, double y, double w, double h, double rot,
-                                   QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles,
-                                   QGraphicsScene& scene, Obstacle** activeObstacle);
+    void initialize();
 
     void rotateObstacle(double angle);
     inline Rectangle* getSimulationRectangle() { return &this->sim; };
@@ -31,7 +26,7 @@ public:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
 //getters
-    inline Rectangle& getSim() { return this->sim; }
+    inline Rectangle* getSim() { return &this->sim; }
     inline QColor& getColor() { return this->color; }
 
     void setSelected();

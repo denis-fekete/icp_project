@@ -1,6 +1,7 @@
 #ifndef SAVEMANAGER_H
 #define SAVEMANAGER_H
 
+#include "2DSimulationLib/simulator.h"
 #include "QIODevice"
 #include "QFile"
 #include "QXmlStreamReader"
@@ -17,21 +18,14 @@ using returnType = enum {err, dontReadNext, readNext};
 class SaveManager
 {
 public:
-    SaveManager(std::vector<std::unique_ptr<AutoRobot>>& robots,
-                std::vector<std::unique_ptr<Obstacle>>& obstacles, QWidget* widget,
-                QGraphicsScene& scene, AutoRobot** activeRobot,
-                Obstacle** activeObstacle);
+    SaveManager(Simulator& simulator, QWidget* widget);
 
     void loadFromFile();
     void saveToFile();
 private:
-    std::vector<std::unique_ptr<AutoRobot>>& robots;
-    std::vector<std::unique_ptr<Obstacle>>& obstacles;
-    AutoRobot** activeRobot;
-    Obstacle** activeObstacle;
+    Simulator& simulator;
 
     QWidget* widget;
-    QGraphicsScene& scene;
 
 
     returnType readRobots();

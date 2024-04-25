@@ -5,17 +5,16 @@ Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& c
 {
     this->color = color;
     this->activeObstacle = activeObstacle;
+}
+
+void Obstacle::initialize()
+{
     this->setPos(sim.getX(), sim.getY());
     this->setRotation(sim.getRotation());
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
-}
 
-void Obstacle::initialize(QGraphicsScene& scene)
-{
-    // this->setTransformOriginPoint(sim.x, sim.y);
     this->setTransformOriginPoint(0, 0);
-    scene.addItem(this);
     brush = QBrush(color);
 }
 
@@ -76,13 +75,4 @@ void Obstacle::setUnselected()
 {
     brush.setStyle(Qt::SolidPattern);
 
-}
-
-void Obstacle::addObstacleToWorld(double x, double y, double w, double h, double rot,
-                               QColor& color, std::vector<std::unique_ptr<Obstacle>>& obstacles,
-                               QGraphicsScene& scene, Obstacle** activeObstacle)
-{
-    obstacles.push_back(std::make_unique<Obstacle> ( x, y, w, h, rot, color, activeObstacle));
-
-    obstacles.back()->initialize(scene);
 }
