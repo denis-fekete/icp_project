@@ -5,9 +5,11 @@
 
 SaveManager::SaveManager(std::vector<std::unique_ptr<AutoRobot> > &robots,
             std::vector<std::unique_ptr<Obstacle> > &obstacles, QWidget* widget,
-                         QGraphicsScene &scene) : robots(robots), obstacles(obstacles), scene(scene)
+                         QGraphicsScene &scene, AutoRobot **activeRobot, Obstacle **activeObstacle) : robots(robots), obstacles(obstacles), scene(scene)
 {
     this->widget = widget;
+    this->activeRobot = activeRobot;
+    this->activeObstacle = activeObstacle;
 }
 
 void SaveManager::saveToFile()
@@ -27,10 +29,12 @@ void SaveManager::saveToFile()
     xmlWriter.setDevice(&file);
 
     xmlWriter.setAutoFormatting(true);
-    xmlWriter.setAutoFormattingIndent(4);
 
-    xmlWriter.writeStartDocument("1.0.0");
+    xmlWriter.writeStartDocument();
     xmlWriter.writeDTD("<!DOCTYPE icpSave>");
+
+    xmlWriter.writeStartElement("Simulation_space");
+
     xmlWriter.writeStartElement("Robots");
 
     for(size_t i = 0; i < robots.size(); i++)
@@ -86,6 +90,7 @@ void SaveManager::saveToFile()
     }
 
     xmlWriter.writeEndElement(); // end Obstacles
+
     xmlWriter.writeEndDocument();
 
     file.close();
@@ -101,8 +106,6 @@ void SaveManager::loadFromFile()
 
     QFile file(fileName);
 
-    std::cout << "file size=" << file.size() << std::endl;
-
     if(!file.open(QIODevice::ReadOnly))
     {
         qDebug("Failed to open XML file for reading");
@@ -110,76 +113,67 @@ void SaveManager::loadFromFile()
 
     xmlReader.setDevice(&file);
 
-
-    while(!xmlReader.atEnd() && !xmlReader.hasError())
+    xmlReader.readNextStartElement();
+    if(xmlReader.name() != "Simulation_space")
     {
-        xmlReader.readNextStartElement();
-        qDebug("works");
+        qDebug("unknown xml format");
+        return;
     }
 
-    if(xmlReader.readNextStartElement())
+    returnType result = readNext;
+    while(!xmlReader.atEnd())
     {
-        qDebug("fuck qt");
-        if(xmlReader.name() == "Robots")
+        qDebug("a");
+        if(result == readNext)
+            xmlReader.readNextStartElement();
+
+        if(xmlReader.tokenType() == QXmlStreamReader::StartElement)
         {
-            qDebug("found Robots");
-            readRobots();
-            qDebug("wtf");
-            // if(!readRobots())
-            // {
-                // qDebug("failed Robots");
-                // exit(-1);
-            // }
-        }
-        else if(xmlReader.name() == "Obstacles")
-        {
-            if(!readObstacles())
+            if(xmlReader.name() == "Robots")
             {
-                exit(-1);
+                qDebug("found robots");
+                result = readRobots();
+            }
+            else if(xmlReader.name() == "Obstacles")
+            {
+                qDebug("found obstacles");
+                result = readObstacles();
+            }
+            else
+            {
+                std::cout << "Unknown: " << xmlReader.name().toString().toStdString() << std::endl;
+                result == err;
             }
         }
-        else
+
+        if(result == err)
         {
-            std::cout << "Unknown: " << xmlReader.name().toString().toStdString() << std::endl;
-            exit(-2);
+            exit(-55);
+            break;
         }
     }
 
     scene.update();
 
-    qDebug("get the fukc out");
     file.close();
 }
 
-bool SaveManager::readRobots()
+returnType SaveManager::readRobots()
 {
-    qDebug("readRobots()");
-
-    while (!(xmlReader.tokenType() == QXmlStreamReader::EndElement &&
-             xmlReader.name() == "Robots"))
+    returnType result = readNext;
+    while (xmlReader.readNextStartElement() && result == readNext)
     {
-        xmlReader.readNext();
-        if(xmlReader.tokenType() == QXmlStreamReader::StartDocument)
+        if(xmlReader.name() == "Robot")
         {
-            if(xmlReader.name() == "Robot")
-            {
-                qDebug("found Robot");
-                QXmlStreamAttributes attributes = xmlReader.attributes();
-                readRobot();
-            }
-            else
-            {
-                return false;
-            }
+            result = readRobot();
         }
     }
 
-    return true;
+    return result;
 }
 
-bool SaveManager::readRobot()
+returnType SaveManager::readRobot()
 {
-    qDebug("readRobot");
     double x = -1;
     double y = -1;
     double radius = -1;
@@ -196,9 +190,14 @@ bool SaveManager::readRobot()
     bool turnDirectionRead = false;
     int turnDirection = 0;
 
-    while (!(xmlReader.tokenType() == QXmlStreamReader::EndElement &&
-             xmlReader.name() == "Robot")) {
-        xmlReader.readNext();
+    while (xmlReader.readNextStartElement())
+    {
+        // found end of new section
+        if(xmlReader.name() == "Obstacles")
+        {
+            break;
+        }
+
         if (xmlReader.tokenType() == QXmlStreamReader::StartElement) {
             QStringRef elementName = xmlReader.name();
             if (elementName == "x")
@@ -218,7 +217,7 @@ bool SaveManager::readRobot()
                 if(!turnAngleRead)
                     turnAngleRead = true;
                 else
-                    return false;
+                    return err;
             }
             else if(elementName == "turn_direction")
             {
@@ -227,7 +226,7 @@ bool SaveManager::readRobot()
                 if(!turnDirectionRead)
                     turnDirectionRead = true;
                 else
-                    return false;
+                    return err;
             }
             else if(elementName == "rotation")
             {
@@ -236,7 +235,7 @@ bool SaveManager::readRobot()
                 if(!rotRead)
                     rotRead = true;
                 else
-                    return false;
+                    return err;
             }
             else if(elementName == "color_red")
             {
@@ -245,7 +244,7 @@ bool SaveManager::readRobot()
                 if(!colorRedRead)
                     colorRedRead = true;
                 else
-                    return false;
+                    return err;
             }
             else if(elementName == "color_green")
             {
@@ -254,7 +253,7 @@ bool SaveManager::readRobot()
                 if(!colorGreenRead)
                     colorGreenRead = true;
                 else
-                    return false;
+                    return err;
             }
             else if(elementName == "color_blue")
             {
@@ -263,11 +262,11 @@ bool SaveManager::readRobot()
                 if(!colorBlueRead)
                     colorBlueRead = true;
                 else
-                    return false;
+                    return err;
             }
             else
             {
-                return false; // unknown element
+                return err; // unknown element
             }
         }
     }
@@ -285,22 +284,118 @@ bool SaveManager::readRobot()
             (turnDirection == 1) ? true : false,
             obstacles,
             robots,
-            scene
-            );
+            scene,
+            activeRobot);
     }
 
-    return true;
+    if(xmlReader.name() == "Obstacles")
+        return dontReadNext;
+    else
+        return readNext;
+
 }
 
-bool SaveManager::readObstacles()
+returnType SaveManager::readObstacles()
 {
+    returnType result;
+    while (xmlReader.readNextStartElement())
+    {
+        if(xmlReader.name() == "Obstacle")
+        {
+            result = readObstacle();
+        }
+        else
+        {
+            return err;
+        }
+    }
 
-    return true;
+    return result;
 }
 
-bool SaveManager::readObstacle()
+returnType SaveManager::readObstacle()
 {
+    double x = -1;
+    double y = -1;
+    double w = -1;
+    double h = -1;
+    bool rotRead = false;
+    double rot;
+    bool colorRedRead = false;
+    bool colorGreenRead = false;
+    bool colorBlueRead = false;
+    QColor color;
 
-    return true;
+    while (xmlReader.readNextStartElement())
+    {
+        if (xmlReader.tokenType() == QXmlStreamReader::StartElement)
+        {
+            QStringRef elementName = xmlReader.name();
+
+            if (elementName == "x")
+                x = xmlReader.readElementText().toDouble();
+            else if (elementName == "y")
+                y = xmlReader.readElementText().toDouble();
+            else if(elementName == "width")
+                w = xmlReader.readElementText().toDouble();
+            else if(elementName == "heigth")
+                h = xmlReader.readElementText().toDouble();
+            else if(elementName == "rotation")
+            {
+                rot = xmlReader.readElementText().toDouble();
+                // check if not set, if set return false as fail
+                if(!rotRead)
+                    rotRead = true;
+                else
+                    return err;
+            }
+            else if(elementName == "color_red")
+            {
+                color.setRed(xmlReader.readElementText().toDouble());
+                // check if not set, if set return false as fail
+                if(!colorRedRead)
+                    colorRedRead = true;
+                else
+                    return err;
+            }
+            else if(elementName == "color_green")
+            {
+                color.setGreen(xmlReader.readElementText().toDouble());
+                // check if not set, if set return false as fail
+                if(!colorGreenRead)
+                    colorGreenRead = true;
+                else
+                    return err;
+            }
+            else if(elementName == "color_blue")
+            {
+                color.setBlue(xmlReader.readElementText().toDouble());
+                // check if not set, if set return false as fail
+                if(!colorBlueRead)
+                    colorBlueRead = true;
+                else
+                    return err;
+            }
+            else
+            {
+                return err; // unknown element
+            }
+        }
+    }
+
+    // check if all parameters were read
+    if(x > -1 && y > -1 && w > -1 && h > -1 &&
+        rotRead && colorRedRead && colorGreenRead &&
+        colorBlueRead)
+    {
+        Obstacle::addObstacleToWorld(
+            x, y, w, h, rot,
+            color,
+            obstacles,
+            scene,
+            activeObstacle);
+    }
+
+    return readNext;
 }
 

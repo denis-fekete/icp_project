@@ -109,7 +109,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
     exit(0);
 }
 
-
+//----------------------------------------------------------------------------
+// Main window
+//----------------------------------------------------------------------------
 
 void MainWindow::on_program_btn_hide_clicked()
 {
@@ -120,28 +122,6 @@ void MainWindow::on_program_btn_hide_clicked()
 void MainWindow::updateAnalytics()
 {
     ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
-}
-
-void MainWindow::on_saveManger_btn_load_clicked()
-{
-    // check if manager was initialzied
-    if(!saveManager)
-    {
-        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene);
-    }
-
-    saveManager.get()->loadFromFile();
-}
-
-void MainWindow::on_saveManager_btn_save_clicked()
-{
-    // check if manager was initialzied
-    if(!saveManager)
-    {
-        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene);
-    }
-
-    saveManager.get()->saveToFile();
 }
 
 void MainWindow::on_program_btn_resumepause_clicked(bool checked)
@@ -159,6 +139,36 @@ void MainWindow::on_program_btn_resumepause_clicked(bool checked)
         ui->controlTab->setEnabled(true);
     }
 }
+
+//----------------------------------------------------------------------------
+// World tab
+//----------------------------------------------------------------------------
+
+void MainWindow::on_saveManger_btn_load_clicked()
+{
+    // check if manager was initialzied
+    if(!saveManager)
+    {
+        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene, &activeRobot, &activeObstacle);
+    }
+
+    saveManager.get()->loadFromFile();
+
+    simulator.get()->balanceCores();
+    scene->update();
+}
+
+void MainWindow::on_saveManager_btn_save_clicked()
+{
+    // check if manager was initialzied
+    if(!saveManager)
+    {
+        saveManager = std::make_unique<SaveManager> (robots, obstacles, this, *scene, &activeRobot, &activeObstacle);
+    }
+
+    saveManager.get()->saveToFile();
+}
+
 
 void MainWindow::on_btn_loadBenchmark_clicked()
 {
@@ -254,7 +264,7 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         double turnAngle = (rand1000->getRandomValue() % 7) - 14;
         QColor color = getRandomColor();
 
-        AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, obstacles, robots, *scene);
+        AutoRobot::addRobotToWorld(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true, obstacles, robots, *scene, &activeRobot);
 
     }
 
@@ -281,6 +291,10 @@ void MainWindow::on_btn_worldApplySize_clicked()
     MainWindow::DrawGrid(ui->sBox_world_gridSize->value());
 }
 
+
+//----------------------------------------------------------------------------
+// Robot tab
+//----------------------------------------------------------------------------
 
 void MainWindow::on_btnCreateRobot_clicked()
 {
@@ -311,7 +325,8 @@ void MainWindow::on_btnCreateRobot_clicked()
             ui->input_robot_onCollisionTurnRight->isChecked(),
             obstacles,
             robots,
-            *scene
+            *scene,
+            &activeRobot
             );
 
 
@@ -399,7 +414,9 @@ void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
     ui->input_robot_onCollisionTurnLeft->setChecked(!checked);
 }
 
-#include "mainwindow.h"
+//----------------------------------------------------------------------------
+// Obstacle tab
+//----------------------------------------------------------------------------
 
 void MainWindow::on_btnCreateObstacle_clicked()
 {

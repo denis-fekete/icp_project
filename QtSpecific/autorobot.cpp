@@ -4,14 +4,25 @@
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
                      double turnAngle, bool turnRight,
-                     std::vector<std::unique_ptr<Obstacle>>& obstacles) : sim(x, y, radius, rot, detRadius), obstacles(obstacles)
+                     std::vector<std::unique_ptr<Obstacle>>& obstacles, AutoRobot **activeRobot) : sim(x, y, radius, rot, detRadius), obstacles(obstacles)
 {
     this->speed = speed;
     this->color = color;
     this->turnAngle = turnAngle;
     this->turnDirection = (turnRight) ? 1 : -1;
-
+    this->activeRobot = activeRobot;
     initialized = false;
+}
+
+void AutoRobot::addRobotToWorld( double x, double y, double radius, double rot,
+                                double detRadius, QColor color, double speed,
+                                double turnAngle, bool turnRight,
+                                std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
+                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene, AutoRobot** activeRobot)
+{
+    robots.push_back(std::make_unique<AutoRobot> ( x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, obstaclesPointer, activeRobot));
+
+    robots.back()->initialize(scene);
 }
 
 void AutoRobot::initialize(QGraphicsScene& scene)
@@ -123,15 +134,4 @@ void AutoRobot::setUnselected()
 {
     brush.setStyle(Qt::SolidPattern);
 
-}
-
-void AutoRobot::addRobotToWorld( double x, double y, double radius, double rot,
-                                double detRadius, QColor color, double speed,
-                                double turnAngle, bool turnRight,
-                                std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
-                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene)
-{
-    robots.push_back(std::make_unique<AutoRobot> ( x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, obstaclesPointer));
-
-    robots.back()->initialize(scene);
 }

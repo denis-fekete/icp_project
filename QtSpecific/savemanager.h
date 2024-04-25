@@ -9,33 +9,40 @@
 #include "QDebug"
 #include "QFileDialog"
 
-
 #include "QtSpecific/autorobot.h"
 #include "QtSpecific/obstacle.h"
+
+using returnType = enum {err, dontReadNext, readNext};
 
 class SaveManager
 {
 public:
     SaveManager(std::vector<std::unique_ptr<AutoRobot>>& robots,
                 std::vector<std::unique_ptr<Obstacle>>& obstacles, QWidget* widget,
-                QGraphicsScene& scene);
+                QGraphicsScene& scene, AutoRobot** activeRobot,
+                Obstacle** activeObstacle);
 
     void loadFromFile();
     void saveToFile();
 private:
     std::vector<std::unique_ptr<AutoRobot>>& robots;
     std::vector<std::unique_ptr<Obstacle>>& obstacles;
+    AutoRobot** activeRobot;
+    Obstacle** activeObstacle;
+
     QWidget* widget;
     QGraphicsScene& scene;
 
-    bool readRobots();
-    bool readRobot();
 
-    bool readObstacles();
-    bool readObstacle();
+    returnType readRobots();
+    returnType readRobot();
+
+    returnType readObstacles();
+    returnType readObstacle();
 
     QXmlStreamReader xmlReader;
     QXmlStreamWriter xmlWriter;
+
 };
 
 #endif // SAVEMANAGER_H

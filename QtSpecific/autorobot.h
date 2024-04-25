@@ -52,8 +52,12 @@ private:
      */
     bool initialized;
 
-
+    /**
+     * @brief Brush for paiting robot on scene
+     */
     QBrush brush;
+
+    AutoRobot** activeRobot;
 public:
 
     /**
@@ -72,7 +76,7 @@ public:
     AutoRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
               double turnAngle, bool turnRight,
-              std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer);
+              std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer, AutoRobot** activeRobot);
 
     /*
      * @brief Creates and adds new AutoRobot to the scene
@@ -93,7 +97,7 @@ public:
                                 double detRadius, QColor color, double speed,
                                 double turnAngle, bool turnRight,
                                 std::vector<std::unique_ptr<Obstacle>>& obstaclesPointer,
-                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene);
+                                std::vector<std::unique_ptr<AutoRobot>>& robots, QGraphicsScene& scene, AutoRobot** activeRobot);
 
     /**
      * @brief Adds AutoRobot object to the scene
