@@ -105,6 +105,8 @@ public:
      */
     void initialize(QGraphicsScene& scene);
 
+
+
     void setUnselected();
     void setSelected();
 
@@ -172,6 +174,9 @@ public:
      * @return Turn direction of the AutoRobot
      */
     inline short signed int getTurnDirection() { return this->turnDirection; }
+
+public slots:
+    void positionUpdate();
 };
 
 #endif // AUTOROBOT_H

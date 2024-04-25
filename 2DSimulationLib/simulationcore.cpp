@@ -1,5 +1,7 @@
 #include "simulationcore.h"
 
+#include <iostream>
+
 SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate) : allRobots(allRobots)
 {
     myRobotsStart = 0;
@@ -11,7 +13,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot>>& allRobot
     lastDuration = 0;
 }
 
-#define LOG_PERFORMACE
+// #define LOG_PERFORMACE
 
 void SimulationCore::runSimulation()
 {
@@ -32,6 +34,7 @@ void SimulationCore::runSimulation()
         {
             allRobots.at(index)->simulate();
         }
+
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
         lastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining).count();
@@ -39,5 +42,5 @@ void SimulationCore::runSimulation()
     }
 
     // delete lock;
-    // lock->release();
+    lock->release();
 }

@@ -1,5 +1,7 @@
 #include "autorobot.h"
 #include "QPen"
+#include "QObject"
+#include "QTimer"
 
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
@@ -54,11 +56,6 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 {
 // #define POINT_REPRE
 #ifndef POINT_REPRE
-    // Correctly rotate
-    this->setPos(0, 0);
-    this->setRotation(sim.getRotation());
-    this->setPos(sim.getX(), sim.getY());
-
     // Body
     painter->setBrush(brush);
     painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
@@ -84,6 +81,14 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     path.lineTo(sim.colliderFwd.LB.x, sim.colliderFwd.LB.y);
     painter->drawPath(path);
 #endif
+}
+
+void AutoRobot::positionUpdate()
+{
+    // Correctly rotate
+    this->setPos(0, 0);
+    this->setRotation(sim.getRotation());
+    this->setPos(sim.getX(), sim.getY());
 }
 
 void AutoRobot::simulate()
@@ -121,6 +126,7 @@ void AutoRobot::simulate()
     {
         this->moveRobot(speed);
     }
+
 #endif
 }
 
@@ -133,5 +139,4 @@ void AutoRobot::setSelected()
 void AutoRobot::setUnselected()
 {
     brush.setStyle(Qt::SolidPattern);
-
 }

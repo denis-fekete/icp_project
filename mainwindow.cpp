@@ -4,8 +4,6 @@
 #include <QDebug>
 #include <QStyleFactory>
 
-#include <iostream>
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -36,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (robots, *scene, 4, &timer);
+    simulator = std::make_unique<Simulator> (robots, *scene, 8, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 
@@ -124,7 +122,7 @@ void MainWindow::updateAnalytics()
     ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
 }
 
-void MainWindow::on_program_btn_resumepause_clicked(bool checked)
+void MainWindow::on_program_btn_resumepause_clicked()
 {
     if(ui->controlTab->isEnabled())
     {
@@ -168,7 +166,6 @@ void MainWindow::on_saveManager_btn_save_clicked()
 
     saveManager.get()->saveToFile();
 }
-
 
 void MainWindow::on_btn_loadBenchmark_clicked()
 {

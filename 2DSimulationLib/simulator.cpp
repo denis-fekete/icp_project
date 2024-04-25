@@ -1,7 +1,7 @@
 #include "simulator.h"
 #include <chrono>
 #include <iostream>
-#define LOG_PERFORMACE
+// #define LOG_PERFORMACE
 
 
 Simulator::Simulator(std::vector<std::unique_ptr<AutoRobot>> &robots, QGraphicsScene &scene, size_t maxThreads, QTimer* timer) : scene(scene), robots(robots)
@@ -27,7 +27,9 @@ void Simulator::simulationCycle()
         for(size_t index = 0; index < robots.size(); index++)
         {
             robots.at(index)->simulate();
+            robots.at(index).get()->positionUpdate();
         }
+
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
@@ -37,6 +39,11 @@ void Simulator::simulationCycle()
     else
     {
         wakeCores.notify_all();
+
+        for(size_t index = 0; index < robots.size(); index++)
+        {
+            robots.at(index).get()->positionUpdate();
+        }
 #ifdef LOG_PERFORMACE
         cycleTime = 0;
         for(size_t index = 0; index < maxThreads; index++)
@@ -138,3 +145,12 @@ void Simulator::balanceCores()
         lastEnd = newEnd;
     }
 }
+
+// void Simulator::addRobotToSimulation(double x, double y, double radius, double rot,
+//                                      double detRadius, QColor color, double speed,
+//                                      double turnAngle, bool turnRight)
+// {
+//     robots.push_back(std::make_unique<AutoRobot> ( x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, obstacles, activeRobot));
+
+//     robots.back()->initialize(scene);
+// }

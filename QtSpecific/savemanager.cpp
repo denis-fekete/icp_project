@@ -142,7 +142,7 @@ void SaveManager::loadFromFile()
             else
             {
                 std::cout << "Unknown: " << xmlReader.name().toString().toStdString() << std::endl;
-                result == err;
+                result = err;
             }
         }
 
@@ -152,8 +152,6 @@ void SaveManager::loadFromFile()
             break;
         }
     }
-
-    scene.update();
 
     file.close();
 }
