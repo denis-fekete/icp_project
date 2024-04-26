@@ -25,9 +25,10 @@ public:
      * @brief Constructor of Simulator object
      * @param scene Reference to scene for updating it
      * @param maxThreads Maximum allowed threads to use
-     * @param timer Pointer to QTimer that will call Simulation
+     * @param timerSim Pointer to QTimer for calling simulation
+     * @param timerSim Pointer to QTimer for calling update position of graphics
      */
-    Simulator(QGraphicsScene &scene, size_t maxThreads, QTimer* timer);
+    Simulator(QGraphicsScene &scene, size_t maxThreads);
     ~Simulator();
 
     /*
@@ -205,9 +206,14 @@ private:
     Obstacle* activeObstacle;
 
     /**
-     * @brief Pointer to global timer
+     * @brief Pointer Timer for calling of simulation cycles
      */
-    QTimer* timer;
+    QTimer timerSim;
+
+    /**
+     * @brief Pointer Timer for calling of graphics update cycles
+     */
+    QTimer timerGraphics;
 
     /**
      * @brief Mutex for SimulationCore synchronization
@@ -254,6 +260,12 @@ private:
                                          std::mutex* mutex,
                                          bool* keepSimulating);
 protected slots:
+
+    /**
+     * @brief Function that calls all robots and updates its graphics based
+     * on simulation
+     */
+    void updateGraphicsPos();
 
     /**
      * @brief Function that calls all SimulationCores to simulate once

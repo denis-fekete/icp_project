@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
-
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     QGraphicsView view(scene);
     view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
@@ -35,13 +35,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (*scene, 4, &timer);
+    simulator = std::make_unique<Simulator> (*scene, 4);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 
     // ------------------------------------------------------------------------
     // Analyitics
+    QTimer timer;
+    timer.setInterval(1000);
+    timer.start();
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateAnalytics()));
+
 }
 
 MainWindow::~MainWindow()

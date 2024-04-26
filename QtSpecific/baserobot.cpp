@@ -13,7 +13,7 @@ void BaseRobot::initialize()
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     this->setFlag(QGraphicsItem::ItemIsSelectable);
-
+    this->setTransformationMode(Qt::SmoothTransformation);
     this->setTransformOriginPoint(0, 0);
     initialized = true;
 
@@ -28,7 +28,7 @@ QRectF BaseRobot::boundingRect() const
     const double adj = 1;
     return QRectF(-sim.getRadius() - adj, -sim.getRadius() - adj,
                   2* sim.getRadius() +  sim.getDetRadius() + adj,
-                  2*sim.getRadius() +  sim.getDetRadius()+ adj);
+                  2*sim.getRadius() + adj);
 }
 
 QPainterPath BaseRobot::shape() const
@@ -36,7 +36,7 @@ QPainterPath BaseRobot::shape() const
     QPainterPath path;
     path.addRect(-sim.getRadius(), -sim.getRadius(),
                  2 * sim.getRadius() + sim.getDetRadius(),
-                 2 * sim.getRadius() + sim.getDetRadius());
+                 2 * sim.getRadius());
     return path;
 }
 

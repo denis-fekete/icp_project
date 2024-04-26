@@ -37,7 +37,6 @@ private:
 
     // Simulation
     std::unique_ptr<Simulator> simulator;
-    QTimer timer;
 
     // Generation of pseudo random numbers
     std::unique_ptr<RandomGenerator> randColor;

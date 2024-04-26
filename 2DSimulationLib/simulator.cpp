@@ -2,21 +2,36 @@
 
 #include <algorithm>
 
-#define LOG_PERFORMACE
+// #define LOG_PERFORMACE
 
 #ifdef LOG_PERFORMACE
     #include <chrono>
 #endif
 
-Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads, QTimer* timer) : scene(scene)
+Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads) : scene(scene)
 {
     this->maxThreads = maxThreads;
-    this->timer = timer;
     timerPeriod = 30; // default 30 ms period
     activeRobot = nullptr;
     activeObstacle = nullptr;
     keepSimCoresRunning = false;
-    connect(timer, SIGNAL(timeout()), this, SLOT(simulationCycle()));
+
+    connect(&timerSim, SIGNAL(timeout()), this, SLOT(simulationCycle()));
+    connect(&timerGraphics, SIGNAL(timeout()), this, SLOT(updateGraphicsPos()));
+}
+
+
+void Simulator::updateGraphicsPos()
+{
+    if(robots.size() == 0)
+    {
+        return;
+    }
+
+    for(size_t index = 0; index < robots.size(); index++)
+    {
+        robots.at(index)->positionUpdate();
+    }
 }
 
 void Simulator::simulationCycle()
@@ -46,12 +61,6 @@ void Simulator::simulationCycle()
     else
     {
         wakeCores.notify_all();
-
-
-    for(size_t index = 0; index < robots.size(); index++)
-    {
-         robots.at(index)->positionUpdate();
-    }
 #ifdef LOG_PERFORMACE
         cycleTime = 0;
         for(size_t index = 0; index < maxThreads; index++)
@@ -95,7 +104,7 @@ Simulator::~Simulator()
     this->keepSimCoresRunning = false;
     wakeCores.notify_all();
 
-    this->timer->stop();
+    this->timerSim.stop();
 }
 
 void Simulator::balanceCores()
@@ -324,7 +333,9 @@ void Simulator::deleteObstacle(size_t id)
 
 void Simulator::runSimulation()
 {
-    this->timer->start(timerPeriod);
+    this->timerSim.start(timerPeriod);
+    this->timerGraphics.start(timerPeriod / 2
+                              );
 
     for(size_t i = 0; i < obstacles.size(); i++)
     {
@@ -339,7 +350,8 @@ void Simulator::runSimulation()
 
 void Simulator::stopSimulation()
 {
-    this->timer->stop();
+    this->timerSim.stop();
+    this->timerGraphics.stop();
 
     for(size_t i = 0; i < obstacles.size(); i++)
     {

@@ -40,6 +40,7 @@ void SaveManager::saveToFile()
     BaseRobot* rob;
     AutoRobot* autoRob = nullptr;
 
+    const double simTimePeriod = 1000 / simulator.getTimerPeriod();
     for(size_t i = 0; i < simulator.getRobotsCount(); i++)
     {
         robSim = simulator.getRobot(i)->getSim();
@@ -73,8 +74,9 @@ void SaveManager::saveToFile()
 
         if(autoRob != nullptr)
         {
-            xmlWriter.writeTextElement("speed", QString::number(autoRob->getSpeed()));
-            xmlWriter.writeTextElement("turn_angle", QString::number(autoRob->getTurnAngle()));
+
+            xmlWriter.writeTextElement("speed", QString::number(autoRob->getSpeed() * simTimePeriod));
+            xmlWriter.writeTextElement("turn_angle", QString::number(autoRob->getTurnAngle() * simTimePeriod));
             xmlWriter.writeTextElement("turn_direction", QString::number(autoRob->getTurnDirection()));
         }
         xmlWriter.writeEndElement(); // end Robot

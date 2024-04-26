@@ -5,6 +5,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 
 #include <QTime>
 #include <QDebug>
@@ -19,7 +20,8 @@ class Simulator;
 #define DEFAULT_PEN_WIDTH 1
 #define HIGHLIGHTED_PEN_WIDTH 3
 
-class BaseRobot : public QGraphicsItem
+class BaseRobot : public QGraphicsPixmapItem
+// class BaseRobot : public QGraphicsItem
 {
 protected:
     /**
