@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (*scene, 0, &timer);
+    simulator = std::make_unique<Simulator> (*scene, 4, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 

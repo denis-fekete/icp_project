@@ -193,11 +193,11 @@ returnType SaveManager::readRobots()
 returnType SaveManager::readRobot()
 {
     bool automatic = false;
-    if(xmlReader.attributes().value("type") == "manual")
+    if(xmlReader.attributes().value("type") == "automatic")
     {
         automatic = true;
     }
-    else if (xmlReader.attributes().value("type") == "automatic")
+    else if (xmlReader.attributes().value("type") == "manual")
     {}
     else
     {
@@ -316,6 +316,8 @@ returnType SaveManager::readRobot()
                 turnAngle,
                 (turnDirection == 1) ? true : false);
         }
+        else
+            return err;
     }
     else
     {
@@ -328,6 +330,8 @@ returnType SaveManager::readRobot()
                 x, y, radius, rot, detRad,
                 color);
         }
+        else
+            return err;
     }
 
 

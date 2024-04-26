@@ -117,28 +117,50 @@ void Rectangle::updatePoints()
     updateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
-bool Rectangle::pointInRectangle(Point& point)
+bool Rectangle::onSegment(Point a, Point b, Point c)
 {
-    return (Line::pointOnLeftSide(point, this->LB, this->RB) &&
-            Line::pointOnLeftSide(point, this->RB, this->RT) &&
-            Line::pointOnLeftSide(point, this->RT, this->LT) &&
-            Line::pointOnLeftSide(point, this->LT, this->LB));
+    if (b.x <= std::max(a.x, c.x) && b.x >= std::min(a.x, c.x) &&
+        b.y <= std::max(a.y, c.y) && b.y >= std::min(a.y, c.y))
+        return true;
 
-    // if(Line::pointOnLeftSide(point, this->LB, this->RB))
-    // {
-    //     if(Line::pointOnLeftSide(point, this->RB, this->RT))
-    //     {
-    //         if(Line::pointOnLeftSide(point, this->RT, this->LT))
-    //         {
-    //             if(Line::pointOnLeftSide(point, this->LT, this->LB))
-    //             {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    // }
+    return false;
+}
 
-    // return false;
+
+int Rectangle::orientation(Point a, Point b, Point c)
+{
+    int val = (b.y - a.y) * (c.x - b.x) -
+              (b.x - a.x) * (c.y - b.y);
+
+    if (val == 0) return 0;
+
+    return (val > 0)? 1: 2;
+}
+
+bool Rectangle::linesIntersect(Point a, Point b, Point c, Point d)
+{
+    int o1 = orientation(a, b, c);
+    int o2 = orientation(a, b, d);
+    int o3 = orientation(c, d, a);
+    int o4 = orientation(c, d, b);
+
+    if (o1 != o2 && o3 != o4)
+        return true;
+
+    // Special Cases
+    // p1, q1 and p2 are collinear and p2 lies on segment p1q1
+    if (o1 == 0 && onSegment(a, d, b)) return true;
+
+    // p1, q1 and q2 are collinear and q2 lies on segment p1q1
+    if (o2 == 0 && onSegment(a, d, b)) return true;
+
+    // p2, q2 and p1 are collinear and p1 lies on segment p2q2
+    if (o3 == 0 && onSegment(c, a, d)) return true;
+
+    // p2, q2 and q1 are collinear and q1 lies on segment p2q2
+    if (o4 == 0 && onSegment(c, a, d)) return true;
+
+    return false;
 }
 
 #define POLYGON_EDGE_COUNT 4
@@ -147,64 +169,53 @@ bool Rectangle::pointInRectangle(Point& point)
 #define RT_LT_LINE 2
 #define LT_LB_LINE 3
 
-Line Rectangle::breakIntoEdges(int line)
+void Rectangle::breakIntoEdges(int line, Point* start, Point* end)
 {
     switch (line)
     {
     case LB_RB_LINE:
-        return Line(this->LB, this->RB);
+        *start = this->LB;
+        *end = this->RB;
+        break;
     case RB_RT_LINE:
-        return Line(this->RB, this->RT);
+        *start = this->RB;
+        *end = this->RT;
+        break;
     case RT_LT_LINE:
-        return Line(this->RT, this->LT);
+        *start = this->RT;
+        *end = this->LT;
+        break;
     default:
-        return Line(this->LT, this->LB);
+        *start = this->LT;
+        *end = this->LB;
+        break;
     }
 }
 
 bool Rectangle::intersects(Rectangle* other)
 {
-    // Check corner points of rectangle
-    if( other->pointInRectangle(this->LB) ||
-        other->pointInRectangle(this->RB) ||
-        other->pointInRectangle(this->RT) ||
-        other->pointInRectangle(this->LT) ||
-        this->pointInRectangle(other->LB) ||
-        this->pointInRectangle(other->RB) ||
-        this->pointInRectangle(other->RT) ||
-        this->pointInRectangle(other->LT)
-        )
-    {
-        return true;
-    }
-
     // Check whenever edges of rectangle intesect
     Point intersectionPoint;
-    Line lineA{0, 0};
-    Line lineB{0, 0};
+    Point a, b;
+    Point c, d;
     for(int i = 0; i < POLYGON_EDGE_COUNT; i++)
     {
-        lineA = this->breakIntoEdges(i);
+        this->breakIntoEdges(i, &a, &b);
 
         for (int j = 0; j < POLYGON_EDGE_COUNT; j++)
         {
-            lineB = other->breakIntoEdges(j);
+            other->breakIntoEdges(j, &c, &d);
 
-            // Check if lines intersect
-            if(Line::linesIntersects(lineA, lineB, intersectionPoint))
+            if(linesIntersect(a, b, c, d))
             {
-                // Check if found point is in both rectangles
-                if(this->pointInRectangle(intersectionPoint) && other->pointInRectangle(intersectionPoint))
-                {
-                    return true;
-                }
-                qDebug("line intersect, but point not");
+                return true;
             }
         }
     }
 
     return false;
 }
+
 #undef POLYGON_EDGE_COUNT
 #undef POLYGON_EDGE_COUNT
 #undef LB_RB_LINE

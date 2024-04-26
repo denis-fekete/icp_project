@@ -5,7 +5,6 @@
 #include <QtDebug>
 
 #include "point.h"
-#include "line.h"
 #include "circle.h"
 
 class Rectangle : public Circle
@@ -134,6 +133,35 @@ public:
         LT.x += deltaX; LT.y += deltaY;
     }
 
+
+    /**
+     * @brief onSegment Checks if Point c lies on line segment
+     * @param a Start of line segment
+     * @param b End of line segment
+     * @param c Point that is cheched
+     * @return True if point lies on segment
+     */
+    bool onSegment(Point a, Point b, Point c);
+
+    /**
+     * @brief Returns orientation of points
+     * @param a Start of first line
+     * @param b End of fisrt line
+     * @param c Point that is checked
+     * @return Returns: 0 if c is collinear with a,b line, 1 if on right side, 2 if on left side
+     */
+    int orientation(Point a, Point b, Point c);
+
+    /**
+     * @brief Checks if two line intersect
+     * @param a Start point of first line
+     * @param b End point of first line
+     * @param c Start point of second line
+     * @param d End point of second
+     * @return True if lines intersect
+     */
+    bool linesIntersect(Point a, Point b, Point c, Point d);
+
 protected:
     /**
      * @brief Updates single point based on `center` Point
@@ -152,11 +180,11 @@ protected:
 
     /**
      * @brief Returns one of the Rectangle lines based on `line`
-     * @param line Enum (Integer) value based on which Line of the Rectangle
-     * will be returned
-     * @return Line of this Rectangle
+     * @param line Value based on which line of the Rectangle will be returned
+     * @param start Start point of the line
+     * @param end End point of the line
      */
-    Line breakIntoEdges(int line);
+    void breakIntoEdges(int line, Point* start, Point* end);
 
     /**
      * @brief Checks if Point is in this Rectangle
