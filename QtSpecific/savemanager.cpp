@@ -45,12 +45,12 @@ void SaveManager::saveToFile()
         if(typeid(*rob) == typeid(ManualRobot))
         {
             xmlWriter.writeStartElement("Robot");
-            xmlWriter.writeAttribute("type=", "manual");
+            xmlWriter.writeAttribute("type", "manual");
         }
         else
         {
             xmlWriter.writeStartElement("Robot");
-            xmlWriter.writeAttribute("type=", "automatic");
+            xmlWriter.writeAttribute("type", "automatic");
             autoRob = dynamic_cast<AutoRobot*> (rob);
         }
 
@@ -122,6 +122,7 @@ void SaveManager::loadFromFile()
 
     if(!file.open(QIODevice::ReadOnly))
     {
+        // TODO:
         qDebug("Failed to open XML file for reading");
     }
 
@@ -130,6 +131,7 @@ void SaveManager::loadFromFile()
     xmlReader.readNextStartElement();
     if(xmlReader.name() != "Simulation_space")
     {
+        // TODO:
         qDebug("unknown xml format");
         return;
     }
@@ -137,7 +139,6 @@ void SaveManager::loadFromFile()
     returnType result = readNext;
     while(!xmlReader.atEnd())
     {
-        qDebug("a");
         if(result == readNext)
             xmlReader.readNextStartElement();
 
@@ -145,12 +146,10 @@ void SaveManager::loadFromFile()
         {
             if(xmlReader.name() == "Robots")
             {
-                qDebug("found robots");
                 result = readRobots();
             }
             else if(xmlReader.name() == "Obstacles")
             {
-                qDebug("found obstacles");
                 result = readObstacles();
             }
             else
@@ -186,6 +185,18 @@ returnType SaveManager::readRobots()
 
 returnType SaveManager::readRobot()
 {
+    bool automatic = false;
+    if(xmlReader.attributes().value("type") == "manual")
+    {
+        automatic = true;
+    }
+    else if (xmlReader.attributes().value("type") == "automatic")
+    {}
+    else
+    {
+        return err;
+    }
+
     double x = -1;
     double y = -1;
     double radius = -1;
@@ -284,18 +295,34 @@ returnType SaveManager::readRobot()
         }
     }
 
-    // check if all parameters were read
-    if(x > -1 && y > -1 && radius > -1 && detRad > -1 && speed > -1 &&
-        rotRead && colorRedRead && colorGreenRead &&
-        colorBlueRead && turnAngleRead && turnDirectionRead)
+    if(automatic)
     {
-        simulator.addAutomaticRobot(
-            x, y, radius, rot, detRad,
-            color,
-            speed,
-            turnAngle,
-            (turnDirection == 1) ? true : false);
+        // check if all parameters were read
+        if(x > -1 && y > -1 && radius > -1 && detRad > -1 && speed > -1 &&
+            rotRead && colorRedRead && colorGreenRead &&
+            colorBlueRead && turnAngleRead && turnDirectionRead)
+        {
+            simulator.addAutomaticRobot(
+                x, y, radius, rot, detRad,
+                color,
+                speed,
+                turnAngle,
+                (turnDirection == 1) ? true : false);
+        }
     }
+    else
+    {
+        // check if all parameters were read
+        if(x > -1 && y > -1 && radius > -1 && detRad > -1 && speed > -1 &&
+            rotRead && colorRedRead && colorGreenRead &&
+            colorBlueRead)
+        {
+            simulator.addManualRobot(
+                x, y, radius, rot, detRad,
+                color);
+        }
+    }
+
 
     if(xmlReader.name() == "Obstacles")
         return dontReadNext;

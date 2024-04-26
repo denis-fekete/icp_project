@@ -145,7 +145,7 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                                      turnAngle / timeNorm,
                                                      turnRight, &colliders, this));
     // add its collider to the vector of colliders
-    colliders.push_back(autoRobots.back().get()->getSim().getColliderInner());
+    colliders.push_back(autoRobots.back().get()->getSim()->getColliderInner());
     // add it do vector of all robots
     robots.push_back(autoRobots.back().get());
 
@@ -164,7 +164,7 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
     // create new AutoRobot and add it to vector of manual robots
     manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, this));
     // add its collider to the vector of colliders
-    colliders.push_back(manualRobots.back().get()->getSim().getColliderInner());
+    colliders.push_back(manualRobots.back().get()->getSim()->getColliderInner());
     // add it do vector of all robots
     robots.push_back(manualRobots.back().get());
 
@@ -242,7 +242,7 @@ void Simulator::deleteRobot(size_t id)
         return;
     }
 
-    Rectangle* colliderToDelete = activeRobot->getSim().getColliderInner();
+    Rectangle* colliderToDelete = activeRobot->getSim()->getColliderInner();
     auto foundCollider = std::find(colliders.begin(), colliders.end(), colliderToDelete);
     if(foundCollider != colliders.end())
         colliders.erase(foundCollider);
