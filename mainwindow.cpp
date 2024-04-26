@@ -325,30 +325,29 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        simulator->setActiveRobot(simulator->getRobotsCount() -1);
+        simulator->setActiveRobot(0);
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
-    auto old = ui->input_robot_IDSelector->value();
     ui->input_robot_IDSelector->setMaximum(static_cast<int>(simulator->getRobotsCount()) -1);
-    ui->input_robot_IDSelector->setValue(old);
-    on_input_robot_IDSelector_valueChanged(old);
 }
 
 void MainWindow::on_btnDeleteRobot_clicked()
 {
     // get active robot id
     auto robotId = ui->input_robot_IDSelector->value();
+
     // erase robot
     simulator->deleteRobot(robotId);
+
     // calculate new val
-    auto val = static_cast<int> (simulator->getRobotsCount()) - 1;
+    auto newCount = static_cast<int> (simulator->getRobotsCount()) - 1;
 
-    if(val <= 0)
-        val = 0;
+    if(newCount <= 0)
+        newCount = 0;
 
-    ui->input_robot_IDSelector->setMaximum(val);
-    ui->input_robot_IDSelector->setValue(val);
+    ui->input_robot_IDSelector->setMaximum(newCount);
+    on_input_robot_IDSelector_valueChanged(newCount);
 
     scene->update();
 }
@@ -410,10 +409,7 @@ void MainWindow::on_btnCreateObstacle_clicked()
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
-    auto old = ui->input_obstacle_IDSelector->value();
     ui->input_obstacle_IDSelector->setMaximum(static_cast<int>(simulator->getObstaclesCount()) -1);
-    ui->input_obstacle_IDSelector->setValue(old);
-    on_input_obstacle_IDSelector_valueChanged(old);
 }
 
 void MainWindow::on_input_obstacle_randomizeColors_toggled(bool checked)
@@ -430,13 +426,13 @@ void MainWindow::on_btnDeleteObstacle_clicked()
     // erase robot
     simulator->deleteObstacle(obstacleId);
     // calculate new val
-    auto val = static_cast<int> (simulator->getObstaclesCount()) - 1;
+    auto newCount = static_cast<int> (simulator->getObstaclesCount()) - 1;
 
-    if(val <= 0)
-        val = 0;
+    if(newCount <= 0)
+        newCount = 0;
 
-    ui->input_obstacle_IDSelector->setMaximum(val);
-    ui->input_obstacle_IDSelector->setValue(val);
+    ui->input_obstacle_IDSelector->setMaximum(newCount);
+    on_input_obstacle_IDSelector_valueChanged(newCount);
 
     scene->update();
 }

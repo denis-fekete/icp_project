@@ -1,7 +1,12 @@
 #include "simulator.h"
-#include <chrono>
-// #define LOG_PERFORMACE
 
+#include <algorithm>
+
+#define LOG_PERFORMACE
+
+#ifdef LOG_PERFORMACE
+    #include <chrono>
+#endif // LOG_PERFORMACE
 
 Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads, QTimer* timer) : scene(scene)
 {
@@ -73,7 +78,7 @@ void Simulator::initializeCores()
 }
 
 void Simulator::createSimulationCore(std::vector<std::unique_ptr<SimulationCore>>* simCores,
-                                     std::vector<std::unique_ptr<AutoRobot>>* robots,
+                                     std::vector<BaseRobot*>* robots,
                                      std::condition_variable* wakeCores,
                                      std::mutex* mutex,
                                      bool* keepSimulating)
@@ -126,17 +131,38 @@ void Simulator::balanceCores()
     }
 }
 
-
 void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                      double detRadius, QColor color, double speed,
                                      double turnAngle, bool turnRight)
 {
-    robots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, &colliders, &activeRobot));
-    colliders.push_back(robots.back().get()->getSim().getColliderInner());
+    // create new AutoRobot and add it to vector of autorobots
+    autoRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, &colliders, &activeRobot));
+    // add its collider to the vector of colliders
+    colliders.push_back(autoRobots.back().get()->getSim().getColliderInner());
+    // add it do vector of all robots
+    robots.push_back(autoRobots.back().get());
 
-    robots.back()->initialize();
+    // initialize it and add it the scene
+    autoRobots.back()->initialize();
+    scene.addItem(autoRobots.back().get());
 
-    scene.addItem(robots.back().get());
+    balanceCores();
+    scene.update();
+}
+
+void Simulator::addManualRobot(double x, double y, double radius, double rot,
+                                  double detRadius, QColor color)
+{
+    // create new AutoRobot and add it to vector of manual robots
+    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, &activeRobot));
+    // add its collider to the vector of colliders
+    colliders.push_back(manualRobots.back().get()->getSim().getColliderInner());
+    // add it do vector of all robots
+    robots.push_back(manualRobots.back().get());
+
+    // initialize it and add it the scene
+    manualRobots.back()->initialize();
+    scene.addItem(manualRobots.back().get());
 
     balanceCores();
     scene.update();
@@ -161,8 +187,12 @@ void Simulator::setActiveRobot(size_t id)
     {
         activeRobot->setUnselected();
     }
-    activeRobot = robots.at(id).get();
-    activeRobot->setSelected();
+
+    if(id >= 0 && id < robots.size())
+    {
+        activeRobot = robots.at(id);
+        activeRobot->setSelected();
+    }
 }
 
 void Simulator::setActiveObstacle(size_t id)
@@ -171,28 +201,86 @@ void Simulator::setActiveObstacle(size_t id)
     {
         activeObstacle->setUnselected();
     }
-    activeObstacle = obstacles.at(id).get();
-    activeObstacle->setSelected();
+
+    if(id >= 0 && id < obstacles.size())
+    {
+        activeObstacle = obstacles.at(id).get();
+        activeObstacle->setSelected();
+    }
 }
 
 void Simulator::deleteRobot(size_t id)
 {
-    Rectangle* colliderToDelete = robots.at(id).get()->getSim().getColliderInner();
-    for(size_t i = id; i < colliders.size(); i++)
+    if(activeRobot == nullptr)
     {
-        if(colliders.at(i) == colliderToDelete)
+        return;
+    }
+
+    if(! (id >= 0 && id < robots.size()))
+    {
+        return;
+    }
+
+    Rectangle* colliderToDelete = activeRobot->getSim().getColliderInner();
+    auto foundCollider = std::find(colliders.begin(), colliders.end(), colliderToDelete);
+    if(foundCollider != colliders.end())
+        colliders.erase(foundCollider);
+
+
+    std::unique_ptr<BaseRobot>* foundRobot;
+    auto activeRobotPtr = activeRobot;
+
+    if(typeid(*activeRobot) == typeid(ManualRobot))
+    {
+        auto foundIt = std::find_if(manualRobots.begin(), manualRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
+            return ptr.get() == activeRobotPtr;});
+
+        if(foundIt != manualRobots.end())
         {
-            colliders.erase(colliders.begin() + i);
-            break;
+            foundRobot = &(*foundIt);
+            scene.removeItem(foundRobot->get());
+
+            auto foundRob = std::find(robots.begin(), robots.end(), activeRobot);
+
+            robots.erase(foundRob);
+            manualRobots.erase(foundIt);
+        }
+    }
+    else
+    {
+        auto foundIt = std::find_if(autoRobots.begin(), autoRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
+            return ptr.get() == activeRobotPtr;});
+
+        if(foundIt != autoRobots.end())
+        {
+            foundRobot = &(*foundIt);
+            scene.removeItem(foundRobot->get());
+
+            auto foundRob = std::find(robots.begin(), robots.end(), activeRobot);
+
+            robots.erase(foundRob);
+            autoRobots.erase(foundIt);
         }
     }
 
-    robots.erase(robots.begin() + id);
     activeRobot = nullptr;
+
+    balanceCores();
+    scene.update();
 }
 
 void Simulator::deleteObstacle(size_t id)
 {
+    if(activeObstacle == nullptr)
+    {
+        return;
+    }
+
+    if(! (id >= 0 && id < obstacles.size()))
+    {
+        return;
+    }
+
     Rectangle* colliderToDelete = obstacles.at(id).get()->getSim();
     for(size_t i = id; i < colliders.size(); i++)
     {
@@ -203,6 +291,49 @@ void Simulator::deleteObstacle(size_t id)
         }
     }
 
+    scene.removeItem(obstacles.at(id).get());
+    obstacles.at(id).release();
     obstacles.erase(obstacles.begin() + id);
     activeObstacle = nullptr;
+
+    scene.update();
 }
+
+
+/**
+ * @brief Starts simulation
+ */
+void Simulator::runSimulation()
+{
+    this->timer->start(timerPeriod_ms);
+
+    for(size_t i = 0; i < obstacles.size(); i++)
+    {
+        obstacles.at(i).get()->setFlag(QGraphicsItem::ItemIsMovable, false);
+    }
+
+    for(size_t i = 0; i < robots.size(); i++)
+    {
+        robots.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
+    }
+}
+
+/**
+ * @brief Stops simulation
+ */
+void Simulator::stopSimulation()
+{
+    this->timer->stop();
+
+    for(size_t i = 0; i < obstacles.size(); i++)
+    {
+        obstacles.at(i).get()->setFlag(QGraphicsItem::ItemIsMovable, true);
+    }
+
+    for(size_t i = 0; i < robots.size(); i++)
+    {
+        robots.at(i)->setFlag(QGraphicsItem::ItemIsMovable, true);
+    }
+}
+
+

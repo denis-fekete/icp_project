@@ -36,7 +36,7 @@ void SaveManager::saveToFile()
     for(size_t i = 0; i < simulator.getRobotsCount(); i++)
     {
         Robot robSim = simulator.getRobot(i)->getSim();
-        AutoRobot* rob = simulator.getRobot(i);
+        BaseRobot* rob = simulator.getRobot(i);
 
         xmlWriter.writeStartElement("Robot");
         xmlWriter.writeAttribute("id", QString::number(i));
@@ -53,9 +53,9 @@ void SaveManager::saveToFile()
         xmlWriter.writeTextElement("color_green", QString::number(rob->getColor().green()));
         xmlWriter.writeTextElement("color_blue", QString::number(rob->getColor().blue()));
 
-        xmlWriter.writeTextElement("speed", QString::number(rob->getSpeed()));
-        xmlWriter.writeTextElement("turn_angle", QString::number(rob->getTurnAngle()));
-        xmlWriter.writeTextElement("turn_direction", QString::number(rob->getTurnDirection()));
+        // xmlWriter.writeTextElement("speed", QString::number(rob->getSpeed()));
+        // xmlWriter.writeTextElement("turn_angle", QString::number(rob->getTurnAngle()));
+        // xmlWriter.writeTextElement("turn_direction", QString::number(rob->getTurnDirection()));
         xmlWriter.writeEndElement(); // end Robot
     }
 

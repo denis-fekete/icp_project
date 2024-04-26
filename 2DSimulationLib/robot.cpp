@@ -29,6 +29,16 @@ void Robot::moveForward(double distance)
     colliderInner.moveInDirection(xDelta, yDelta);
 }
 
+void Robot::moveTo(Point p)
+{
+    this->x = p.x;
+    this->y = p.y;
+
+    colliderInner.moveTo(p);
+
+    rotate(0);
+}
+
 double dAbs(double val)
 {
     return (val > 0) ? val : -val;
@@ -64,7 +74,6 @@ void Robot::rotate(double angle)
     // translate point back
     colliderFwd.x = this->x + xDelta;
     colliderFwd.y = this->y + yDelta;
-
 
     colliderFwd.updatePoints(cosRad, sinRad);
 }

@@ -10,7 +10,9 @@
 #include <QTimer>
 #include <QGraphicsScene>
 
+#include "../QtSpecific/baserobot.h"
 #include "../QtSpecific/autorobot.h"
+#include "../QtSpecific/manualrobot.h"
 #include "../QtSpecific/obstacle.h"
 #include "../2DSimulationLib/rectangle.h"
 #include "simulationcore.h"
@@ -18,7 +20,6 @@
 class Simulator : public QObject
 {
     Q_OBJECT
-
 public:
     /**
      * @brief Constructor of Simulator object
@@ -46,6 +47,18 @@ public:
                               double turnAngle, bool turnRight);
 
     /*
+     * @brief Creates and adds new AutoRobot to the scene
+     * @param x Center X position to be set
+     * @param y Center Y position to be set
+     * @param radius Radius if this Robot
+     * @param rot Rotation of this robot
+     * @param detRadius Detection radius of this robot
+     * @param color Color of the AutoRobot
+     */
+    void addManualRobot(double x, double y, double radius, double rot,
+                        double detRadius, QColor color);
+
+    /*
      * @brief Creates and adds new Obstacle to the scene
      * @param x Center X position to be set
      * @param y Center Y position to be set
@@ -56,6 +69,8 @@ public:
      */
     void addObstacle(double x, double y, double w, double h, double rot,
                             QColor& color);
+
+
 
     /**
      * @brief Initializes SimulationCores and starts it loop
@@ -68,7 +83,7 @@ public:
     inline size_t getObstaclesCount() { return obstacles.size(); }
 
     inline Obstacle* getObstacle(size_t id) { return obstacles.at(id).get(); }
-    inline AutoRobot* getRobot(size_t id) { return robots.at(id).get(); }
+    inline BaseRobot* getRobot(size_t id) { return robots.at(id); }
 
     void deleteRobot(size_t id);
     void deleteObstacle(size_t id);
@@ -76,12 +91,12 @@ public:
     /**
      * @brief Starts simulation
      */
-    inline void runSimulation() { this->timer->start(timerPeriod_ms); }
+    void runSimulation();
 
     /**
      * @brief Stops simulation
      */
-    inline void stopSimulation() { this->timer->stop(); }
+    void stopSimulation();
 
     /**
      * @brief Sets period of QTimer updating in milliseconds
@@ -114,7 +129,7 @@ public:
     /**
      * @return Returns pointer to activeRobot
      */
-    inline AutoRobot* getActiveRobot() { return activeRobot; }
+    inline BaseRobot* getActiveRobot() { return activeRobot; }
 
     /**
      * @return Returns pointer to activeObstacle
@@ -128,9 +143,19 @@ private:
     QGraphicsScene& scene;
 
     /**
-     * @brief Reference to the vector of Robots
+     * @brief robots Vector of Robots
      */
-    std::vector<std::unique_ptr<AutoRobot>> robots;
+    std::vector<BaseRobot*> robots;
+
+    /**
+     * @brief autoRobots Vector of automatic robots
+     */
+    std::vector<std::unique_ptr<BaseRobot>> autoRobots;
+
+    /**
+     * @brief manualRobots vector of manual robots
+     */
+    std::vector<std::unique_ptr<BaseRobot>> manualRobots;
 
     /**
      * @brief Reference to the vector of Robots
@@ -152,8 +177,14 @@ private:
      */
     std::vector<std::unique_ptr<std::thread>> simThreads;
 
-    AutoRobot* activeRobot;
+    /**
+     * @brief activeRobot Pointer to active AutoRobot
+     */
+    BaseRobot* activeRobot;
 
+    /**
+     * @brief activeObstacle Pointer to active active Obstacle
+     */
     Obstacle* activeObstacle;
 
     /**
@@ -201,7 +232,7 @@ private:
      * @param keepSimulating Pointer to bool value for turning off simulation loop
      */
     static void createSimulationCore(std::vector<std::unique_ptr<SimulationCore>>* simCores,
-                                         std::vector<std::unique_ptr<AutoRobot>>* robots,
+                                         std::vector<BaseRobot *> *robots,
                                          std::condition_variable* wakeCores,
                                          std::mutex* mutex,
                                          bool* keepSimulating);

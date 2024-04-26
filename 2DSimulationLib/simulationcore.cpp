@@ -1,6 +1,6 @@
 #include "simulationcore.h"
 
-SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot> > *allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate) : allRobots(allRobots)
+SimulationCore::SimulationCore(std::vector<BaseRobot *> *allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate) : allRobots(allRobots)
 {
     myRobotsStart = 0;
     myRobotsEnd = 0;
@@ -15,7 +15,7 @@ SimulationCore::SimulationCore(std::vector<std::unique_ptr<AutoRobot> > *allRobo
 
 void SimulationCore::runSimulation()
 {
-    auto lock = new std::unique_lock<std::mutex>(*mutex);
+    auto lock = std::make_unique<std::unique_lock<std::mutex>> (*mutex);
     while(*simulate)
     {
         // wait until i am notified

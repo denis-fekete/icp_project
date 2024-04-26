@@ -17,13 +17,12 @@ SOURCES += \
     2DSimulationLib/simulationcore.cpp \
     2DSimulationLib/simulator.cpp \
     QtSpecific/autorobot.cpp \
+    QtSpecific/baserobot.cpp \
+    QtSpecific/manualrobot.cpp \
     QtSpecific/obstacle.cpp \
     QtSpecific/savemanager.cpp \
     main.cpp \
-    mainwindow.cpp \
-    obstacle_menu.cpp \
-    robot_menu.cpp \
-    world_menu.cpp
+    mainwindow.cpp
 
 HEADERS += \
     2DSimulationLib/circle.h \
@@ -35,6 +34,8 @@ HEADERS += \
     2DSimulationLib/simulationcore.h \
     2DSimulationLib/simulator.h \
     QtSpecific/autorobot.h \
+    QtSpecific/baserobot.h \
+    QtSpecific/manualrobot.h \
     QtSpecific/obstacle.h \
     QtSpecific/savemanager.h \
     mainwindow.h

@@ -59,6 +59,13 @@ public:
      */
     void moveForward(double distance);
 
+
+    /**
+     * @brief moveTo Moves Robot to Point `p`
+     * @param p New center position of Robot
+     */
+    void moveTo(Point p);
+
     /**
      * @brief Add rotation to this Rectangle, and update all points
      * @param angle Angle to be added to the Rectangle

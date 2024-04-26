@@ -11,8 +11,8 @@ void Obstacle::initialize()
 {
     this->setPos(sim.getX(), sim.getY());
     this->setRotation(sim.getRotation());
-    this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    this->setFlag(QGraphicsItem::ItemIsMovable);
 
     this->setTransformOriginPoint(0, 0);
     brush = QBrush(color);
@@ -68,7 +68,7 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Obstacle::setSelected()
 {
-    brush.setStyle(Qt::Dense3Pattern);
+    brush.setStyle(Qt::Dense1Pattern);
 }
 
 void Obstacle::setUnselected()
