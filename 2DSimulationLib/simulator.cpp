@@ -34,7 +34,9 @@ void Simulator::simulationCycle()
         for(size_t index = 0; index < robots.size(); index++)
         {
             robots.at(index)->simulate();
+            robots.at(index)->positionUpdate();
         }
+
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
@@ -352,6 +354,8 @@ void Simulator::stopSimulation()
 
 ManualRobot* Simulator::getActiveManualRobot()
 {
+    if(activeRobot == nullptr)
+        return nullptr;
     // check if active robot is manul robot, if not return nullptr
     if(typeid(*activeRobot) == typeid(ManualRobot))
         return dynamic_cast<ManualRobot*> (activeRobot);

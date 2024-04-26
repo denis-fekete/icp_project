@@ -53,7 +53,6 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-
     if(change == GraphicsItemChange::ItemPositionHasChanged)
     {
         QPointF newPosition = value.toPointF();
@@ -68,7 +67,7 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Obstacle::setSelected()
 {
-    brush.setStyle(Qt::Dense1Pattern);
+    brush.setStyle(Qt::SolidPattern);
 }
 
 void Obstacle::setUnselected()

@@ -36,10 +36,12 @@ void AutoRobot::simulate()
     bool collision = this->sim.obstacleDetection(colliders);
     if(collision)
     {
+        qDebug("rotating");
         this->rotateRobot(turnAngle * turnDirection);
     }
     else
     {
+        qDebug("moving");
         this->moveRobot(speed);
     }
 }

@@ -17,7 +17,7 @@ void Rectangle::moveTo(Point p)
     this->y = p.y;
 
     // Call updatePoints to update points based on rotation
-    this->updatePoints();
+    updatePoints(cosRad, sinRad);
 }
 
 void Rectangle::moveForward(double distance)
@@ -117,21 +117,6 @@ void Rectangle::updatePoints()
     updateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
-Line Rectangle::breakIntoEdges(RectLines line)
-{
-    switch (line)
-    {
-    case RectLines::bottom:
-        return Line(this->LB, this->RB);
-    case RectLines::right:
-        return Line(this->RB, this->RT);
-    case RectLines::top:
-        return Line(this->RT, this->LT);
-    default:
-        return Line(this->LT, this->LB);
-    }
-}
-
 bool Rectangle::pointInRectangle(Point& point)
 {
     return (Line::pointOnLeftSide(point, this->LB, this->RB) &&
@@ -157,18 +142,41 @@ bool Rectangle::pointInRectangle(Point& point)
 }
 
 #define POLYGON_EDGE_COUNT 4
+#define LB_RB_LINE 0
+#define RB_RT_LINE 1
+#define RT_LT_LINE 2
+#define LT_LB_LINE 3
+
+Line Rectangle::breakIntoEdges(int line)
+{
+    switch (line)
+    {
+    case LB_RB_LINE:
+        return Line(this->LB, this->RB);
+    case RB_RT_LINE:
+        return Line(this->RB, this->RT);
+    case RT_LT_LINE:
+        return Line(this->RT, this->LT);
+    default:
+        return Line(this->LT, this->LB);
+    }
+}
+
 bool Rectangle::intersects(Rectangle* other)
 {
-    // Check points of rectangle
-    // if(other->pointInRectangle(this->LB)) {return true; }
-    // if(other->pointInRectangle(this->RB)) {return true; }
-    // if(other->pointInRectangle(this->RT)) {return true; }
-    // if(other->pointInRectangle(this->LT)) {return true; }
-    // Check if other rectangle is not inside this rectaangle
-    // if(pointInRectangle(other->LB)) {return true; }
-    // if(pointInRectangle(other->RB)) {return true; }
-    // if(pointInRectangle(other->RT)) {return true; }
-    // if(pointInRectangle(other->LT)) {return true; }
+    // Check corner points of rectangle
+    if( other->pointInRectangle(this->LB) ||
+        other->pointInRectangle(this->RB) ||
+        other->pointInRectangle(this->RT) ||
+        other->pointInRectangle(this->LT) ||
+        this->pointInRectangle(other->LB) ||
+        this->pointInRectangle(other->RB) ||
+        this->pointInRectangle(other->RT) ||
+        this->pointInRectangle(other->LT)
+        )
+    {
+        return true;
+    }
 
     // Check whenever edges of rectangle intesect
     Point intersectionPoint;
@@ -176,11 +184,11 @@ bool Rectangle::intersects(Rectangle* other)
     Line lineB{0, 0};
     for(int i = 0; i < POLYGON_EDGE_COUNT; i++)
     {
-        lineA = breakIntoEdges(static_cast<RectLines>(i));
+        lineA = this->breakIntoEdges(i);
 
         for (int j = 0; j < POLYGON_EDGE_COUNT; j++)
         {
-            lineB = other->breakIntoEdges(static_cast<RectLines>(j));
+            lineB = other->breakIntoEdges(j);
 
             // Check if lines intersect
             if(Line::linesIntersects(lineA, lineB, intersectionPoint))
@@ -190,6 +198,7 @@ bool Rectangle::intersects(Rectangle* other)
                 {
                     return true;
                 }
+                qDebug("line intersect, but point not");
             }
         }
     }
@@ -197,3 +206,8 @@ bool Rectangle::intersects(Rectangle* other)
     return false;
 }
 #undef POLYGON_EDGE_COUNT
+#undef POLYGON_EDGE_COUNT
+#undef LB_RB_LINE
+#undef RB_RT_LINE
+#undef RT_LT_LINE
+#undef LT_LB_LINE

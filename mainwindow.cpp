@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QStyleFactory>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ------------------------------------------------------------------------
     // Setup simulation
-    simulator = std::make_unique<Simulator> (*scene, 4, &timer);
+    simulator = std::make_unique<Simulator> (*scene, 0, &timer);
     simulator->initializeCores();
     simulator->setTimerPeriod(30);
 
@@ -502,7 +503,9 @@ void MainWindow::on_input_manualrobot_forward_clicked()
     }
     else
     {
-        //TODO:
+        QMessageBox msgBox;
+        msgBox.setText("Warning: No ManualRobot is selected.");
+        msgBox.exec();
     }
 }
 
@@ -519,7 +522,9 @@ void MainWindow::on_input_manualrobot_stay_clicked()
     }
     else
     {
-        //TODO:
+        QMessageBox msgBox;
+        msgBox.setText("Warning: No ManualRobot is selected.");
+        msgBox.exec();
     }
 }
 
@@ -537,7 +542,9 @@ void MainWindow::on_input_manualrobot_anticlockwise_clicked()
     }
     else
     {
-        //TODO:
+        QMessageBox msgBox;
+        msgBox.setText("Warning: No ManualRobot is selected.");
+        msgBox.exec();
     }
 }
 
@@ -557,7 +564,9 @@ void MainWindow::on_input_manualrobot_clockwise_clicked()
     }
     else
     {
-        //TODO:
+        QMessageBox msgBox;
+        msgBox.setText("Warning: No ManualRobot is selected.");
+        msgBox.exec();
     }
 }
 

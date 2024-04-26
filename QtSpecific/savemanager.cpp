@@ -1,7 +1,7 @@
 #include "savemanager.h"
 
+#include <QMessageBox>
 #include <QCoreApplication>
-#include <iostream>
 
 SaveManager::SaveManager(Simulator& simulator, QWidget* widget) : simulator(simulator)
 {
@@ -19,7 +19,10 @@ void SaveManager::saveToFile()
 
     if(!file.open(QIODevice::ReadWrite | QIODevice::Truncate))
     {
-        qDebug("Failed to open XML file for reading");
+        QMessageBox msgBox;
+        msgBox.setText("Failed to open XML file for reading! No changes will be made to Simulator.");
+        msgBox.exec();
+        return;
     }
 
     xmlWriter.setDevice(&file);
@@ -122,8 +125,10 @@ void SaveManager::loadFromFile()
 
     if(!file.open(QIODevice::ReadOnly))
     {
-        // TODO:
-        qDebug("Failed to open XML file for reading");
+        QMessageBox msgBox;
+        msgBox.setText("Failed to open XML file for reading. No changes will be done to Simulator");
+        msgBox.exec();
+        return;
     }
 
     xmlReader.setDevice(&file);
@@ -131,9 +136,9 @@ void SaveManager::loadFromFile()
     xmlReader.readNextStartElement();
     if(xmlReader.name() != "Simulation_space")
     {
-        // TODO:
-        qDebug("unknown xml format");
-        return;
+        QMessageBox msgBox;
+        msgBox.setText("Bad XML format. First element is not <Simualtio_space>");
+        msgBox.exec();
     }
 
     returnType result = readNext;
@@ -154,16 +159,18 @@ void SaveManager::loadFromFile()
             }
             else
             {
-                std::cout << "Unknown: " << xmlReader.name().toString().toStdString() << std::endl;
                 result = err;
+                break;
             }
         }
+    }
 
-        if(result == err)
-        {
-            exit(-55);
-            break;
-        }
+    if(result == err)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Unknown XML format. Unknown eleemt, please check source file and correct it.");
+        msgBox.exec();
+        return;
     }
 
     file.close();

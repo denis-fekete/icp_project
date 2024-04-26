@@ -108,9 +108,12 @@ bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
         // Store current other object
         Rectangle* other = validObstacles->at(i);
 
+        if(other == &(this->colliderInner))
+            continue;
+
         Circle* otherCircle = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
-        if(other != &this->colliderInner && this->intersect(otherCircle))
+        if(this->intersect(otherCircle))
         {
             if(colliderFwd.intersects(other))
             {

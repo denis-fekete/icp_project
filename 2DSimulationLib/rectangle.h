@@ -136,11 +136,6 @@ public:
 
 protected:
     /**
-     * Enumeration for breakIntoEdges() function
-     */
-    using RectLines = enum RectangleLines {bottom, left, top, right};
-
-    /**
      * @brief Updates single point based on `center` Point
      * @param center Point based on which position will be calculated
      * @param p Pointer to the Point that will be set
@@ -161,7 +156,7 @@ protected:
      * will be returned
      * @return Line of this Rectangle
      */
-    Line breakIntoEdges(RectLines line);
+    Line breakIntoEdges(int line);
 
     /**
      * @brief Checks if Point is in this Rectangle
