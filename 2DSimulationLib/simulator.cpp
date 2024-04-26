@@ -6,18 +6,18 @@
 
 #ifdef LOG_PERFORMACE
     #include <chrono>
-#endif // LOG_PERFORMACE
+#endif
 
 Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads, QTimer* timer) : scene(scene)
 {
     this->maxThreads = maxThreads;
     this->timer = timer;
+    timerPeriod = 30; // default 30 ms period
     activeRobot = nullptr;
     activeObstacle = nullptr;
     keepSimCoresRunning = false;
     connect(timer, SIGNAL(timeout()), this, SLOT(simulationCycle()));
 }
-
 
 void Simulator::simulationCycle()
 {
@@ -135,8 +135,15 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                      double detRadius, QColor color, double speed,
                                      double turnAngle, bool turnRight)
 {
+    // cosnt for normalizing values
+    const double timeNorm = 1000 / timerPeriod;
+
     // create new AutoRobot and add it to vector of autorobots
-    autoRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot, detRadius, color, speed, turnAngle, turnRight, &colliders, &activeRobot));
+    autoRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
+                                                     detRadius, color,
+                                                     speed / timeNorm,
+                                                     turnAngle / timeNorm,
+                                                     turnRight, &colliders, this));
     // add its collider to the vector of colliders
     colliders.push_back(autoRobots.back().get()->getSim().getColliderInner());
     // add it do vector of all robots
@@ -146,15 +153,16 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
     autoRobots.back()->initialize();
     scene.addItem(autoRobots.back().get());
 
+    autoRobots.back().get()->positionUpdate();
     balanceCores();
     scene.update();
 }
 
 void Simulator::addManualRobot(double x, double y, double radius, double rot,
-                                  double detRadius, QColor color)
+                                double detRadius, QColor color)
 {
     // create new AutoRobot and add it to vector of manual robots
-    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, &activeRobot));
+    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, this));
     // add its collider to the vector of colliders
     colliders.push_back(manualRobots.back().get()->getSim().getColliderInner());
     // add it do vector of all robots
@@ -164,6 +172,7 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
     manualRobots.back()->initialize();
     scene.addItem(manualRobots.back().get());
 
+    manualRobots.back().get()->positionUpdate();
     balanceCores();
     scene.update();
 }
@@ -179,6 +188,18 @@ void Simulator::addObstacle(double x, double y, double w, double h, double rot,
     scene.addItem(obstacles.back().get());
 
     scene.update();
+}
+
+void Simulator::setActiveRobot(BaseRobot* robot)
+{
+    if(activeRobot != nullptr)
+    {
+        activeRobot->setUnselected();
+    }
+
+    auto found = std::find(robots.begin(), robots.end(), robot);
+    activeRobot = (*found);
+    activeRobot->setSelected();
 }
 
 void Simulator::setActiveRobot(size_t id)
@@ -299,13 +320,9 @@ void Simulator::deleteObstacle(size_t id)
     scene.update();
 }
 
-
-/**
- * @brief Starts simulation
- */
 void Simulator::runSimulation()
 {
-    this->timer->start(timerPeriod_ms);
+    this->timer->start(timerPeriod);
 
     for(size_t i = 0; i < obstacles.size(); i++)
     {
@@ -318,9 +335,6 @@ void Simulator::runSimulation()
     }
 }
 
-/**
- * @brief Stops simulation
- */
 void Simulator::stopSimulation()
 {
     this->timer->stop();
@@ -336,4 +350,12 @@ void Simulator::stopSimulation()
     }
 }
 
+ManualRobot* Simulator::getActiveManualRobot()
+{
+    // check if active robot is manul robot, if not return nullptr
+    if(typeid(*activeRobot) == typeid(ManualRobot))
+        return dynamic_cast<ManualRobot*> (activeRobot);
+    else
+        return nullptr;
+}
 

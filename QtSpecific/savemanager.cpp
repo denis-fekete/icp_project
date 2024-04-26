@@ -33,29 +33,47 @@ void SaveManager::saveToFile()
 
     xmlWriter.writeStartElement("Robots");
 
+    Robot* robSim;
+    BaseRobot* rob;
+    AutoRobot* autoRob = nullptr;
+
     for(size_t i = 0; i < simulator.getRobotsCount(); i++)
     {
-        Robot robSim = simulator.getRobot(i)->getSim();
-        BaseRobot* rob = simulator.getRobot(i);
+        robSim = simulator.getRobot(i)->getSim();
+        rob = simulator.getRobot(i);
 
-        xmlWriter.writeStartElement("Robot");
+        if(typeid(*rob) == typeid(ManualRobot))
+        {
+            xmlWriter.writeStartElement("Robot");
+            xmlWriter.writeAttribute("type=", "manual");
+        }
+        else
+        {
+            xmlWriter.writeStartElement("Robot");
+            xmlWriter.writeAttribute("type=", "automatic");
+            autoRob = dynamic_cast<AutoRobot*> (rob);
+        }
+
         xmlWriter.writeAttribute("id", QString::number(i));
 
-        xmlWriter.writeTextElement("x", QString::number(robSim.getX()));
-        xmlWriter.writeTextElement("y", QString::number(robSim.getY()));
+        xmlWriter.writeTextElement("x", QString::number(robSim->getX()));
+        xmlWriter.writeTextElement("y", QString::number(robSim->getY()));
 
-        xmlWriter.writeTextElement("radius", QString::number(robSim.getRadius()));
-        xmlWriter.writeTextElement("detection_radius", QString::number(robSim.getDetRadius()));
+        xmlWriter.writeTextElement("radius", QString::number(robSim->getRadius()));
+        xmlWriter.writeTextElement("detection_radius", QString::number(robSim->getDetRadius()));
 
-        xmlWriter.writeTextElement("rotation", QString::number(robSim.getRotation()));
+        xmlWriter.writeTextElement("rotation", QString::number(robSim->getRotation()));
 
         xmlWriter.writeTextElement("color_red", QString::number(rob->getColor().red()));
         xmlWriter.writeTextElement("color_green", QString::number(rob->getColor().green()));
         xmlWriter.writeTextElement("color_blue", QString::number(rob->getColor().blue()));
 
-        // xmlWriter.writeTextElement("speed", QString::number(rob->getSpeed()));
-        // xmlWriter.writeTextElement("turn_angle", QString::number(rob->getTurnAngle()));
-        // xmlWriter.writeTextElement("turn_direction", QString::number(rob->getTurnDirection()));
+        if(autoRob != nullptr)
+        {
+            xmlWriter.writeTextElement("speed", QString::number(autoRob->getSpeed()));
+            xmlWriter.writeTextElement("turn_angle", QString::number(autoRob->getTurnAngle()));
+            xmlWriter.writeTextElement("turn_direction", QString::number(autoRob->getTurnDirection()));
+        }
         xmlWriter.writeEndElement(); // end Robot
     }
 
@@ -194,6 +212,7 @@ returnType SaveManager::readRobot()
 
         if (xmlReader.tokenType() == QXmlStreamReader::StartElement) {
             QStringRef elementName = xmlReader.name();
+
             if (elementName == "x")
                 x = xmlReader.readElementText().toDouble();
             else if (elementName == "y")
@@ -287,7 +306,7 @@ returnType SaveManager::readRobot()
 
 returnType SaveManager::readObstacles()
 {
-    returnType result;
+    returnType result = readNext;
     while (xmlReader.readNextStartElement())
     {
         if(xmlReader.name() == "Obstacle")

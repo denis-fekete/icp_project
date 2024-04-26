@@ -125,17 +125,21 @@ void MainWindow::updateAnalytics()
 
 void MainWindow::on_program_btn_resumepause_clicked()
 {
-    if(ui->controlTab->isEnabled())
+    if(ui->controlTab->isTabEnabled(0))
     {
         ui->program_btn_resumepause->setText("Pause");
         simulator.get()->runSimulation();
-        ui->controlTab->setEnabled(false);
+        ui->controlTab->setTabEnabled(0, false);
+        ui->controlTab->setTabEnabled(1, false);
+        ui->controlTab->setTabEnabled(2, false);
     }
     else
     {
         ui->program_btn_resumepause->setText("Resume");
         simulator.get()->stopSimulation();
-        ui->controlTab->setEnabled(true);
+        ui->controlTab->setTabEnabled(0, true);
+        ui->controlTab->setTabEnabled(1, true);
+        ui->controlTab->setTabEnabled(2, true);
     }
 }
 
@@ -288,7 +292,7 @@ void MainWindow::on_btn_worldApplySize_clicked()
 
 
 //----------------------------------------------------------------------------
-// Robot tab
+// Create Robot tab
 //----------------------------------------------------------------------------
 
 void MainWindow::on_btnCreateRobot_clicked()
@@ -308,24 +312,38 @@ void MainWindow::on_btnCreateRobot_clicked()
 
     color = MainWindow::getRandomColor();
 
-    simulator->addAutomaticRobot(
+    if(ui->input_selectAutomatic->isChecked())
+
+    {
+        simulator->addAutomaticRobot(
+                ui->input_robot_xPos->value(),
+                ui->input_robot_yPos->value(),
+                ui->input_robot_radius->value(),
+                ui->input_robot_rotation->value(),
+                ui->input_robot_detRadius->value(),
+                color,
+                ui->input_robot_speed->value(),
+                ui->input_robot_collisionDetectionAngle->value(),
+                ui->input_robot_onCollisionTurnRight->isChecked()
+                );
+    }
+    else
+    {
+        simulator->addManualRobot(
             ui->input_robot_xPos->value(),
             ui->input_robot_yPos->value(),
             ui->input_robot_radius->value(),
             ui->input_robot_rotation->value(),
             ui->input_robot_detRadius->value(),
-            color,
-            ui->input_robot_speed->value(),
-            ui->input_robot_collisionDetectionAngle->value(),
-            ui->input_robot_onCollisionTurnRight->isChecked()
+            color
             );
-
+    }
 
     // If ID selector is not enabled enable it
     if(!ui->input_robot_IDSelector->isEnabled())
     {
         ui->input_robot_IDSelector->setEnabled(true);
-        simulator->setActiveRobot(0);
+        simulator->setActiveRobot(size_t{0});
     }
 
     // Set maximum value of robot selector to a size vector that stores robots
@@ -372,7 +390,31 @@ void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
 void MainWindow::on_input_robot_onCollisionTurnLeft_clicked(bool checked)
 {
     ui->input_robot_onCollisionTurnLeft->setChecked(checked);
+    ui->input_robot_onCollisionTurnRight->setChecked(!checked);
 }
+
+void MainWindow::on_input_selectAutomatic_clicked()
+{
+    ui->input_selectAutomatic->setChecked(true);
+    ui->input_selectManual->setChecked(false);
+
+    ui->input_robot_speed->setEnabled(true);
+    ui->input_robot_onCollisionTurnLeft->setEnabled(true);
+    ui->input_robot_onCollisionTurnRight->setEnabled(true);
+    ui->input_robot_collisionDetectionAngle->setEnabled(true);
+}
+
+void MainWindow::on_input_selectManual_clicked()
+{
+    ui->input_selectManual->setChecked(true);
+    ui->input_selectAutomatic->setChecked(false);
+
+    ui->input_robot_speed->setEnabled(false);
+    ui->input_robot_onCollisionTurnLeft->setEnabled(false);
+    ui->input_robot_onCollisionTurnRight->setEnabled(false);
+    ui->input_robot_collisionDetectionAngle->setEnabled(false);
+}
+
 
 //----------------------------------------------------------------------------
 // Obstacle tab
@@ -441,3 +483,81 @@ void MainWindow::on_input_obstacle_IDSelector_valueChanged(int arg1)
 {
     simulator->setActiveObstacle(arg1);
 }
+
+//----------------------------------------------------------------------------
+// Control Robots tab
+//----------------------------------------------------------------------------
+
+void MainWindow::on_input_manualrobot_forward_clicked()
+{
+    ui->input_manualrobot_stay->setChecked(false);
+    ui->input_manualrobot_anticlockwise->setChecked(false);
+    ui->input_manualrobot_clockwise->setChecked(false);
+
+    auto robot = simulator.get()->getActiveManualRobot();
+    if(robot != nullptr)
+    {
+        robot->setCommand(Command::FORWARD);
+        robot->setSpeed(ui->input_manualrobot_speed->value() / (1000 / simulator->getTimerPeriod()));
+    }
+    else
+    {
+        //TODO:
+    }
+}
+
+void MainWindow::on_input_manualrobot_stay_clicked()
+{
+    ui->input_manualrobot_forward->setChecked(false);
+    ui->input_manualrobot_anticlockwise->setChecked(false);
+    ui->input_manualrobot_clockwise->setChecked(false);
+
+    auto robot = simulator.get()->getActiveManualRobot();
+    if(robot != nullptr)
+    {
+        robot->setCommand(Command::STAY);
+    }
+    else
+    {
+        //TODO:
+    }
+}
+
+void MainWindow::on_input_manualrobot_anticlockwise_clicked()
+{
+    ui->input_manualrobot_forward->setChecked(false);
+    ui->input_manualrobot_stay->setChecked(false);
+    ui->input_manualrobot_clockwise->setChecked(false);
+
+    auto robot = simulator.get()->getActiveManualRobot();
+    if(robot != nullptr)
+    {
+        robot->setCommand(Command::ROTATE_ANTICLOCK);
+        robot->setTurnAngle(-ui->input_manualrobot_turnAngle->value() / (1000 / simulator->getTimerPeriod()));
+    }
+    else
+    {
+        //TODO:
+    }
+}
+
+void MainWindow::on_input_manualrobot_clockwise_clicked()
+{
+
+    ui->input_manualrobot_forward->setChecked(false);
+    ui->input_manualrobot_stay->setChecked(false);
+    ui->input_manualrobot_anticlockwise->setChecked(false);
+
+    auto robot = simulator.get()->getActiveManualRobot();
+    if(robot != nullptr)
+    {
+        robot->setCommand(Command::ROTATE_CLOCK);
+        robot->setCommand(Command::ROTATE_ANTICLOCK);
+        robot->setTurnAngle(ui->input_manualrobot_turnAngle->value() / (1000 / simulator->getTimerPeriod()));
+    }
+    else
+    {
+        //TODO:
+    }
+}
+

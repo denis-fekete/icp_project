@@ -87,5 +87,11 @@ private slots:
     void on_input_obstacle_IDSelector_valueChanged(int arg1);
     void on_btnDeleteObstacle_clicked();
     void on_program_btn_resumepause_clicked();
+    void on_input_selectAutomatic_clicked();
+    void on_input_selectManual_clicked();
+    void on_input_manualrobot_forward_clicked();
+    void on_input_manualrobot_stay_clicked();
+    void on_input_manualrobot_anticlockwise_clicked();
+    void on_input_manualrobot_clockwise_clicked();
 };
 #endif // MAINWINDOW_H

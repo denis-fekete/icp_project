@@ -102,7 +102,12 @@ public:
      * @brief Sets period of QTimer updating in milliseconds
      * @param milliSeconds Value to be set to the QTimer
      */
-    inline void setTimerPeriod(int milliSeconds) { this->timerPeriod_ms = milliSeconds; }
+    inline void setTimerPeriod(int milliSeconds) { this->timerPeriod = milliSeconds; }
+
+    /**
+     * @return Returns period time of Simulator
+     */
+    inline double getTimerPeriod() { return this->timerPeriod; }
 
     /**
      * @return Returns last simulation cycle time
@@ -121,6 +126,12 @@ public:
     void setActiveRobot(size_t id);
 
     /**
+     * @brief Sets activeRobot by pointer
+     * @param robot Pointer to the robot
+     */
+    void setActiveRobot(BaseRobot* robot);
+
+    /**
      * @brief Sets activeObstacl by id
      * @param id Id in vector of Obstacles
      */
@@ -130,6 +141,12 @@ public:
      * @return Returns pointer to activeRobot
      */
     inline BaseRobot* getActiveRobot() { return activeRobot; }
+
+    /**
+     * @return Returns pointer to active ManualRobot, if no active robot is
+     * not ManualRobot nullptr will be returned
+     */
+    ManualRobot* getActiveManualRobot();
 
     /**
      * @return Returns pointer to activeObstacle
@@ -215,7 +232,7 @@ private:
     /**
      * @brief Timer period in milliseconds
      */
-    int timerPeriod_ms = 20;
+    int timerPeriod;
 
     /**
      * @brief Last period of cycle timer

@@ -49,7 +49,7 @@ public:
     AutoRobot(double x, double y, double radius, double rot,
                          double detRadius, QColor color, double speed,
                          double turnAngle, bool turnRight,
-                         std::vector<Rectangle*>* colliders, BaseRobot **activeRobot);
+                         std::vector<Rectangle*>* colliders, Simulator* simulator);
 
     /**
      * @brief Simulates robot once, check if collision is occuring, if not

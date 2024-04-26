@@ -14,6 +14,11 @@
 #include "../2DSimulationLib/robot.h"
 #include "../2DSimulationLib/rectangle.h"
 
+class Simulator;
+
+#define DEFAULT_PEN_WIDTH 1
+#define HIGHLIGHTED_PEN_WIDTH 3
+
 class BaseRobot : public QGraphicsItem
 {
 protected:
@@ -37,11 +42,19 @@ protected:
     bool initialized;
 
     /**
-     * @brief Brush for paiting robot on scene
+     * @brief Pen for painting robot on scene
      */
-    QBrush brush;
+    QPen pen;
 
-    BaseRobot** activeRobot;
+    /**
+     * @brief Color of this robot when highlighted
+     */
+    QColor highligtedColor;
+
+    /**
+     * @brief Pointer to the simulator
+     */
+    Simulator* simulator;
 public:
 
     /**
@@ -55,7 +68,7 @@ public:
      * @param colliders Pointer to vector of Rectangle that will collide with this robot
      */
     BaseRobot(double x, double y, double radius, double rot,
-              double detRadius, QColor color, std::vector<Rectangle*>* colliders, BaseRobot **activeRobot);
+              double detRadius, QColor color, std::vector<Rectangle*>* colliders, Simulator* simulator);
     /**
      * @brief Adds AutoRobot object to the scene
      * @param scene
@@ -110,7 +123,7 @@ public:
     /**
      * @return Reference to simulation
      */
-    inline Robot& getSim() { return this->sim; }
+    inline Robot* getSim() { return &this->sim; }
 
     /**
      * @return Reference to Color

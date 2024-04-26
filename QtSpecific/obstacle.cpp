@@ -13,6 +13,7 @@ void Obstacle::initialize()
     this->setRotation(sim.getRotation());
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     this->setFlag(QGraphicsItem::ItemIsMovable);
+    this->setFlag(QGraphicsItem::ItemIsSelectable);
 
     this->setTransformOriginPoint(0, 0);
     brush = QBrush(color);
@@ -48,7 +49,6 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
 
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
-    painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
 }
 
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)

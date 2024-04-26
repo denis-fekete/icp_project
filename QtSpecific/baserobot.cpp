@@ -1,9 +1,9 @@
 #include "baserobot.h"
-
+#include "../2DSimulationLib/simulator.h"
 BaseRobot::BaseRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
-                     std::vector<Rectangle*>* colliders, BaseRobot **activeRobot) :
-    sim(x, y, radius, rot, detRadius), colliders(colliders), color(color), activeRobot(activeRobot)
+                     std::vector<Rectangle*>* colliders, Simulator* simulator) :
+    sim(x, y, radius, rot, detRadius), colliders(colliders), color(color), simulator(simulator)
 {
     initialized = false;
 }
@@ -12,22 +12,31 @@ void BaseRobot::initialize()
 {
     this->setFlag(QGraphicsItem::ItemIsMovable);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    this->setFlag(QGraphicsItem::ItemIsSelectable);
+
     this->setTransformOriginPoint(0, 0);
     initialized = true;
-    this->brush = QBrush(color);
+
+
+    highligtedColor.setRed(std::min(color.red() + 30, 240));
+    highligtedColor.setGreen(std::min(color.green() + 30, 240));
+    highligtedColor.setBlue(std::min(color.blue() + 30, 240));
 }
 
 QRectF BaseRobot::boundingRect() const
 {
     const double adj = 1;
-    return QRectF(-sim.getRadius() - adj, -sim.getRadius() - adj, 2* sim.getRadius() + adj, 2*sim.getRadius() + adj);
+    return QRectF(-sim.getRadius() - adj, -sim.getRadius() - adj,
+                  2* sim.getRadius() +  sim.getDetRadius() + adj,
+                  2*sim.getRadius() +  sim.getDetRadius()+ adj);
 }
 
 QPainterPath BaseRobot::shape() const
 {
     QPainterPath path;
-    path.addEllipse(-sim.getRadius(), -sim.getRadius(),  sim.getRadius(), sim.getRadius());
-    path.addRect(-sim.getDetRadius(), -sim.getDetRadius(), sim.getRadius(), sim.getRadius());
+    path.addRect(-sim.getRadius(), -sim.getRadius(),
+                 2 * sim.getRadius() + sim.getDetRadius(),
+                 2 * sim.getRadius() + sim.getDetRadius());
     return path;
 }
 
@@ -42,10 +51,14 @@ QVariant BaseRobot::itemChange(GraphicsItemChange change, const QVariant &value)
         {
             Point p(newPosition.x(), newPosition.y());
             this->sim.moveTo(p);
-            *activeRobot = this;
+            simulator->setActiveRobot(this);
         }
 
         return newPosition;
+    }
+    else if (change == GraphicsItemChange::ItemSelectedChange)
+    {
+        simulator->setActiveRobot(this);
     }
 
     return QGraphicsItem::itemChange(change, value);
@@ -62,10 +75,12 @@ void BaseRobot::positionUpdate()
 
 void BaseRobot::setSelected()
 {
-    brush.setStyle(Qt::Dense1Pattern);
+    pen.setColor(highligtedColor);
+    pen.setWidth(HIGHLIGHTED_PEN_WIDTH);
 }
 
 void BaseRobot::setUnselected()
 {
-    brush.setStyle(Qt::SolidPattern);
+    pen.setColor(color);
+    pen.setWidth(DEFAULT_PEN_WIDTH);
 }
