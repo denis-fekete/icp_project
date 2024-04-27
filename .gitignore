@@ -87,7 +87,7 @@ debug.
 *.files
 *.includes
 
-doc
+doc/html
 moc_*
 icp_project
 build-*

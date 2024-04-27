@@ -52,7 +52,7 @@ public:
      */
     ManualRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color,
-              std::vector<Rectangle*>* colliders, Simulator* simulator);
+              std::vector<Rectangle*>* colliders, std::vector<Robot*>* robotColliders, Simulator* simulator);
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not

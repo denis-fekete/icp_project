@@ -2,8 +2,10 @@
 #include "../2DSimulationLib/simulator.h"
 BaseRobot::BaseRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
-                     std::vector<Rectangle*>* colliders, Simulator* simulator) :
-    sim(x, y, radius, rot, detRadius), colliders(colliders), color(color), simulator(simulator)
+                     std::vector<Rectangle*>* colliders,
+                     std::vector<Robot *> *robotColliders,
+                     Simulator* simulator) :
+    sim(x, y, radius, rot, detRadius), colliders(colliders), robotColliders(robotColliders), color(color), simulator(simulator)
 {
     initialized = false;
 }

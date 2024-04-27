@@ -33,6 +33,11 @@ protected:
     std::vector<Rectangle*>* colliders;
 
     /**
+     * @brief Vector of all other robots colliders
+     */
+    std::vector<Robot*>* robotColliders;
+
+    /**
      * @brief Color of this robot
      */
     QColor color;
@@ -69,7 +74,7 @@ public:
      * @param colliders Pointer to vector of Rectangle that will collide with this robot
      */
     BaseRobot(double x, double y, double radius, double rot,
-              double detRadius, QColor color, std::vector<Rectangle*>* colliders, Simulator* simulator);
+              double detRadius, QColor color, std::vector<Rectangle*>* colliders, std::vector<Robot*>* robotColliders, Simulator* simulator);
 
     /**
      * @brief Initializes Robot values, this needs to called after constructor 

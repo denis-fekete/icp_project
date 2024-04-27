@@ -2,8 +2,11 @@
 
 ManualRobot::ManualRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
-                     std::vector<Rectangle*>* colliders, Simulator* simulator) : BaseRobot(x, y, radius, rot, detRadius, color, colliders, simulator),
-    speed(0),turnAngle(0)
+                     std::vector<Rectangle*>* colliders,
+                     std::vector<Robot *> *robotColliders,
+                     Simulator* simulator) :
+                    BaseRobot(x, y, radius, rot, detRadius, color, colliders, robotColliders, simulator),
+                    speed(0),turnAngle(0)
 {
     cmd = Command::STAY;
     initialized = false;
@@ -36,13 +39,9 @@ void ManualRobot::simulate()
     case Command::STAY:
         break;
     case Command::FORWARD:
-        if(!this->sim.obstacleDetection(colliders))
+        if(!this->sim.obstacleDetection(colliders) && !this->sim.robotDetection(robotColliders))
         {
             this->moveRobot(speed);
-        }
-        else
-        {
-            qDebug("collision, cannot move");
         }
         break;
     case Command::ROTATE_CLOCK:

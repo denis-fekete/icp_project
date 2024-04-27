@@ -6,7 +6,9 @@
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
                      double turnAngle, bool turnRight,
-                     std::vector<Rectangle*>* colliders, Simulator* simulator) : BaseRobot(x, y, radius, rot, detRadius, color, colliders, simulator),
+                     std::vector<Rectangle*>* colliders,
+                     std::vector<Robot*>* robotColliders,
+                     Simulator* simulator) : BaseRobot(x, y, radius, rot, detRadius, color, colliders, robotColliders, simulator),
     speed(speed),turnAngle(turnAngle), turnDirection((turnRight)? 1 : -1)
 {
     initialized = false;
@@ -34,7 +36,8 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 void AutoRobot::simulate()
 {
     bool collision = this->sim.obstacleDetection(colliders);
-    if(collision)
+    bool collision2 = this->sim.robotDetection(robotColliders);
+    if(collision || collision2)
     {
         this->rotateRobot(turnAngle * turnDirection);
     }

@@ -8,6 +8,8 @@
 #include "circle.h"
 #include "../QtSpecific/obstacle.h"
 
+
+
 class Robot : public Circle
 {
     /**
@@ -46,12 +48,23 @@ public:
      */
     bool obstacleDetection(std::vector<std::unique_ptr<Obstacle>>* obstacles);
 
+
     /**
      * @brief Checks if Robots collides with any Rectangle from vector of obstacles
      * @param validObstacles Vector of obstacles that Robot can collide with
-     * @return True if Robot collides with one of the Rectangle
+     * @return True if Robot collides with one of the Rectangles
      */
     bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
+
+
+    bool lineCircleIntersect(Point* lineStart, Point* lineEnd);
+
+    /**
+     * @brief Check is this robot collides with another robot
+     * @param robots Pointer to the vector of robots
+     * @return True if Robot collides with other Robots
+     */
+    bool robotDetection(std::vector<Robot*>* robots);
 
     /**
      * @brief Moves this Robot forward in direction it is facing (based on `rotation`)

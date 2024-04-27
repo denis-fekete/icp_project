@@ -182,9 +182,14 @@ private:
     std::vector<std::unique_ptr<BaseRobot>> manualRobots;
 
     /**
-     * @brief Reference to the vector of Robots
+     * @brief Vector of Robots
      */
     std::vector<std::unique_ptr<Obstacle>> obstacles;
+
+    /**
+     * @brief Vector of robot colliders
+     */
+    std::vector<Robot*> robotColliders;
 
     /**
      * @brief colliders Vector of all colliders

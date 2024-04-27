@@ -162,6 +162,14 @@ public:
      */
     bool linesIntersect(Point a, Point b, Point c, Point d);
 
+    /**
+     * @brief Returns one of the Rectangle lines based on `line`
+     * @param line Value based on which line of the Rectangle will be returned
+     * @param start Start point of the line
+     * @param end End point of the line
+     */
+    void breakIntoEdges(int line, Point* start, Point* end);
+
 protected:
     /**
      * @brief Updates single point based on `center` Point
@@ -178,13 +186,7 @@ protected:
      */
     static void calculateCornersWithNoRotation(Rectangle* rect);
 
-    /**
-     * @brief Returns one of the Rectangle lines based on `line`
-     * @param line Value based on which line of the Rectangle will be returned
-     * @param start Start point of the line
-     * @param end End point of the line
-     */
-    void breakIntoEdges(int line, Point* start, Point* end);
+
 
     /**
      * @brief Checks if Point is in this Rectangle

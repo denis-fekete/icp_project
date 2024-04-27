@@ -47,9 +47,11 @@ public:
      * @param obstaclesPointer Pointer to the vector of obstacles
      */
     AutoRobot(double x, double y, double radius, double rot,
-                         double detRadius, QColor color, double speed,
-                         double turnAngle, bool turnRight,
-                         std::vector<Rectangle*>* colliders, Simulator* simulator);
+                        double detRadius, QColor color, double speed,
+                        double turnAngle, bool turnRight,
+                        std::vector<Rectangle*>* colliders,
+                        std::vector<Robot*>* robotColliders,
+                        Simulator* simulator);
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not

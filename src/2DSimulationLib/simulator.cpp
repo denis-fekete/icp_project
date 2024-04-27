@@ -154,9 +154,10 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                                      detRadius, color,
                                                      speed / timeNorm,
                                                      turnAngle / timeNorm,
-                                                     turnRight, &colliders, this));
-    // add its collider to the vector of colliders
-    colliders.push_back(autoRobots.back().get()->getSim()->getColliderInner());
+                                                     turnRight, &colliders, &robotColliders, this));
+    // add robot to the vector of robotColliders
+    robotColliders.push_back(autoRobots.back().get()->getSim());
+
     // add it do vector of all robots
     robots.push_back(autoRobots.back().get());
 
@@ -173,9 +174,11 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
                                 double detRadius, QColor color)
 {
     // create new AutoRobot and add it to vector of manual robots
-    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, this));
-    // add its collider to the vector of colliders
-    colliders.push_back(manualRobots.back().get()->getSim()->getColliderInner());
+    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, &robotColliders, this));
+
+    // add robot to the vector of robotColliders
+    robotColliders.push_back(manualRobots.back().get()->getSim());
+
     // add it do vector of all robots
     robots.push_back(manualRobots.back().get());
 
@@ -265,15 +268,16 @@ void Simulator::deleteRobot(size_t id)
         return;
     }
 
-    Rectangle* colliderToDelete = activeRobot->getSim()->getColliderInner();
-    auto foundCollider = std::find(colliders.begin(), colliders.end(), colliderToDelete);
-    if(foundCollider != colliders.end())
-        colliders.erase(foundCollider);
+    // delete robot from robotColliders vector
+    Robot* colliderToDelete = activeRobot->getSim();
+    auto foundCollider = std::find(robotColliders.begin(), robotColliders.end(), colliderToDelete);
+    if(foundCollider != robotColliders.end())
+        robotColliders.erase(foundCollider);
 
 
     std::unique_ptr<BaseRobot>* foundRobot;
     auto activeRobotPtr = activeRobot;
-
+    // remove robot from baseRobot (all) and manualRobot
     if(typeid(*activeRobot) == typeid(ManualRobot))
     {
         auto foundIt = std::find_if(manualRobots.begin(), manualRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
@@ -290,7 +294,7 @@ void Simulator::deleteRobot(size_t id)
             manualRobots.erase(foundIt);
         }
     }
-    else
+    else // remove robot from baseRobot (all) and autoRobot
     {
         auto foundIt = std::find_if(autoRobots.begin(), autoRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
             return ptr.get() == activeRobotPtr;});
