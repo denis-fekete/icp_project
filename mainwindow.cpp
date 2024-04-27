@@ -268,7 +268,7 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         benchmarkHeigth = scene->sceneRect().height();
     }
 
-    for(size_t robs = 0; robs < ui->sBox_world_robotsCount->value(); robs++)
+    for(int robs = 0; robs < ui->sBox_world_robotsCount->value(); robs++)
     {
         double rad = (rand1000->getRandomValue() % 10) + 15;
         double xPos = benchmarkWidth / 2 + (rand1000->getRandomValue() % (static_cast<int>(rad*3)));

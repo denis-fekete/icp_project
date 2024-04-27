@@ -3,12 +3,10 @@
 ManualRobot::ManualRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
                      std::vector<Rectangle*>* colliders, Simulator* simulator) : BaseRobot(x, y, radius, rot, detRadius, color, colliders, simulator),
-    speed(speed),turnAngle(turnAngle)
+    speed(0),turnAngle(0)
 {
     cmd = Command::STAY;
     initialized = false;
-    speed = 0;
-    turnAngle = 0;
 }
 
 

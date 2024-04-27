@@ -48,12 +48,12 @@
      <rect>
       <x>0</x>
       <y>30</y>
-      <width>341</width>
+      <width>371</width>
       <height>411</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="_1World">
      <attribute name="title">
@@ -1661,7 +1661,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>

@@ -50,17 +50,17 @@ public:
     /**
      * @return Returns position of this point
      */
-    inline const Point getPos() const { return *this; }
+    inline Point getPos() const { return *this; }
 
     /**
      * @return Returns X Position of this Point
      */
-    inline const double getX() const { return x; }
+    inline double getX() const { return x; }
 
     /**
      * @return Returns Y position of this point
      */
-    inline const double getY() const { return y; }
+    inline double getY() const { return y; }
 
     Point operator*(Point const& point)
     {

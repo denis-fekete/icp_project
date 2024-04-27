@@ -211,11 +211,11 @@ returnType SaveManager::readRobot()
     double radius = -1;
     double detRad = -1;
     bool rotRead = false;
-    double rot;
+    double rot = 0;
     bool colorRedRead = false;
     bool colorGreenRead = false;
     bool colorBlueRead = false;
-    QColor color;
+    QColor color = Qt::black;
     double speed = -1;
     bool turnAngleRead = false;
     double turnAngle = 0;
@@ -369,11 +369,11 @@ returnType SaveManager::readObstacle()
     double w = -1;
     double h = -1;
     bool rotRead = false;
-    double rot;
+    double rot = 0;
     bool colorRedRead = false;
     bool colorGreenRead = false;
     bool colorBlueRead = false;
-    QColor color;
+    QColor color = Qt::black;
 
     while (xmlReader.readNextStartElement())
     {

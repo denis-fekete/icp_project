@@ -221,7 +221,7 @@ void Simulator::setActiveRobot(size_t id)
         activeRobot->setUnselected();
     }
 
-    if(id >= 0 && id < robots.size())
+    if(id < robots.size())
     {
         activeRobot = robots.at(id);
         activeRobot->setSelected();
@@ -246,7 +246,7 @@ void Simulator::setActiveObstacle(size_t id)
         activeObstacle->setUnselected();
     }
 
-    if(id >= 0 && id < obstacles.size())
+    if(id < obstacles.size())
     {
         activeObstacle = obstacles.at(id).get();
         activeObstacle->setSelected();
@@ -260,7 +260,7 @@ void Simulator::deleteRobot(size_t id)
         return;
     }
 
-    if(! (id >= 0 && id < robots.size()))
+    if(! (id < robots.size()))
     {
         return;
     }
@@ -320,7 +320,7 @@ void Simulator::deleteObstacle(size_t id)
         return;
     }
 
-    if(! (id >= 0 && id < obstacles.size()))
+    if(!(id < obstacles.size()))
     {
         return;
     }
