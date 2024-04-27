@@ -119,6 +119,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(event){}
     simulator->stopSimulation();
+
     simulator.release();
     exit(0);
 }

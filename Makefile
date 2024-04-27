@@ -13,10 +13,14 @@ doxygen:
 clean:
 	rm -f -r doc/*
 	rm -f build/*	.o
-	rm -f build
+	rm -f -r build
 	rm -f src/moc_*
 	rm -f ui_*
 	rm -f src/Makefile
+	rm -f icp_project
 
+make run:
+	./icp_project
+	
 pack:
 	zip -r xfeket01.zip src examples doc/main_page.md Makefile
