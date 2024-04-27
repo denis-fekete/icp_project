@@ -33,11 +33,11 @@ void Circle::rotate(double angle)
 
 void Circle::moveForward(double distance)
 {
-    // Calcualte delta value for moving in X and Y direction
+    // Calculate delta value for moving in X and Y direction
     double xDelta = getCosRad() * distance;
     double yDelta = getSinRad() * distance;
 
-    // Apply deltas to the current possition
+    // Apply deltas to the current position
     this->setPos(xDelta, yDelta);
 }
 

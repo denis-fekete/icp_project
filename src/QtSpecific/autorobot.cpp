@@ -26,7 +26,7 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->drawLine(QLine(3, 0, -3, 3));
 
     // Collider
-    painter->setPen(QPen(highligtedColor, DEFAULT_PEN_WIDTH));
+    painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
     painter->drawRect(-sim.getRadius(), -sim.getRadius(),  sim.getRadius() + sim.getDetRadius(), 2 * sim.getRadius());
 }

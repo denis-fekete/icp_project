@@ -146,10 +146,10 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                      double detRadius, QColor color, double speed,
                                      double turnAngle, bool turnRight)
 {
-    // cosnt for normalizing values
+    // const for normalizing values
     const double timeNorm = 1000 / timerPeriod;
 
-    // create new AutoRobot and add it to vector of autorobots
+    // create new AutoRobot and add it to vector of AutoRobots
     autoRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
                                                      detRadius, color,
                                                      speed / timeNorm,
@@ -381,7 +381,7 @@ ManualRobot* Simulator::getActiveManualRobot()
 {
     if(activeRobot == nullptr)
         return nullptr;
-    // check if active robot is manul robot, if not return nullptr
+    // check if active robot is manual robot, if not return nullptr
     if(typeid(*activeRobot) == typeid(ManualRobot))
         return dynamic_cast<ManualRobot*> (activeRobot);
     else

@@ -71,7 +71,7 @@ void Rectangle::updateSinglePoint(Point* center , Point* p, double cosRad, doubl
 
 void Rectangle::calculateCornersWithNoRotation(Rectangle* rect)
 {
-    // Calculate constants width/2 and heigth/2
+    // Calculate constants width/2 and height/2
     const auto w2 = rect->w / 2;
     const auto h2 = rect->h / 2;
 
@@ -87,7 +87,7 @@ void Rectangle::updatePoints(double cosRad, double sinRad)
     calculateCornersWithNoRotation(this);
     Point center(this->x, this->y);
 
-    // Update stored sinus and cosinus values
+    // Update stored sinus and cosine values
     this->setCosRad(cosRad);
     this->setSinRad(sinRad);
 
@@ -104,7 +104,7 @@ void Rectangle::updatePoints()
 
     Point center(this->x, this->y);
 
-    // Update stored sinus and cosinus values
+    // Update stored sinus and cosine values
     this->calculateSinCos(this->rot);
 
     const double cosRad = this->getCosRad();

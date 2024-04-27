@@ -50,7 +50,7 @@ public:
      * @param x X position to be set
      * @param y Y position to be set
      * @param w Width of the Rectangle
-     * @param h Heigth of the Rectangle
+     * @param h Height of the Rectangle
      * @param rot Rotation of rectangle
      */
     Rectangle(double x, double y, double w, double h, double rot);
@@ -74,7 +74,7 @@ public:
 
     /**
      * @brief Moves Rectangle to this Point
-     * @param p New positon of the center of the Rectangle
+     * @param p New position of the center of the Rectangle
      */
     void moveTo(Point p);
 
@@ -103,7 +103,7 @@ public:
     inline double getW() { return w; }
 
     /**
-     * @return Returns heigth of this Rectangle
+     * @return Returns height of this Rectangle
      */
     inline double getH() { return h; }
 
@@ -114,7 +114,7 @@ public:
     inline void setW(double w) { this->w = w; }
 
     /**
-     * @brief Sets heigth of this Rectangle
+     * @brief Sets height of this Rectangle
      * @param h New value to be set
      */
     inline void setH(double h) { this->h = h; }
@@ -138,7 +138,7 @@ public:
      * @brief onSegment Checks if Point c lies on line segment
      * @param a Start of line segment
      * @param b End of line segment
-     * @param c Point that is cheched
+     * @param c Point that is checked
      * @return True if point lies on segment
      */
     bool onSegment(Point a, Point b, Point c);
@@ -146,7 +146,7 @@ public:
     /**
      * @brief Returns orientation of points
      * @param a Start of first line
-     * @param b End of fisrt line
+     * @param b End of first line
      * @param c Point that is checked
      * @return Returns: 0 if c is collinear with a,b line, 1 if on right side, 2 if on left side
      */

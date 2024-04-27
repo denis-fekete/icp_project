@@ -97,7 +97,7 @@ void SaveManager::saveToFile()
         xmlWriter.writeTextElement("x", QString::number(obsSim->getX()));
         xmlWriter.writeTextElement("y", QString::number(obsSim->getY()));
         xmlWriter.writeTextElement("width", QString::number(obsSim->getW()));
-        xmlWriter.writeTextElement("heigth", QString::number(obsSim->getH()));
+        xmlWriter.writeTextElement("height", QString::number(obsSim->getH()));
 
         xmlWriter.writeTextElement("rotation", QString::number(obsSim->getRotation()));
 
@@ -139,7 +139,7 @@ void SaveManager::loadFromFile()
     if(xmlReader.name() != "Simulation_space")
     {
         QMessageBox msgBox;
-        msgBox.setText("Bad XML format. First element is not <Simualtio_space>");
+        msgBox.setText("Bad XML format. First element is not <Simulation_space>");
         msgBox.exec();
     }
 
@@ -387,7 +387,7 @@ returnType SaveManager::readObstacle()
                 y = xmlReader.readElementText().toDouble();
             else if(elementName == "width")
                 w = xmlReader.readElementText().toDouble();
-            else if(elementName == "heigth")
+            else if(elementName == "height")
                 h = xmlReader.readElementText().toDouble();
             else if(elementName == "rotation")
             {

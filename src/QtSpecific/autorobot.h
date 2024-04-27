@@ -44,7 +44,7 @@ public:
      * @param speed Speed of the AutoRobot
      * @param turnAngle Turn angle on collision detection
      * @param turnRight Turn direction
-     * @param obstaclesPointer Refernce to vector of obstacles
+     * @param obstaclesPointer Pointer to the vector of obstacles
      */
     AutoRobot(double x, double y, double radius, double rot,
                          double detRadius, QColor color, double speed,
@@ -52,7 +52,7 @@ public:
                          std::vector<Rectangle*>* colliders, Simulator* simulator);
 
     /**
-     * @brief Simulates robot once, check if collision is occuring, if not
+     * @brief Simulates robot once, check if collision is occurring, if not
      * movesForward, if yes, rotates
      */
     void simulate() override;
