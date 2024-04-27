@@ -27,9 +27,12 @@ void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->drawLine(QLine(-3, 3, -3, -3));
 
     // Collider
-    painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH));
+    painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
-    painter->drawRect(-sim.getRadius(), -sim.getRadius(),  sim.getRadius() + sim.getDetRadius(), 2 * sim.getRadius());
+
+    painter->drawLine(0, sim.getRadius(), sim.getDetRadius(), sim.getRadius());
+    painter->drawLine(sim.getDetRadius(), sim.getRadius(), sim.getDetRadius(), -sim.getRadius());
+    painter->drawLine(sim.getDetRadius(), -sim.getRadius(), 0, -sim.getRadius());
 }
 
 void ManualRobot::simulate()

@@ -23,12 +23,6 @@ class Robot : public Circle
      * collision detection
      */
     Rectangle colliderFwd;
-
-    /**
-     * @brief colliderInner Collider for other robots to know that they are too close
-     * to this robot
-     */
-    Rectangle colliderInner;
 public:
 
     /**
@@ -56,7 +50,12 @@ public:
      */
     bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
 
-
+    /**
+     * @brief Checks if line itersects with this robot
+     * @param lineStart Point where line starts
+     * @param lineEnd Point where line ends
+     * @return True if line intersects with robot
+     */
     bool lineCircleIntersect(Point* lineStart, Point* lineEnd);
 
     /**
@@ -94,11 +93,6 @@ public:
      * @return Returns pointer to forward facing rectangle
      */
     inline Rectangle* getColliderFwd() { return &(this->colliderFwd); }
-
-    /**
-     * @return Return pointer to inner rectangle
-     */
-    inline Rectangle* getColliderInner() { return &(this->colliderInner); }
 
     /**
      * @brief Checks if this Robot intersects with other Circle
