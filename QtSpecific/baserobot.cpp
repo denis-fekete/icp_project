@@ -10,13 +10,19 @@ BaseRobot::BaseRobot(double x, double y, double radius, double rot,
 
 void BaseRobot::initialize()
 {
+    // item can be moved by mouse
     this->setFlag(QGraphicsItem::ItemIsMovable);
+    // sends changes when moved
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    // can be selected, for moving multiple objects at one
     this->setFlag(QGraphicsItem::ItemIsSelectable);
+    // antialiasing
     this->setTransformationMode(Qt::SmoothTransformation);
+    // set origin point to 0,0
     this->setTransformOriginPoint(0, 0);
+    // make this appear on top of all objects, obstacles have 1
+    this->setZValue(2);
     initialized = true;
-
 
     highligtedColor.setRed(std::min(color.red() + 30, 240));
     highligtedColor.setGreen(std::min(color.green() + 30, 240));

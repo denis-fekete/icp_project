@@ -139,6 +139,12 @@ public:
     void setActiveObstacle(size_t id);
 
     /**
+     * @brief Sets activeObstacle by pointer
+     * @param robot Pointer to the obstacle
+     */
+    void setActiveObstacle(Obstacle* obstacle);
+
+    /**
      * @return Returns pointer to activeRobot
      */
     inline BaseRobot* getActiveRobot() { return activeRobot; }

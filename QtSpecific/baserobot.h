@@ -21,7 +21,6 @@ class Simulator;
 #define HIGHLIGHTED_PEN_WIDTH 3
 
 class BaseRobot : public QGraphicsPixmapItem
-// class BaseRobot : public QGraphicsItem
 {
 protected:
     /**

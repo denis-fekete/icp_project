@@ -34,7 +34,7 @@ private:
     // UI elements
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
-
+    QGraphicsView* view;
     // Simulation
     std::unique_ptr<Simulator> simulator;
 
@@ -46,7 +46,7 @@ private:
     void resizeEvent(QResizeEvent*);
     // Save/Load
     std::unique_ptr<SaveManager> saveManager;
-
+    std::vector<std::unique_ptr<QLine>> gridLines;
 
 // Analytics
 public slots:

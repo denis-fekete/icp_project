@@ -191,7 +191,7 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
 void Simulator::addObstacle(double x, double y, double w, double h, double rot,
                                   QColor& color)
 {
-    obstacles.push_back(std::make_unique<Obstacle>(x, y, w, h, rot, color, &activeObstacle));
+    obstacles.push_back(std::make_unique<Obstacle>(x, y, w, h, rot, color, this));
     colliders.push_back(obstacles.back().get()->getSimulationRectangle());
 
     obstacles.back()->initialize();
@@ -208,8 +208,9 @@ void Simulator::setActiveRobot(BaseRobot* robot)
         activeRobot->setUnselected();
     }
 
-    auto found = std::find(robots.begin(), robots.end(), robot);
-    activeRobot = (*found);
+    // auto found = std::find(robots.begin(), robots.end(), robot);
+    // activeRobot = (*found);
+    activeRobot = robot;
     activeRobot->setSelected();
 }
 
@@ -225,6 +226,17 @@ void Simulator::setActiveRobot(size_t id)
         activeRobot = robots.at(id);
         activeRobot->setSelected();
     }
+}
+
+void Simulator::setActiveObstacle(Obstacle* obstacle)
+{
+    if(activeObstacle != nullptr)
+    {
+        activeObstacle->setUnselected();
+    }
+
+    activeObstacle = obstacle;
+    activeObstacle->setSelected();
 }
 
 void Simulator::setActiveObstacle(size_t id)
@@ -314,6 +326,7 @@ void Simulator::deleteObstacle(size_t id)
     }
 
     Rectangle* colliderToDelete = obstacles.at(id).get()->getSim();
+
     for(size_t i = id; i < colliders.size(); i++)
     {
         if(colliders.at(i) == colliderToDelete)

@@ -22,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
-    QGraphicsView view(scene);
-    view.setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    view = new QGraphicsView(scene);
+    view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     // QApplication::setStyle(QStyleFactory::create("Windows"));
@@ -50,12 +50,23 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    delete view;
     delete ui;
     delete scene;
 }
 
 void MainWindow::DrawGrid(unsigned density)
 {
+    // remove all qgraphics objects at level 0 (grid lines)
+    auto objectList = scene->items();
+    for(int i = 0; i < objectList.size(); i++)
+    {
+        if(objectList.at(i)->zValue() == 0)
+        {
+            scene->removeItem(objectList.at(i));
+        }
+    }
+
     QPen gridPen(Qt::lightGray);
     const auto xMax = ui->sBox_worldc_sizeX->value();
     const auto yMax = ui->sBox_worldc_sizeY->value();
@@ -95,7 +106,6 @@ void MainWindow::resizeEvent(QResizeEvent*)
     #undef VERTICAL_SPACING
     #undef HORIZONTAL_SPACING
 }
-
 
 QColor MainWindow::getRandomColor()
 {

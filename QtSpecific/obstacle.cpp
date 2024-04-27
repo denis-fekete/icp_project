@@ -1,22 +1,32 @@
 #include "obstacle.h"
+#include "2DSimulationLib/simulator.h"
 #include "qpen.h"
 
-Obstacle::Obstacle(double x, double y, double w, double h, double rot, QColor& color, Obstacle** activeObstacle) : sim(x, y, w, h, rot)
-{
-    this->color = color;
-    this->activeObstacle = activeObstacle;
-}
+Obstacle::Obstacle(double x, double y, double w, double h,
+                   double rot, QColor& color, Simulator* simulator) :
+    simulator(simulator), sim(x, y, w, h, rot), color(color)
+{}
 
 void Obstacle::initialize()
 {
-    this->setPos(sim.getX(), sim.getY());
-    this->setRotation(sim.getRotation());
-    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
-    this->setFlag(QGraphicsItem::ItemIsMovable);
-    this->setFlag(QGraphicsItem::ItemIsSelectable);
-
+    // set position and rotation to sim
     this->setTransformOriginPoint(0, 0);
-    brush = QBrush(color);
+    this->setRotation(sim.getRotation());
+    this->setPos(sim.getX(), sim.getY());
+    // sends signals when moved
+    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    // can be moved
+    this->setFlag(QGraphicsItem::ItemIsMovable);
+    // can be selected, moved in group
+    this->setFlag(QGraphicsItem::ItemIsSelectable);
+    // antialising
+    this->setTransformationMode(Qt::SmoothTransformation);
+    // make this appear on top of all objects, obstacles have 1
+    this->setZValue(1);
+
+    highligtedColor.setRed(std::min(color.red() + 30, 240));
+    highligtedColor.setGreen(std::min(color.green() + 30, 240));
+    highligtedColor.setBlue(std::min(color.blue() + 30, 240));
 }
 
 void Obstacle::rotateObstacle(double angle)
@@ -44,34 +54,80 @@ QPainterPath Obstacle::shape() const
 
 void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->setBrush(brush);
-
+    painter->setPen(pen);
+    painter->setBrush(color);
     painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
 
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 }
-
-QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
+/*
+ * QVariant BaseRobot::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change == GraphicsItemChange::ItemPositionHasChanged)
+    auto flags = this->flags();
+    if (change == GraphicsItemChange::ItemPositionHasChanged)
     {
         QPointF newPosition = value.toPointF();
-        Point p(newPosition.x(), newPosition.y());
-        this->sim.moveTo(p);
-        *activeObstacle = this;
+        if (flags.testFlag(QGraphicsItem::ItemIsMovable))
+        {
+            Point p(newPosition.x(), newPosition.y());
+            this->sim.moveTo(p);
+            simulator->setActiveRobot(this);
+        }
+
         return newPosition;
+    }
+    else if (change == GraphicsItemChange::ItemSelectedChange)
+    {
+        simulator->setActiveRobot(this);
     }
 
     return QGraphicsItem::itemChange(change, value);
 }
+ */
+QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    auto flags = this->flags();
+    if (change == GraphicsItemChange::ItemPositionHasChanged)
+    {
+        QPointF newPosition = value.toPointF();
+        if (flags.testFlag(QGraphicsItem::ItemIsMovable))
+        {
+            Point p(newPosition.x(), newPosition.y());
+            this->sim.moveTo(p);
+            simulator->setActiveObstacle(this);
+        }
+
+        return newPosition;
+    }
+    else if (change == GraphicsItemChange::ItemSelectedChange)
+    {
+        simulator->setActiveObstacle(this);
+    }
+
+    return QGraphicsItem::itemChange(change, value);
+
+
+    // if(change == GraphicsItemChange::ItemPositionHasChanged)
+    // {
+    //     QPointF newPosition = value.toPointF();
+    //     Point p(newPosition.x(), newPosition.y());
+    //     this->sim.moveTo(p);
+    //     *activeObstacle = this;
+    //     return newPosition;
+    // }
+
+    // return QGraphicsItem::itemChange(change, value);
+}
+
 
 void Obstacle::setSelected()
 {
-    brush.setStyle(Qt::SolidPattern);
+    pen.setColor(highligtedColor);
+    pen.setWidth(HIGHLIGHTED_PEN_WIDTH);
 }
 
 void Obstacle::setUnselected()
 {
-    brush.setStyle(Qt::SolidPattern);
-
+    pen.setColor(color);
+    pen.setWidth(DEFAULT_PEN_WIDTH);
 }
