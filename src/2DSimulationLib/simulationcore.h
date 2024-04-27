@@ -58,7 +58,7 @@ public:
     void runSimulation();
 
     /**
-     * @brief Sets stard and end indexes that this SimulationCore will simulate
+     * @brief Sets start and end indexes that this SimulationCore will simulate
      * @param start Start index
      * @param end End index
      */

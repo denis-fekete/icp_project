@@ -11,8 +11,7 @@ doxygen:
 	doxygen Doxyfile
 
 clean:
-	rm -f -r doc/*
-	rm -f build/*	.o
+	rm -f -r doc/html
 	rm -f -r build
 	rm -f src/moc_*
 	rm -f ui_*

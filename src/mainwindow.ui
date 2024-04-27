@@ -364,7 +364,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Heigth</string>
+        <string>Height</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_14">
@@ -441,7 +441,7 @@
         <string>Rotation</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="input_obstacle_heigth">
+      <widget class="QSpinBox" name="input_obstacle_height">
        <property name="geometry">
         <rect>
          <x>10</x>

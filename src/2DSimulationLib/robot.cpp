@@ -17,11 +17,11 @@ void Robot::moveForward(double distance)
 {
     this->calculateSinCos (rot);
 
-    // Calcualte delta value for moving in X and Y direction
+    // Calculate delta value for moving in X and Y direction
     double xDelta = getCosRad() * distance;
     double yDelta = getSinRad() * distance;
 
-    // Apply deltas to the current possition
+    // Apply deltas to the current position
     x += xDelta;
     y += yDelta;
 

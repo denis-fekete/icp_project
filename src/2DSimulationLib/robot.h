@@ -12,7 +12,7 @@ class Robot : public Circle
 {
     /**
      * @brief detRadius Radius in which will obstacles be detected, used for
-     * less precise collision detectiom
+     * less precise collision detection
      */
     double detRadius;
 

@@ -133,7 +133,7 @@ public:
     void setActiveRobot(BaseRobot* robot);
 
     /**
-     * @brief Sets activeObstacl by id
+     * @brief Sets activeObstacle by id
      * @param id Id in vector of Obstacles
      */
     void setActiveObstacle(size_t id);

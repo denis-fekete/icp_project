@@ -55,7 +55,7 @@ public:
     void rotate(double angle);
 
     /**
-     * @return Returns stored cosinus
+     * @return Returns stored cosine
      */
     inline double getCosRad() const { return cosRad; }
     /**
@@ -72,7 +72,7 @@ public:
     inline double getRotation() const { return rot; }
 
     /**
-     * @brief Sets cosinus
+     * @brief Sets cosine
      * @param val New value to be set
      */
     inline void setCosRad(double val) { this->cosRad = val; }
@@ -93,20 +93,20 @@ public:
     inline void setRadius(double rad) { this->radius = rad; }
 
     /**
-     * @brief Calculates sinus and cosinus values and stores them into
+     * @brief Calculates sinus and cosine values and stores them into
      * cosRad and sinRad
      */
     void calculateSinCos();
     /**
-     * @brief Calculates sinus and cosinus values and stores them into
+     * @brief Calculates sinus and cosine values and stores them into
      * cosRad and sinRad
      * @param rot Rotation based on which sin/cos will be calculated
      */
     void calculateSinCos(double rot);
     /**
-     * @brief Calculates sinus and cosinus values and stores them into
+     * @brief Calculates sinus and cosine values and stores them into
      * cosRad and sinRad
-     * @param cosRad Output variable to which cosinus value will be set
+     * @param cosRad Output variable to which cosine value will be set
      * @param sinRad Output variable to which sinus value will be set
      * @param rot Rotation based on which sin/cos will be calculated
      */

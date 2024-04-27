@@ -37,28 +37,74 @@ private:
     /**
      * @brief Color of this Obstacle when highlighted
      */
-    QColor highligtedColor;
+    QColor highlightedColor;
 
 public:
+    /**
+     * @brief Constructor of Obstacle object
+     * @param x Center X position to be set
+     * @param y Center Y position to be set
+     * @param w Width of the Obstacle
+     * @param h Height of the Obstacle
+     * @param rot Rotation of this robot
+     * @param detRadius Detection radius of this robot
+     * @param color Color of the AutoRobot
+     * @param colliders Pointer to vector of Rectangle that will collide with this robot
+     */
     Obstacle(double x, double y, double w, double h, double rot, QColor& color, Simulator* simulator);
 
+   /**
+     * @brief Initializes Obstacle values, this needs to called after constructor 
+     */
     void initialize();
 
+    /**
+     * @brief Rotates Obstacle in simulation and graphics view
+     * @param angle Value by which will Obstacle be rotated 
+     */
     void rotateObstacle(double angle);
+    
+    /**
+     * @return Rectangle* Returns pointer to the Rectangle that is used for simulation
+     */
     inline Rectangle* getSimulationRectangle() { return &this->sim; };
 
-// Qt
+    /**
+     * @brief Method defining rough collider of the object for Qt
+     * @return
+     */
     QRectF boundingRect() const override;
+
+    /**
+     * @brief Method defining detailed collider of the object for Qt
+     */
     QPainterPath shape() const override;
+
+    /**
+     * @brief Method for drawing the obstacle on the screen
+     */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
-//getters
+    /**
+     * @return Rectangle* Returns pointer to simulation Rectangle object
+     */
     inline Rectangle* getSim() { return &this->sim; }
+
+    /**
+     * @return QColor& Returns reference to color of this object 
+     */
     inline QColor& getColor() { return this->color; }
 
+    /**
+     * @brief Sets this robot to be highlighted
+     */
     void setSelected();
+
+      /**
+     * @brief Un-sets this obstacle, to not be highlighted
+     */
     void setUnselected();
 
 };

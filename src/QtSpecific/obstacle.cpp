@@ -19,20 +19,20 @@ void Obstacle::initialize()
     this->setFlag(QGraphicsItem::ItemIsMovable);
     // can be selected, moved in group
     this->setFlag(QGraphicsItem::ItemIsSelectable);
-    // antialising
+    // anti-aliasing
     this->setTransformationMode(Qt::SmoothTransformation);
     // make this appear on top of all objects, obstacles have 1
     this->setZValue(1);
 
-    highligtedColor.setRed(std::min(color.red() + 30, 240));
-    highligtedColor.setGreen(std::min(color.green() + 30, 240));
-    highligtedColor.setBlue(std::min(color.blue() + 30, 240));
+    highlightedColor.setRed(std::min(color.red() + 30, 240));
+    highlightedColor.setGreen(std::min(color.green() + 30, 240));
+    highlightedColor.setBlue(std::min(color.blue() + 30, 240));
 }
 
 void Obstacle::rotateObstacle(double angle)
 {
     this->sim.rotate(angle);
-    this->setRotation(angle);
+    this->setRotation(sim.getRotation());
 }
 
 QRectF Obstacle::boundingRect() const
@@ -60,30 +60,7 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
 
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 }
-/*
- * QVariant BaseRobot::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    auto flags = this->flags();
-    if (change == GraphicsItemChange::ItemPositionHasChanged)
-    {
-        QPointF newPosition = value.toPointF();
-        if (flags.testFlag(QGraphicsItem::ItemIsMovable))
-        {
-            Point p(newPosition.x(), newPosition.y());
-            this->sim.moveTo(p);
-            simulator->setActiveRobot(this);
-        }
 
-        return newPosition;
-    }
-    else if (change == GraphicsItemChange::ItemSelectedChange)
-    {
-        simulator->setActiveRobot(this);
-    }
-
-    return QGraphicsItem::itemChange(change, value);
-}
- */
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     auto flags = this->flags();
@@ -105,24 +82,12 @@ QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)
     }
 
     return QGraphicsItem::itemChange(change, value);
-
-
-    // if(change == GraphicsItemChange::ItemPositionHasChanged)
-    // {
-    //     QPointF newPosition = value.toPointF();
-    //     Point p(newPosition.x(), newPosition.y());
-    //     this->sim.moveTo(p);
-    //     *activeObstacle = this;
-    //     return newPosition;
-    // }
-
-    // return QGraphicsItem::itemChange(change, value);
 }
 
 
 void Obstacle::setSelected()
 {
-    pen.setColor(highligtedColor);
+    pen.setColor(highlightedColor);
     pen.setWidth(HIGHLIGHTED_PEN_WIDTH);
 }
 

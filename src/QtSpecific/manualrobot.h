@@ -48,14 +48,14 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param obstaclesPointer Refernce to vector of obstacles
+     * @param obstaclesPointer Pointer to vector of obstacles
      */
     ManualRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color,
               std::vector<Rectangle*>* colliders, Simulator* simulator);
 
     /**
-     * @brief Simulates robot once, check if collision is occuring, if not
+     * @brief Simulates robot once, check if collision is occurring, if not
      * movesForward, if yes, rotates
      */
     void simulate() override;

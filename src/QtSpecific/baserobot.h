@@ -50,7 +50,7 @@ protected:
     /**
      * @brief Color of this robot when highlighted
      */
-    QColor highligtedColor;
+    QColor highlightedColor;
 
     /**
      * @brief Pointer to the simulator
@@ -70,15 +70,21 @@ public:
      */
     BaseRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, std::vector<Rectangle*>* colliders, Simulator* simulator);
+
     /**
-     * @brief Adds AutoRobot object to the scene
-     * @param scene
+     * @brief Initializes Robot values, this needs to called after constructor 
      */
     void initialize();
 
-
-    void setUnselected();
+    /**
+     * @brief Sets this robot to be highlighted
+     */
     void setSelected();
+
+    /**
+     * @brief Un-sets this robot, to not be highlighted
+     */
+    void setUnselected();
 
     /**
      * @brief Calls simulation move method for moving forward
@@ -94,7 +100,7 @@ public:
 
 
     /**
-     * @brief Simulates robot once, check if collision is occuring, if not
+     * @brief Simulates robot once, check if collision is occurring, if not
      * movesForward, if yes, rotates
      */
     virtual void simulate() = 0;
@@ -106,7 +112,7 @@ public:
     QRectF boundingRect() const override;
 
     /**
-     * @brief Method defining detailded collider of the object for Qt
+     * @brief Method defining detailed collider of the object for Qt
      */
     QPainterPath shape() const override;
 
@@ -122,7 +128,7 @@ public:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
     /**
-     * @return Reference to simulation
+     * @return Robot* Returns pointer to the simulation Robot
      */
     inline Robot* getSim() { return &this->sim; }
 

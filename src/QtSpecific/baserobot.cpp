@@ -16,7 +16,7 @@ void BaseRobot::initialize()
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     // can be selected, for moving multiple objects at one
     this->setFlag(QGraphicsItem::ItemIsSelectable);
-    // antialiasing
+    // // anti-aliasing
     this->setTransformationMode(Qt::SmoothTransformation);
     // set origin point to 0,0
     this->setTransformOriginPoint(0, 0);
@@ -24,9 +24,9 @@ void BaseRobot::initialize()
     this->setZValue(2);
     initialized = true;
 
-    highligtedColor.setRed(std::min(color.red() + 30, 240));
-    highligtedColor.setGreen(std::min(color.green() + 30, 240));
-    highligtedColor.setBlue(std::min(color.blue() + 30, 240));
+    highlightedColor.setRed(std::min(color.red() + 30, 240));
+    highlightedColor.setGreen(std::min(color.green() + 30, 240));
+    highlightedColor.setBlue(std::min(color.blue() + 30, 240));
 }
 
 QRectF BaseRobot::boundingRect() const
@@ -81,7 +81,7 @@ void BaseRobot::positionUpdate()
 
 void BaseRobot::setSelected()
 {
-    pen.setColor(highligtedColor);
+    pen.setColor(highlightedColor);
     pen.setWidth(HIGHLIGHTED_PEN_WIDTH);
 }
 

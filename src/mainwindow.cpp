@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ------------------------------------------------------------------------
     // Setup internal objects/variables
     // value 235 means that values in RGB wont be too bright,
-    // potentialy resulting in white robot on white background
+    // potentially resulting in white robot on white background
     randColor = std::make_unique<RandomGenerator>(0, 235);
     rand1000 = std::make_unique<RandomGenerator>(0, 1000);
     // ------------------------------------------------------------------------
@@ -57,7 +57,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::DrawGrid(unsigned density)
 {
-    // remove all qgraphics objects at level 0 (grid lines)
+    // remove all QGraphics objects at level 0 (grid lines)
     auto objectList = scene->items();
     for(int i = 0; i < objectList.size(); i++)
     {
@@ -165,7 +165,7 @@ void MainWindow::on_program_btn_resumepause_clicked()
 
 void MainWindow::on_saveManger_btn_load_clicked()
 {
-    // check if manager was initialzied
+    // check if manager was initialized
     if(!saveManager)
     {
         saveManager = std::make_unique<SaveManager> (*simulator.get(), this);
@@ -179,7 +179,7 @@ void MainWindow::on_saveManger_btn_load_clicked()
 
 void MainWindow::on_saveManager_btn_save_clicked()
 {
-    // check if manager was initialzied
+    // check if manager was initialized
     if(!saveManager)
     {
         saveManager = std::make_unique<SaveManager> (*simulator.get(), this);
@@ -191,14 +191,14 @@ void MainWindow::on_saveManager_btn_save_clicked()
 void MainWindow::on_btn_loadBenchmark_clicked()
 {
     unsigned int benchmarkWidth = ui->sBox_world_benchMarkSizeX->value();
-    unsigned int benchmarkHeigth = ui->sBox_world_benchMarkSizeY->value();
+    unsigned int benchmarkHeight = ui->sBox_world_benchMarkSizeY->value();
     if(benchmarkWidth > scene->sceneRect().width())
     {
         benchmarkWidth = scene->sceneRect().width();
     }
-    if(benchmarkHeigth > scene->sceneRect().height())
+    if(benchmarkHeight > scene->sceneRect().height())
     {
-        benchmarkHeigth = scene->sceneRect().height();
+        benchmarkHeight = scene->sceneRect().height();
     }
 
 
@@ -226,11 +226,11 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         double rot= (rand1000->getRandomValue() % 360);
         QColor color = getRandomColor();
 
-        simulator->addObstacle(x + xPosOffset, benchmarkHeigth - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
+        simulator->addObstacle(x + xPosOffset, benchmarkHeight - 10 + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
 
     }
 
-    for(size_t y = 0; y < benchmarkHeigth; y += sizeConst)
+    for(size_t y = 0; y < benchmarkHeight; y += sizeConst)
     {
         double xPosOffset = (rand1000->getRandomValue() % 10) - 5;
         double yPosOffset = (rand1000->getRandomValue() % 10) - 5;
@@ -242,7 +242,7 @@ void MainWindow::on_btn_loadBenchmark_clicked()
         simulator->addObstacle(10 + xPosOffset, y + yPosOffset, 10 + sizeOffsetW, 10 + sizeOffsetH, rot, color);
     }
 
-    for(size_t y = 0; y < benchmarkHeigth; y += sizeConst)
+    for(size_t y = 0; y < benchmarkHeight; y += sizeConst)
     {
         double xPosOffset = (rand1000->getRandomValue() % 10) - 5;
         double yPosOffset = (rand1000->getRandomValue() % 10) - 5;
@@ -258,22 +258,22 @@ void MainWindow::on_btn_loadBenchmark_clicked()
 void MainWindow::on_btn_worldAddMoreRobots_clicked()
 {
     unsigned int benchmarkWidth = ui->sBox_world_benchMarkSizeX->value();
-    unsigned int benchmarkHeigth = ui->sBox_world_benchMarkSizeY->value();
+    unsigned int benchmarkHeight = ui->sBox_world_benchMarkSizeY->value();
 
     if(benchmarkWidth > scene->sceneRect().width())
     {
         benchmarkWidth = scene->sceneRect().width();
     }
-    if(benchmarkHeigth > scene->sceneRect().height())
+    if(benchmarkHeight > scene->sceneRect().height())
     {
-        benchmarkHeigth = scene->sceneRect().height();
+        benchmarkHeight = scene->sceneRect().height();
     }
 
     for(int robs = 0; robs < ui->sBox_world_robotsCount->value(); robs++)
     {
         double rad = (rand1000->getRandomValue() % 10) + 15;
         double xPos = benchmarkWidth / 2 + (rand1000->getRandomValue() % (static_cast<int>(rad*3)));
-        double yPos = benchmarkHeigth / 2 + (rand1000->getRandomValue() % (static_cast<int>(rad*3)));
+        double yPos = benchmarkHeight / 2 + (rand1000->getRandomValue() % (static_cast<int>(rad*3)));
         double detRad = (rand1000->getRandomValue() % 20) + 40;
         double rot= (rand1000->getRandomValue() % 360);
         double speed = (rand1000->getRandomValue() % 3) + 1;
@@ -455,7 +455,7 @@ void MainWindow::on_btnCreateObstacle_clicked()
             ui->input_obstacle_xPos->value(),
             ui->input_obstacle_yPos->value(),
             ui->input_obstacle_width->value(),
-            ui->input_obstacle_heigth->value(),
+            ui->input_obstacle_height->value(),
             ui->input_obstacle_rotation->value(),
             color);
 
