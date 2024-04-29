@@ -39,7 +39,8 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->drawLine(QLine(3, 0, -3, 3));
 
     // Collider
-    painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
+    // painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
+    painter->setPen(QPen(highlightedColor, 2, Qt::SolidLine));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 
     painter->drawLine(0, flooredRadius, flooredDetRadius, flooredRadius);

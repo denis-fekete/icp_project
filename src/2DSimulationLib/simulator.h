@@ -274,6 +274,8 @@ private:
     /**
      * @brief Function that calls all SimulationCores to simulate once
      */
+
+protected slots:
     void simulationCycle();
 };
 

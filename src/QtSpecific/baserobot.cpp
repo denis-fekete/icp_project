@@ -16,21 +16,20 @@ BaseRobot::BaseRobot(double x, double y, double radius, double rot,
 
 void BaseRobot::initialize()
 {
-    this->rotateRobot(0);
-    this->sim.getColliderFwd()->rotate(0);
+    rotateRobot(0);
+    sim.getColliderFwd()->rotate(0);
 
     // item can be moved by mouse
-    this->setFlag(QGraphicsItem::ItemIsMovable);
-    // sends changes when moved
-    this->setFlag(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlag(QGraphicsItem::ItemIsMovable);
     // can be selected, for moving multiple objects at one
-    this->setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemSendsGeometryChanges);
     // // anti-aliasing
-    this->setTransformationMode(Qt::SmoothTransformation);
+    setTransformationMode(Qt::SmoothTransformation);
     // set origin point to 0,0
-    this->setTransformOriginPoint(0, 0);
+    setTransformOriginPoint(0, 0);
     // make this appear on top of all objects, obstacles have 1
-    this->setZValue(2);
+    setZValue(2);
     initialized = true;
 
     highlightedColor.setRed(std::min(color.red() + 30, 240));
@@ -54,7 +53,6 @@ QPainterPath BaseRobot::shape() const
                  2 * sim.getRadius());
     return path;
 }
-
 
 QVariant BaseRobot::itemChange(GraphicsItemChange change, const QVariant &value)
 {
@@ -104,8 +102,6 @@ void BaseRobot::advance(int step)
 {
     if(!step)
         return;
-
-    this->simulate();
 
     this->setPos(0, 0);
     this->setRotation(sim.getRotation());

@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     view = new QGraphicsView(scene);
     view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    view->setDragMode(QGraphicsView::ScrollHandDrag);
+    // view->setDragMode(QGraphicsView::ScrollHandDrag);
 
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     // QApplication::setStyle(QStyleFactory::create("Windows"));
@@ -281,7 +281,7 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         double speed = (rand1000->getRandomValue() % 15) + 10;
         double turnAngle = (rand1000->getRandomValue() % 50) + 25;
         double turnDirection = (rand1000->getRandomValue() % 2);
-        turnDirection = (turnDirection == 0)? -1 : 1;
+        turnDirection = (turnDirection == 0)? -1 : turnDirection;
         QColor color = getRandomColor();
 
         simulator->addAutomaticRobot(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, turnDirection);

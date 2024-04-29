@@ -2,11 +2,8 @@
 
 #include <algorithm>
 
-// #define LOG_PERFORMACE
 
-#ifdef LOG_PERFORMACE
-    #include <chrono>
-#endif
+
 
 Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads) : scene(scene)
 {
@@ -20,6 +17,12 @@ Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads) : scene(scene)
     connect(&timerGraphics, SIGNAL(timeout()), &scene, SLOT(advance()));
 }
 
+// #define LOG_PERFORMACE
+
+#ifdef LOG_PERFORMACE
+#include <chrono>
+#endif
+
 void Simulator::simulationCycle()
 {
     if(robots.size() == 0)
@@ -32,11 +35,7 @@ void Simulator::simulationCycle()
 #ifdef LOG_PERFORMACE
         auto beggining = std::chrono::high_resolution_clock::now();
 #endif
-        // for(size_t index = 0; index < robots.size(); index++)
-        // {
-        //     robots.at(index)->simulate();
-        //     robots.at(index)->positionUpdate();
-        // }
+
         return;
 
 #ifdef LOG_PERFORMACE
@@ -55,10 +54,9 @@ void Simulator::simulationCycle()
         {
             cycleTime += simCores.at(index).get()->lastDuration;
         }
-        cycleTime /= 4;
+        cycleTime /= maxThreads;
 #endif
     }
-
 
     scene.update();
 }

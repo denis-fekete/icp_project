@@ -49,7 +49,7 @@ private:
     std::vector<std::unique_ptr<QLine>> gridLines;
 
 // Analytics
-public slots:
+private slots:
     void updateAnalytics();
 
 private slots:
