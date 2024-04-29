@@ -17,21 +17,7 @@ Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads) : scene(scene)
     keepSimCoresRunning = false;
 
     connect(&timerSim, SIGNAL(timeout()), this, SLOT(simulationCycle()));
-    connect(&timerGraphics, SIGNAL(timeout()), this, SLOT(updateGraphicsPos()));
-}
-
-
-void Simulator::updateGraphicsPos()
-{
-    if(robots.size() == 0)
-    {
-        return;
-    }
-
-    for(size_t index = 0; index < robots.size(); index++)
-    {
-        robots.at(index)->positionUpdate();
-    }
+    connect(&timerGraphics, SIGNAL(timeout()), &scene, SLOT(advance()));
 }
 
 void Simulator::simulationCycle()
@@ -46,11 +32,12 @@ void Simulator::simulationCycle()
 #ifdef LOG_PERFORMACE
         auto beggining = std::chrono::high_resolution_clock::now();
 #endif
-        for(size_t index = 0; index < robots.size(); index++)
-        {
-            robots.at(index)->simulate();
-            robots.at(index)->positionUpdate();
-        }
+        // for(size_t index = 0; index < robots.size(); index++)
+        // {
+        //     robots.at(index)->simulate();
+        //     robots.at(index)->positionUpdate();
+        // }
+        return;
 
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
@@ -61,6 +48,7 @@ void Simulator::simulationCycle()
     else
     {
         wakeCores.notify_all();
+
 #ifdef LOG_PERFORMACE
         cycleTime = 0;
         for(size_t index = 0; index < maxThreads; index++)
@@ -142,9 +130,10 @@ void Simulator::balanceCores()
     }
 }
 
+
 void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                      double detRadius, QColor color, double speed,
-                                     double turnAngle, bool turnRight)
+                                     double turnAngle, int turnDirection)
 {
     // const for normalizing values
     const double timeNorm = 1000 / timerPeriod;
@@ -154,18 +143,21 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                                      detRadius, color,
                                                      speed / timeNorm,
                                                      turnAngle / timeNorm,
-                                                     turnRight, &colliders, &robotColliders, this));
+                                                     turnDirection, &colliders, &robotColliders, this));
+
+    auto addedRobot = autoRobots.back().get();
     // add robot to the vector of robotColliders
-    robotColliders.push_back(autoRobots.back().get()->getSim());
+    robotColliders.push_back(addedRobot->getSim());
 
     // add it do vector of all robots
-    robots.push_back(autoRobots.back().get());
+    robots.push_back(addedRobot);
 
     // initialize it and add it the scene
-    autoRobots.back()->initialize();
-    scene.addItem(autoRobots.back().get());
+    addedRobot->initialize();
+    scene.addItem(addedRobot);
 
-    autoRobots.back().get()->positionUpdate();
+    addedRobot->positionUpdate();
+
     balanceCores();
     scene.update();
 }
@@ -176,17 +168,18 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
     // create new AutoRobot and add it to vector of manual robots
     manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, &robotColliders, this));
 
+    auto addedRobot = manualRobots.back().get();
     // add robot to the vector of robotColliders
-    robotColliders.push_back(manualRobots.back().get()->getSim());
+    robotColliders.push_back(addedRobot->getSim());
 
     // add it do vector of all robots
-    robots.push_back(manualRobots.back().get());
+    robots.push_back(addedRobot);
 
     // initialize it and add it the scene
-    manualRobots.back()->initialize();
-    scene.addItem(manualRobots.back().get());
+    addedRobot->initialize();
+    scene.addItem(addedRobot);
 
-    manualRobots.back().get()->positionUpdate();
+    addedRobot->positionUpdate();
     balanceCores();
     scene.update();
 }
@@ -350,10 +343,6 @@ void Simulator::deleteObstacle(size_t id)
 
 void Simulator::runSimulation()
 {
-    this->timerSim.start(timerPeriod);
-    this->timerGraphics.start(timerPeriod / 2
-                              );
-
     for(size_t i = 0; i < obstacles.size(); i++)
     {
         obstacles.at(i).get()->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -363,6 +352,9 @@ void Simulator::runSimulation()
     {
         robots.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
     }
+
+    this->timerSim.start(timerPeriod);
+    this->timerGraphics.start(timerPeriod / 2);
 }
 
 void Simulator::stopSimulation()

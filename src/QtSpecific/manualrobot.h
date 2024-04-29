@@ -20,27 +20,13 @@ class ManualRobot : public BaseRobot
 {
 protected:
     /**
-     * @brief Speed of this robot
-     */
-    double speed;
-
-    /**
-     * @brief Turn angle on collision detection
-     */
-
-    double turnAngle;
-    /**
-     * @brief Direction in which will robot turn on collision
-     */
-
-    /**
      * @brief cmd Command that robot will execute
      */
     Command cmd;
 
 public:
     /**
-     * @brief Constructor of AutoRobot object
+     * @brief Constructor of ManualRobot object
      * @param x Center X position to be set
      * @param y Center Y position to be set
      * @param radius Radius if this Robot
@@ -48,11 +34,17 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param obstaclesPointer Pointer to vector of obstacles
+     * @param turnAngle Turn angle on collision detection
+     * @param turnDirection Turn direction, -1 or 1
+     * @param colliders Pointer to the vector of obstacles
+     * @param robotCollider Pointer to the vector of all robots
+     * @param simulator Pointer to the simulator
      */
     ManualRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color,
-              std::vector<Rectangle*>* colliders, std::vector<Robot*>* robotColliders, Simulator* simulator);
+              std::vector<Rectangle*>* colliders,
+              std::vector<Robot*>* robotColliders,
+              Simulator* simulator);
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not

@@ -9,6 +9,8 @@ Obstacle::Obstacle(double x, double y, double w, double h,
 
 void Obstacle::initialize()
 {
+    this->rotateObstacle(0);
+
     // set position and rotation to sim
     this->setTransformOriginPoint(0, 0);
     this->setRotation(sim.getRotation());
@@ -57,8 +59,6 @@ void Obstacle::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidge
     painter->setPen(pen);
     painter->setBrush(color);
     painter->drawRect(-sim.w/2, -sim.h/2, sim.w, sim.h);
-
-    painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 }
 
 QVariant Obstacle::itemChange(GraphicsItemChange change, const QVariant &value)

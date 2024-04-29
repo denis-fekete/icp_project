@@ -20,6 +20,7 @@ class Simulator;
 #define DEFAULT_PEN_WIDTH 1
 #define HIGHLIGHTED_PEN_WIDTH 3
 
+// class BaseRobot : public QGraphicsPixmapItem
 class BaseRobot : public QGraphicsPixmapItem
 {
 protected:
@@ -61,20 +62,46 @@ protected:
      * @brief Pointer to the simulator
      */
     Simulator* simulator;
+
+
+    /**
+     * @brief Speed of this robot
+     */
+    double speed;
+
+    /**
+     * @brief Turn angle on collision detection
+     */
+
+    double turnAngle;
+
+    /**
+     * @brief Direction in which will robot turn on collision
+     */
+    short turnDirection;
 public:
 
     /**
-     * @brief Constructor of AutoRobot object
+     * @brief Constructor of BaseRobot object
      * @param x Center X position to be set
      * @param y Center Y position to be set
      * @param radius Radius if this Robot
      * @param rot Rotation of this robot
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
-     * @param colliders Pointer to vector of Rectangle that will collide with this robot
+     * @param speed Speed of the AutoRobot
+     * @param turnAngle Turn angle on collision detection
+     * @param turnDirection Turn direction, -1 or 1
+     * @param colliders Pointer to the vector of obstacles
+     * @param robotCollider Pointer to the vector of all robots
+     * @param simulator Pointer to the simulator
      */
     BaseRobot(double x, double y, double radius, double rot,
-              double detRadius, QColor color, std::vector<Rectangle*>* colliders, std::vector<Robot*>* robotColliders, Simulator* simulator);
+              double detRadius, QColor color, double speed,
+              double turnAngle, short turnDirection,
+              std::vector<Rectangle*>* colliders,
+              std::vector<Robot*>* robotColliders,
+              Simulator* simulator);
 
     /**
      * @brief Initializes Robot values, this needs to called after constructor 
@@ -142,7 +169,9 @@ public:
      */
     inline QColor& getColor() { return this->color; }
 
-public slots:
+protected:
+    void advance(int step) Q_DECL_OVERRIDE;
+public:
     void positionUpdate();
 };
 

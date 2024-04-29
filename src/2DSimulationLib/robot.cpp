@@ -2,16 +2,14 @@
 
 Robot::Robot(double x, double y, double radius, double rot, double detRadius) :
     Circle::Circle(x, y, radius, rot),
-    colliderFwd(x + detRadius / 2, y, radius + detRadius, 2 * radius, rot)
-    // colliderFwd(x + (radius + detRadius)/2 - radius, y, radius + detRadius, 2 * radius, rot)
+    colliderFwd(x + detRadius / 2, y, detRadius, 2 * radius, rot)
 {
     this->detRadius = detRadius;
-    this->rotate(0);
 }
 
 void Robot::moveForward(double distance)
 {
-    this->calculateSinCos (rot);
+    this->calculateSinCos();
 
     // Calculate delta value for moving in X and Y direction
     double xDelta = getCosRad() * distance;
@@ -51,10 +49,11 @@ void Robot::rotate(double angle)
         this->rot -= sign * 360;
     }
 
-    colliderFwd.setRotation(getRotation());
-
     // Fix colliderFwd position, rotate point around point
     calculateSinCos(rot);
+
+    colliderFwd.setRotation(this->getRotation());
+
     // Reset collider position as if it was not rotated
     colliderFwd.x = x + detRadius / 2;
     colliderFwd.y = y;
@@ -71,28 +70,6 @@ void Robot::rotate(double angle)
     colliderFwd.updatePoints(cosRad, sinRad);
 }
 
-bool Robot::obstacleDetection(std::vector<std::unique_ptr<Obstacle>>* validObstacles)
-{
-    // Go through list of all other objects
-    for(unsigned i = 0; i < validObstacles->size(); i++)
-    {
-        // Store current other object
-        Rectangle* other = validObstacles->at(i)->getSimulationRectangle();
-
-        Circle* otherCircle = dynamic_cast<Circle*>(other);
-        // First check if robot and obstacles radiuses intersect
-        if(this->intersect(otherCircle))
-        {
-            if(colliderFwd.intersects(other))
-            {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
 {
     // Go through list of all other objects
@@ -103,7 +80,7 @@ bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
 
         Circle* otherCircle = dynamic_cast<Circle*>(other);
         // First check if robot and obstacles radiuses intersect
-        if(this->intersect(otherCircle))
+        if(this->intersect(*otherCircle))
         {
             if(colliderFwd.intersects(other))
             {
@@ -115,35 +92,29 @@ bool Robot::obstacleDetection(std::vector<Rectangle*>* validObstacles)
     return false;
 }
 
-bool Robot::intersect(Circle* other)
+bool Robot::intersect(Circle& other)
 {
-    auto radius = (this->detRadius + other->getRadius());
-    auto left = (this->x - other->getX()) * (this->x - other->getX()) +
-                (this->y - other->getY()) * (this->y - other->getY());
-    auto right = radius * radius;
-    if( left <= right)
-    {
-        return true;
-    }
+    auto left = (this->x - other.getX()) * (this->x - other.getX()) +
+                (this->y - other.getY()) * (this->y - other.getY());
 
-    return false;
+    return left <= ((this->detRadius + other.getRadius()) * (this->detRadius + other.getRadius()));
 }
 
-bool Robot::lineCircleIntersect(Point* lineStart, Point* lineEnd)
+bool Robot::lineCircleIntersect(Point& lineStart, Point& lineEnd)
 {
 
-    double lineX1 = lineEnd->x - lineStart->x;
-    double lineY1 = lineEnd->y - lineStart->y;
+    double lineX1 = lineEnd.x - lineStart.x;
+    double lineY1 = lineEnd.y - lineStart.y;
 
-    double lineX2 = this->x - lineStart->x;
-    double lineY2 = this->y - lineStart->y;
+    double lineX2 = this->x - lineStart.x;
+    double lineY2 = this->y - lineStart.y;
 
     double lineLength = lineX1 * lineX1 + lineY1 * lineY1;
 
     double t = std::max(0.0, std::min(lineLength, (lineX1 * lineX2 + lineY1 * lineY2))) / lineLength;
 
-    double closestX = lineStart->x + t * lineX1;
-    double closestY = lineStart->y + t * lineY1;
+    double closestX = lineStart.x + t * lineX1;
+    double closestY = lineStart.y + t * lineY1;
 
     double distance = sqrt((this->x - closestX) * (this->x - closestX) + (this->y - closestY) * (this->y - closestY));
 
@@ -155,6 +126,7 @@ bool Robot::lineCircleIntersect(Point* lineStart, Point* lineEnd)
     return false;
 }
 
+
 bool Robot::robotDetection(std::vector<Robot *> *robots)
 {
     for(size_t i = 0; i < robots->size(); i++)
@@ -163,7 +135,7 @@ bool Robot::robotDetection(std::vector<Robot *> *robots)
         if(other == this)
             continue;
 
-        if(this->intersect(other))
+        if(this->intersect(*other))
         {
             Point lineStart;
             Point lineEnd;
@@ -171,7 +143,7 @@ bool Robot::robotDetection(std::vector<Robot *> *robots)
             {
                 this->colliderFwd.breakIntoEdges(i, &lineStart, &lineEnd);
 
-                if(other->lineCircleIntersect(&lineStart, &lineEnd))
+                if(other->lineCircleIntersect(lineStart, lineEnd))
                 {
                     return true;
                 }

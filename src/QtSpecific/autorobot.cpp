@@ -3,24 +3,35 @@
 #include "QObject"
 #include "QTimer"
 
+/*
+    BaseRobot(double x, double y, double radius, double rot,
+              double detRadius, QColor color, double speed,
+              double turnAngle, bool turnRight,
+              std::vector<Rectangle*>* colliders,
+              std::vector<Robot*>* robotColliders,
+              Simulator* simulator);
+*/
+
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
-                     double turnAngle, bool turnRight,
+                     double turnAngle, short turnDirection,
                      std::vector<Rectangle*>* colliders,
                      std::vector<Robot*>* robotColliders,
-                     Simulator* simulator) : BaseRobot(x, y, radius, rot, detRadius, color, colliders, robotColliders, simulator),
-    speed(speed),turnAngle(turnAngle), turnDirection((turnRight)? 1 : -1)
+                     Simulator* simulator) :
+    BaseRobot(x, y, radius, rot, detRadius, color, speed, turnAngle, turnDirection, colliders, robotColliders, simulator)
 {
     initialized = false;
 }
-
 
 void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     // Body
     painter->setPen(pen);
     painter->setBrush(color);
-    painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
+    const int flooredRadius = std::floor(sim.getRadius());
+    const int flooredDetRadius = std::floor(sim.getDetRadius());
+
+    painter->drawEllipse(-flooredRadius, -flooredRadius, 2 * flooredRadius, 2 * flooredRadius);
 
     // Center sign
     painter->setPen(QPen(Qt::white, HIGHLIGHTED_PEN_WIDTH));
@@ -31,16 +42,14 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 
-    painter->drawLine(0, sim.getRadius(), sim.getDetRadius(), sim.getRadius());
-    painter->drawLine(sim.getDetRadius(), sim.getRadius(), sim.getDetRadius(), -sim.getRadius());
-    painter->drawLine(sim.getDetRadius(), -sim.getRadius(), 0, -sim.getRadius());
+    painter->drawLine(0, flooredRadius, flooredDetRadius, flooredRadius);
+    painter->drawLine(flooredDetRadius,flooredRadius, flooredDetRadius, -flooredRadius);
+    painter->drawLine(flooredDetRadius, -flooredRadius, 0, -flooredRadius);
 }
 
 void AutoRobot::simulate()
 {
-    bool collision = this->sim.obstacleDetection(colliders);
-    bool collision2 = this->sim.robotDetection(robotColliders);
-    if(collision || collision2)
+    if(sim.obstacleDetection(colliders) || sim.robotDetection(robotColliders))
     {
         this->rotateRobot(turnAngle * turnDirection);
     }

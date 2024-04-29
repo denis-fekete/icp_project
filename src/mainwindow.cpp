@@ -19,11 +19,14 @@ MainWindow::MainWindow(QWidget *parent)
     // ------------------------------------------------------------------------
     // Setup graphics view
     ui->setupUi(this);
+
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+
     view = new QGraphicsView(scene);
     view->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    view->setDragMode(QGraphicsView::ScrollHandDrag);
 
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     // QApplication::setStyle(QStyleFactory::create("Windows"));
@@ -45,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
     timer.setInterval(1000);
     timer.start();
     connect(&timer, SIGNAL(timeout()), this, SLOT(updateAnalytics()));
-
 }
 
 MainWindow::~MainWindow()
@@ -276,11 +278,13 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         double yPos = benchmarkHeight / 2 + (rand1000->getRandomValue() % (static_cast<int>(rad*3)));
         double detRad = (rand1000->getRandomValue() % 20) + 40;
         double rot= (rand1000->getRandomValue() % 360);
-        double speed = (rand1000->getRandomValue() % 3) + 1;
-        double turnAngle = (rand1000->getRandomValue() % 7) - 14;
+        double speed = (rand1000->getRandomValue() % 15) + 10;
+        double turnAngle = (rand1000->getRandomValue() % 50) + 25;
+        double turnDirection = (rand1000->getRandomValue() % 2);
+        turnDirection = (turnDirection == 0)? -1 : 1;
         QColor color = getRandomColor();
 
-        simulator->addAutomaticRobot(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, true);
+        simulator->addAutomaticRobot(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, turnDirection);
     }
 
     // If ID selector is not enabled enable it
@@ -331,6 +335,8 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(ui->input_selectAutomatic->isChecked())
 
     {
+        const short turnDirection = (ui->input_robot_onCollisionTurnRight->isChecked())? 1 : -1;
+
         simulator->addAutomaticRobot(
                 ui->input_robot_xPos->value(),
                 ui->input_robot_yPos->value(),
@@ -340,7 +346,7 @@ void MainWindow::on_btnCreateRobot_clicked()
                 color,
                 ui->input_robot_speed->value(),
                 ui->input_robot_collisionDetectionAngle->value(),
-                ui->input_robot_onCollisionTurnRight->isChecked()
+                turnDirection
                 );
     }
     else

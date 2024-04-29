@@ -135,24 +135,6 @@ public:
 
 
     /**
-     * @brief onSegment Checks if Point c lies on line segment
-     * @param a Start of line segment
-     * @param b End of line segment
-     * @param c Point that is checked
-     * @return True if point lies on segment
-     */
-    bool onSegment(Point a, Point b, Point c);
-
-    /**
-     * @brief Returns orientation of points
-     * @param a Start of first line
-     * @param b End of first line
-     * @param c Point that is checked
-     * @return Returns: 0 if c is collinear with a,b line, 1 if on right side, 2 if on left side
-     */
-    int orientation(Point a, Point b, Point c);
-
-    /**
      * @brief Checks if two line intersect
      * @param a Start point of first line
      * @param b End point of first line
@@ -160,7 +142,7 @@ public:
      * @param d End point of second
      * @return True if lines intersect
      */
-    bool linesIntersect(Point a, Point b, Point c, Point d);
+    bool linesIntersect(Point& startA, Point& endA, Point& startB, Point& endB);
 
     /**
      * @brief Returns one of the Rectangle lines based on `line`
@@ -170,7 +152,27 @@ public:
      */
     void breakIntoEdges(int line, Point* start, Point* end);
 
+
 protected:
+
+    /**
+     * @brief onSegment Checks if Point c lies on line segment
+     * @param a Start of line segment
+     * @param b End of line segment
+     * @param c Point that is checked
+     * @return True if point lies on segment
+     */
+    bool onSegment(Point& a, Point& b, Point& c);
+
+    /**
+     * @brief Returns orientation of points
+     * @param a Start of first line
+     * @param b End of first line
+     * @param c Point that is checked
+     * @return Returns: 0 if c is collinear with a,b line, 1 if on right side, 2 if on left side
+     */
+    double orientation(Point& a, Point& b, Point& c);
+
     /**
      * @brief Updates single point based on `center` Point
      * @param center Point based on which position will be calculated
@@ -184,16 +186,7 @@ protected:
      * @brief Calculates corners of `rect` Rectangle with no rotation
      * @param rect Rectangle whose `rect` will be changed
      */
-    static void calculateCornersWithNoRotation(Rectangle* rect);
-
-
-
-    /**
-     * @brief Checks if Point is in this Rectangle
-     * @param point Point that will be checked if is in this Rectangle
-     * @return True if Point is in this Rectangle
-     */
-    bool pointInRectangle(Point& point);
+    void calculateCornersWithNoRotation();
 };
 
 #endif

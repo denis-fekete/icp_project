@@ -41,11 +41,11 @@ public:
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
      * @param turnAngle Turn angle on collision detection
-     * @param turnRight Turn direction
+     * @param turnDirection Turn direction of the robot, 1 or -1
      */
     void addAutomaticRobot(double x, double y, double radius, double rot,
                               double detRadius, QColor color, double speed,
-                              double turnAngle, bool turnRight);
+                              double turnAngle, int turnDirection);
 
     /*
      * @brief Creates and adds new AutoRobot to the scene
@@ -270,13 +270,6 @@ private:
                                          std::condition_variable* wakeCores,
                                          std::mutex* mutex,
                                          bool* keepSimulating);
-protected slots:
-
-    /**
-     * @brief Function that calls all robots and updates its graphics based
-     * on simulation
-     */
-    void updateGraphicsPos();
 
     /**
      * @brief Function that calls all SimulationCores to simulate once

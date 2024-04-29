@@ -23,7 +23,6 @@ void SimulationCore::runSimulation()
 #ifdef LOG_PERFORMACE
         auto beggining = std::chrono::high_resolution_clock::now();
 #endif
-
         // if start and end are same, reset loop
         if(myRobotsStart == myRobotsEnd)
             continue;
@@ -32,6 +31,7 @@ void SimulationCore::runSimulation()
         {
             allRobots->at(index)->simulate();
         }
+
 #ifdef LOG_PERFORMACE
         auto end = std::chrono::high_resolution_clock::now();
         lastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining).count();

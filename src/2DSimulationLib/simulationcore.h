@@ -39,6 +39,7 @@ private:
      * @brief simulate Whenever simulation core should keep going
      */
     bool* simulate;
+
 public:
 
     /**

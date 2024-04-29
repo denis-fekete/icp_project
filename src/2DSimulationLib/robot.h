@@ -35,13 +35,6 @@ public:
      */
     Robot(double x, double y, double radius, double rot, double detRadius);
 
-    /**
-     * @brief Checks if Robots collides with any Obstacle from vector of obstacles
-     * @param validObstacles Vector of obstacles that Robot can collide with
-     * @return True if Robot collides with one of the Obstacles
-     */
-    bool obstacleDetection(std::vector<std::unique_ptr<Obstacle>>* obstacles);
-
 
     /**
      * @brief Checks if Robots collides with any Rectangle from vector of obstacles
@@ -51,12 +44,12 @@ public:
     bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
 
     /**
-     * @brief Checks if line itersects with this robot
+     * @brief Checks if line intersects with this robot
      * @param lineStart Point where line starts
      * @param lineEnd Point where line ends
      * @return True if line intersects with robot
      */
-    bool lineCircleIntersect(Point* lineStart, Point* lineEnd);
+    bool lineCircleIntersect(Point& lineStart, Point& lineEnd);
 
     /**
      * @brief Check is this robot collides with another robot
@@ -99,6 +92,6 @@ public:
      * @param other Pointer to the other Circle
      * @return True if this Robot collides with Circle
      */
-    bool intersect(Circle* other);
+    bool intersect(Circle& other);
 };
 #endif

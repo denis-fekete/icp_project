@@ -3,15 +3,13 @@
 ManualRobot::ManualRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
                      std::vector<Rectangle*>* colliders,
-                     std::vector<Robot *> *robotColliders,
+                     std::vector<Robot*>* robotColliders,
                      Simulator* simulator) :
-                    BaseRobot(x, y, radius, rot, detRadius, color, colliders, robotColliders, simulator),
-                    speed(0),turnAngle(0)
+    BaseRobot(x, y, radius, rot, detRadius, color, 0, 0, 1, colliders, robotColliders, simulator)
 {
     cmd = Command::STAY;
     initialized = false;
 }
-
 
 void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
@@ -33,6 +31,7 @@ void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->drawLine(0, sim.getRadius(), sim.getDetRadius(), sim.getRadius());
     painter->drawLine(sim.getDetRadius(), sim.getRadius(), sim.getDetRadius(), -sim.getRadius());
     painter->drawLine(sim.getDetRadius(), -sim.getRadius(), 0, -sim.getRadius());
+
 }
 
 void ManualRobot::simulate()

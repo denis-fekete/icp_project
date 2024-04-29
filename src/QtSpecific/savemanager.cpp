@@ -316,7 +316,7 @@ returnType SaveManager::readRobot()
                 color,
                 speed,
                 turnAngle,
-                (turnDirection == 1) ? true : false);
+                turnDirection);
         }
         else
             return err;

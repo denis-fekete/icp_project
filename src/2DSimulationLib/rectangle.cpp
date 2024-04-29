@@ -4,8 +4,6 @@ Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Circl
 {
     this->w = w;
     this->h = h;
-\
-    updatePoints();
 }
 
 Rectangle::~Rectangle() {}
@@ -64,27 +62,28 @@ void Rectangle::updateSinglePoint(Point* center , Point* p, double cosRad, doubl
     // Calculate rotated position
     double rotatedX = (tmpX * cosRad) - (tmpY * sinRad);
     double rotatedY = (tmpX * sinRad) + (tmpY * cosRad);
-    // Transle back to original position with rotated position
+    // Translate back to original position with rotated position
     p->x = rotatedX + center->x;
     p->y = rotatedY + center->y;
 }
 
-void Rectangle::calculateCornersWithNoRotation(Rectangle* rect)
+void Rectangle::calculateCornersWithNoRotation()
 {
     // Calculate constants width/2 and height/2
-    const auto w2 = rect->w / 2;
-    const auto h2 = rect->h / 2;
+    const auto w2 = this->w / 2;
+    const auto h2 = this->h / 2;
 
     // Calculate corner points with no rotation
-    rect->LB = Point(rect->x - w2, rect->y - h2);
-    rect->LT = Point(rect->x - w2, rect->y + h2);
-    rect->RB = Point(rect->x + w2, rect->y - h2);
-    rect->RT = Point(rect->x + w2, rect->y + h2);
+    this->LB.setPos(this->x - w2, this->y - h2);
+    this->LT.setPos(this->x - w2, this->y + h2);
+    this->RB.setPos(this->x + w2, this->y - h2);
+    this->RT.setPos(this->x + w2, this->y + h2);
+
 }
 
 void Rectangle::updatePoints(double cosRad, double sinRad)
 {
-    calculateCornersWithNoRotation(this);
+    calculateCornersWithNoRotation();
     Point center(this->x, this->y);
 
     // Update stored sinus and cosine values
@@ -100,7 +99,7 @@ void Rectangle::updatePoints(double cosRad, double sinRad)
 
 void Rectangle::updatePoints()
 {
-    calculateCornersWithNoRotation(this);
+    calculateCornersWithNoRotation();
 
     Point center(this->x, this->y);
 
@@ -117,48 +116,45 @@ void Rectangle::updatePoints()
     updateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
-bool Rectangle::onSegment(Point a, Point b, Point c)
+bool Rectangle::onSegment(Point& a, Point& b, Point& c)
 {
-    if (b.x <= std::max(a.x, c.x) && b.x >= std::min(a.x, c.x) &&
-        b.y <= std::max(a.y, c.y) && b.y >= std::min(a.y, c.y))
-        return true;
-
-    return false;
+    return (b.x <= std::max(a.x, c.x) && b.x >= std::min(a.x, c.x) &&
+            b.y <= std::max(a.y, c.y) && b.y >= std::min(a.y, c.y));
 }
 
 
-int Rectangle::orientation(Point a, Point b, Point c)
+double Rectangle::orientation(Point& a, Point& b, Point& c)
 {
-    int val = (b.y - a.y) * (c.x - b.x) -
+    double val = (b.y - a.y) * (c.x - b.x) -
               (b.x - a.x) * (c.y - b.y);
 
-    if (val == 0) return 0;
+    if (val >= -0.01 && val <= 0.01) return 0;
 
     return (val > 0)? 1: 2;
 }
 
-bool Rectangle::linesIntersect(Point a, Point b, Point c, Point d)
+bool Rectangle::linesIntersect(Point& startA, Point& endA, Point& startB, Point& endB)
 {
-    int o1 = orientation(a, b, c);
-    int o2 = orientation(a, b, d);
-    int o3 = orientation(c, d, a);
-    int o4 = orientation(c, d, b);
+    double o1 = orientation(startA, endA, startB);
+    double o2 = orientation(startA, endA, endB);
+    double o3 = orientation(startB, endB, startA);
+    double o4 = orientation(startB, endB, endA);
 
     if (o1 != o2 && o3 != o4)
         return true;
 
     // Special Cases
     // p1, q1 and p2 are collinear and p2 lies on segment p1q1
-    if (o1 == 0 && onSegment(a, d, b)) return true;
+    if (o1 == 0 && onSegment(startA, endB, endA)) return true;
 
     // p1, q1 and q2 are collinear and q2 lies on segment p1q1
-    if (o2 == 0 && onSegment(a, d, b)) return true;
+    if (o2 == 0 && onSegment(startA, endB, endA)) return true;
 
     // p2, q2 and p1 are collinear and p1 lies on segment p2q2
-    if (o3 == 0 && onSegment(c, a, d)) return true;
+    if (o3 == 0 && onSegment(startB, startA, endB)) return true;
 
     // p2, q2 and q1 are collinear and q1 lies on segment p2q2
-    if (o4 == 0 && onSegment(c, a, d)) return true;
+    if (o4 == 0 && onSegment(startB, startA, endB)) return true;
 
     return false;
 }
@@ -195,18 +191,17 @@ void Rectangle::breakIntoEdges(int line, Point* start, Point* end)
 bool Rectangle::intersects(Rectangle* other)
 {
     // Check whenever edges of rectangle intesect
-    Point intersectionPoint;
-    Point a, b;
-    Point c, d;
+    Point startA, endA;
+    Point startB, endB;
     for(int i = 0; i < POLYGON_EDGE_COUNT; i++)
     {
-        this->breakIntoEdges(i, &a, &b);
+        this->breakIntoEdges(i, &startA, &endA);
 
         for (int j = 0; j < POLYGON_EDGE_COUNT; j++)
         {
-            other->breakIntoEdges(j, &c, &d);
+            other->breakIntoEdges(j, &startB, &endB);
 
-            if(linesIntersect(a, b, c, d))
+            if(linesIntersect(startA, endA, startB, endB))
             {
                 return true;
             }

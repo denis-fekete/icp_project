@@ -1,17 +1,24 @@
 #include "baserobot.h"
 #include "../2DSimulationLib/simulator.h"
+
 BaseRobot::BaseRobot(double x, double y, double radius, double rot,
-                     double detRadius, QColor color,
-                     std::vector<Rectangle*>* colliders,
-                     std::vector<Robot *> *robotColliders,
-                     Simulator* simulator) :
-    sim(x, y, radius, rot, detRadius), colliders(colliders), robotColliders(robotColliders), color(color), simulator(simulator)
+          double detRadius, QColor color, double speed,
+          double turnAngle, short turnDirection,
+          std::vector<Rectangle*>* colliders,
+          std::vector<Robot*>* robotColliders,
+          Simulator* simulator) :
+    sim(x, y, radius, rot, detRadius), colliders(colliders),
+    robotColliders(robotColliders), color(color), simulator(simulator),
+    speed(speed), turnAngle(turnAngle), turnDirection(turnDirection)
 {
     initialized = false;
 }
 
 void BaseRobot::initialize()
 {
+    this->rotateRobot(0);
+    this->sim.getColliderFwd()->rotate(0);
+
     // item can be moved by mouse
     this->setFlag(QGraphicsItem::ItemIsMovable);
     // sends changes when moved
@@ -91,4 +98,16 @@ void BaseRobot::setUnselected()
 {
     pen.setColor(color);
     pen.setWidth(DEFAULT_PEN_WIDTH);
+}
+
+void BaseRobot::advance(int step)
+{
+    if(!step)
+        return;
+
+    this->simulate();
+
+    this->setPos(0, 0);
+    this->setRotation(sim.getRotation());
+    this->setPos(sim.getX(), sim.getY());
 }
