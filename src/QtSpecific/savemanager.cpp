@@ -140,10 +140,41 @@ void SaveManager::loadFromFile()
     xmlReader.readNextStartElement();
     if(xmlReader.name() != "Simulation_space")
     {
+        file.close();
+
         QMessageBox msgBox;
         msgBox.setText("Bad XML format. First element is not <Simulation_space>");
         msgBox.exec();
+        return;
     }
+
+
+    auto attrs = xmlReader.attributes();
+
+    double width = -1;
+    double height = -1;
+
+    if(attrs.hasAttribute("width"))
+    {
+        width = attrs.value("width").toDouble();
+    }
+
+    if(attrs.hasAttribute("height"))
+    {
+        height = attrs.value("width").toDouble();
+    }
+
+    if(width == -1 || height == -1)
+    {
+        file.close();
+
+        QMessageBox msgBox;
+        msgBox.setText("Bad XML format. Width or Height attributes not set in <Simulation_space>");
+        msgBox.exec();
+        return;
+    }
+
+    simulator.setSimulationSize(width, height);
 
     returnType result = readNext;
     while(!xmlReader.atEnd())
@@ -171,11 +202,16 @@ void SaveManager::loadFromFile()
 
     if(result == err)
     {
+        file.close();
+
         QMessageBox msgBox;
         msgBox.setText("Unknown XML format. Unknown eleemt, please check source file and correct it.");
         msgBox.exec();
         return;
     }
+
+    // balance core load
+    simulator.balanceCores();
 
     file.close();
 }

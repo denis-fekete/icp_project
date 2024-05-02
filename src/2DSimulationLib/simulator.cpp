@@ -3,12 +3,11 @@
 #include <algorithm>
 
 
-Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads,
+Simulator::Simulator(QGraphicsScene &scene,
                      double width, double height,
                      double windowWidth, double windowHeight):
                     scene(scene)
 {
-    this->maxThreads = maxThreads;
     timerPeriod = 30; // default 30 ms period
     activeRobot = nullptr;
     activeObstacle = nullptr;
@@ -20,15 +19,22 @@ Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads,
     this->windowWidth = windowWidth;
     this->windowHeight= windowHeight;
 
+    maxThreads = 0;
+
     connect(&timerSim, SIGNAL(timeout()), this, SLOT(simulationCycle()));
     connect(&timerGraphics, SIGNAL(timeout()), &scene, SLOT(advance()));
+
+    scene.addItem(&worldBorderX);
+    scene.addItem(&worldBorderY);
 }
 
-// #define LOG_PERFORMACE
+Simulator::~Simulator()
+{
+    this->keepSimCoresRunning = false;
+    wakeCores.notify_all();
 
-#ifdef LOG_PERFORMACE
-#include <chrono>
-#endif
+    this->timerSim.stop();
+}
 
 void Simulator::simulationCycle()
 {
@@ -39,30 +45,14 @@ void Simulator::simulationCycle()
 
     if(maxThreads == 0)
     {
-#ifdef LOG_PERFORMACE
-        auto beggining = std::chrono::high_resolution_clock::now();
-#endif
-
-        return;
-
-#ifdef LOG_PERFORMACE
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining);
-        cycleTime = duration.count();
-#endif
+        for(size_t i = 0; i < robots.size(); i++)
+        {
+            robots.at(i)->simulate();
+        }
     }
     else
     {
         wakeCores.notify_all();
-
-#ifdef LOG_PERFORMACE
-        cycleTime = 0;
-        for(size_t index = 0; index < maxThreads; index++)
-        {
-            cycleTime += simCores.at(index).get()->lastDuration;
-        }
-        cycleTime /= maxThreads;
-#endif
     }
 
     scene.update();
@@ -70,22 +60,15 @@ void Simulator::simulationCycle()
 
 void Simulator::initializeCores()
 {
-    scene.addItem(&worldBorderX);
-    scene.addItem(&worldBorderY);
-
-    worldBorderX.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
-    worldBorderY.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
-
-    worldBorderX.setPen(QPen(Qt::NoPen));
-    worldBorderY.setPen(QPen(Qt::NoPen));
-
     // initialize cores
     keepSimCoresRunning = true;
-    if(maxThreads > 1)
+    if(maxThreads > 0)
     {
         for(size_t i = 0; i < maxThreads; i++)
         {
             simThreads.push_back(std::make_unique<std::thread> (&Simulator::createSimulationCore, &simCores, &robots, &wakeCores, &mutex, &keepSimCoresRunning));
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(500ms);
         }
     }
 }
@@ -101,13 +84,7 @@ void Simulator::createSimulationCore(std::vector<std::unique_ptr<SimulationCore>
 }
 
 
-Simulator::~Simulator()
-{
-    this->keepSimCoresRunning = false;
-    wakeCores.notify_all();
 
-    this->timerSim.stop();
-}
 
 void Simulator::balanceCores()
 {
@@ -115,7 +92,7 @@ void Simulator::balanceCores()
     {
         return;
     }
-    if(simCores.size() != maxThreads)
+    if(simCores.size() < maxThreads)
     {
         exit(-1);
     }
@@ -224,7 +201,6 @@ void Simulator::setActiveRobot(BaseRobot* robot)
     activeRobot = robot;
     activeRobot->setSelected();
 }
-
 
 void Simulator::setActiveObstacle(Obstacle* obstacle)
 {
@@ -366,8 +342,37 @@ void Simulator::setWindowSize(double width, double height)
 
 void Simulator::setBorder()
 {
+    worldBorderX.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
+    worldBorderY.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
+
+    worldBorderX.setPen(QPen(Qt::NoPen));
+    worldBorderY.setPen(QPen(Qt::NoPen));
+
     worldBorderX.setRect(spaceWidth, 0, std::max(windowWidth-spaceWidth, 0.0), std::max(windowHeight, spaceHeight));
-    worldBorderY.setRect(0, spaceHeight, std::max(windowWidth, spaceWidth), std::max(windowHeight-spaceHeight, 0.0));
+    worldBorderY.setRect(0, spaceHeight, spaceWidth, std::max(windowHeight-spaceHeight, 0.0));
 
     scene.update();
+}
+
+void Simulator::unselectActive()
+{
+    if(activeObstacle != nullptr)
+    {
+        activeObstacle->setUnselected();
+        activeObstacle = nullptr;
+    }
+
+    if(activeRobot != nullptr)
+    {
+        activeRobot->setUnselected();
+        activeRobot = nullptr;
+    }
+}
+
+void Simulator::changeThreadCount(int threads)
+{
+    this->maxThreads = threads;
+
+    initializeCores();
+    balanceCores();
 }

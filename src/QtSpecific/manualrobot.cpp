@@ -13,6 +13,7 @@ ManualRobot::ManualRobot(double x, double y, double radius, double rot,
 
 void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
+
     // Body
     painter->setPen(pen);
     painter->setBrush(color);
@@ -28,7 +29,7 @@ void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->drawLine(QLine(-3, 3, -3, -3));
 
     // Collider
-    painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
+    painter->setPen(QPen(highlightedColor, 2, Qt::SolidLine));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 
 

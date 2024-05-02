@@ -26,6 +26,8 @@ void Obstacle::initialize()
     // make this appear on top of all objects, obstacles have 1
     this->setZValue(1);
 
+    pen.setColor(color);
+
     highlightedColor.setRed(std::min(color.red() + 30, 240));
     highlightedColor.setGreen(std::min(color.green() + 30, 240));
     highlightedColor.setBlue(std::min(color.blue() + 30, 240));

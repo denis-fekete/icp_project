@@ -33,6 +33,7 @@ HEADERS += \
     2DSimulationLib/simulator.h \
     QtSpecific/autorobot.h \
     QtSpecific/baserobot.h \
+    QtSpecific/customscene.h \
     QtSpecific/manualrobot.h \
     QtSpecific/obstacle.h \
     QtSpecific/savemanager.h \

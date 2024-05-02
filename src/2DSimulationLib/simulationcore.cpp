@@ -11,8 +11,6 @@ SimulationCore::SimulationCore(std::vector<BaseRobot *> *allRobots, std::conditi
     lastDuration = 0;
 }
 
-// #define LOG_PERFORMACE
-
 void SimulationCore::runSimulation()
 {
     auto lock = std::make_unique<std::unique_lock<std::mutex>> (*mutex);
@@ -20,9 +18,7 @@ void SimulationCore::runSimulation()
     {
         // wait until i am notified
         wakeCondition->wait(*lock);
-#ifdef LOG_PERFORMACE
-        auto beggining = std::chrono::high_resolution_clock::now();
-#endif
+
         // if start and end are same, reset loop
         if(myRobotsStart == myRobotsEnd)
             continue;
@@ -32,10 +28,6 @@ void SimulationCore::runSimulation()
             allRobots->at(index)->simulate();
         }
 
-#ifdef LOG_PERFORMACE
-        auto end = std::chrono::high_resolution_clock::now();
-        lastDuration = std::chrono::duration_cast<std::chrono::microseconds>(end - beggining).count();
-#endif
     }
 
     // delete lock;

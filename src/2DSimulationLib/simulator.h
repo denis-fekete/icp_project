@@ -32,7 +32,7 @@ public:
      * @param windowWidth Width of window space
      * @param windowHeight Height of window space
      */
-    Simulator(QGraphicsScene &scene, size_t maxThreads, double width, double height, double windowWidth, double windowHeight);
+    Simulator(QGraphicsScene &scene, double width, double height, double windowWidth, double windowHeight);
     ~Simulator();
 
     /*
@@ -200,6 +200,16 @@ public:
      */
     void setBorder();
 
+    /**
+     * @brief unselectActive Unselects active Robot and active obstacle
+     */
+    void unselectActive();
+
+    /**
+     * @brief changeThreadCount Changes number of threads that simulator will use
+     * @param threads New number of threads
+     */
+    void changeThreadCount(int threads);
 private:
     /**
      * @brief Reference to the scene for updating
@@ -315,6 +325,10 @@ private:
      * @brief worldBorder Polygon symbolizing world border
      */
     QGraphicsRectItem worldBorderX;
+
+    /**
+     * @brief worldBorder Polygon symbolizing world border
+     */
     QGraphicsRectItem worldBorderY;
 
     /**
@@ -327,16 +341,16 @@ private:
      * @param keepSimulating Pointer to bool value for turning off simulation loop
      */
     static void createSimulationCore(std::vector<std::unique_ptr<SimulationCore>>* simCores,
-                                         std::vector<BaseRobot *> *robots,
+                                         std::vector<BaseRobot*>* robots,
                                          std::condition_variable* wakeCores,
                                          std::mutex* mutex,
                                          bool* keepSimulating);
 
+
+protected slots:
     /**
      * @brief Function that calls all SimulationCores to simulate once
      */
-
-protected slots:
     void simulationCycle();
 };
 
