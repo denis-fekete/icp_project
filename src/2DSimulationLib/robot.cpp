@@ -148,6 +148,9 @@ bool Robot::robotDetection(std::vector<Robot *> *robots)
                     return true;
                 }
             }
+
+            if(this->colliderFwd.pointInRectangle(other->getPos()))
+                return true;
         }
     }
 

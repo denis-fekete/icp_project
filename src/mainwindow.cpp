@@ -9,7 +9,6 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
     // ------------------------------------------------------------------------
     // Setup internal objects/variables
     // value 235 means that values in RGB wont be too bright,
@@ -31,16 +30,15 @@ MainWindow::MainWindow(QWidget *parent)
     QApplication::setStyle(QStyleFactory::create("Fusion"));
     // QApplication::setStyle(QStyleFactory::create("Windows"));
 
-    ui->controlTab->setVisible(false);
+    // ------------------------------------------------------------------------
+    // Setup simulation
+    simulator = std::make_unique<Simulator> (*scene, 4, 700, 500, 1000, 600);
+    simulator->initializeCores();
+    simulator->setTimerPeriod(30);
+
     // ------------------------------------------------------------------------
     // Apply world configuration
     on_btn_worldApplySize_clicked();
-
-    // ------------------------------------------------------------------------
-    // Setup simulation
-    simulator = std::make_unique<Simulator> (*scene, 4);
-    simulator->initializeCores();
-    simulator->setTimerPeriod(30);
 
     // ------------------------------------------------------------------------
     // Analyitics
@@ -69,7 +67,7 @@ void MainWindow::DrawGrid(unsigned density)
         }
     }
 
-    QPen gridPen(Qt::lightGray);
+    QPen gridPen(QColor(245, 245, 245));
     const auto xMax = ui->sBox_worldc_sizeX->value();
     const auto yMax = ui->sBox_worldc_sizeY->value();
     for(int y = 0; y <yMax; y+= density)
@@ -87,26 +85,28 @@ void MainWindow::DrawGrid(unsigned density)
 
 void MainWindow::resizeEvent(QResizeEvent*)
 {
-    #define VERTICAL_SPACING 5
-    #define HORIZONTAL_SPACING 5
+    #define SPACING 5
 
-    const auto windowWidth = this->window()->size().width();
-    const auto windowHeight = this->window()->size().height();
+    const auto graphicalSceneW = this->window()->size().width()
+                                 - ui->mainMenu->geometry().width()
+                                 - SPACING;
+    const auto graphicalSceneH = this->window()->size().height() - SPACING;
 
-    ui->graphicsView->setGeometry(VERTICAL_SPACING, HORIZONTAL_SPACING,
-                                  windowWidth - VERTICAL_SPACING,
-                                  windowHeight - HORIZONTAL_SPACING);
-    DrawGrid(ui->sBox_world_gridSize->value());
+    ui->graphicsView->setGeometry(ui->mainMenu->geometry().width() + SPACING,
+                                  SPACING,
+                                  graphicalSceneW,
+                                  graphicalSceneH);
 
-    const auto resumepause = ui->program_btn_resumepause->geometry();
-    ui->program_btn_resumepause->setGeometry(windowWidth / 2- resumepause.width() / 2,
-                                        0,
-                                        resumepause.width(),
-                                        resumepause.height()
-                                        );
+    // DrawGrid(ui->sBox_world_gridSize->value());
 
-    #undef VERTICAL_SPACING
-    #undef HORIZONTAL_SPACING
+    ui->mainMenu->setGeometry(SPACING,
+                              ui->program_btn_resumepause->geometry().height(),
+                              ui->mainMenu->geometry().width(),
+                              graphicalSceneH - ui->program_btn_resumepause->geometry().height() - 5 * SPACING);
+
+    simulator->setWindowSize(graphicalSceneW, graphicalSceneH);
+
+    #undef SPACING
 }
 
 QColor MainWindow::getRandomColor()
@@ -130,12 +130,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 // Main window
 //----------------------------------------------------------------------------
 
-void MainWindow::on_program_btn_hide_clicked()
-{
-    ui->controlTab->setVisible(!ui->controlTab->isVisible());
-    ui->program_btn_hide->setText((ui->controlTab->isVisible())? "Hide controls" : "Show controls");
-}
-
 void MainWindow::updateAnalytics()
 {
     ui->analytics_label_simulationCycles->setText(QString::number(simulator.get()->getCycleTime()));
@@ -143,21 +137,21 @@ void MainWindow::updateAnalytics()
 
 void MainWindow::on_program_btn_resumepause_clicked()
 {
-    if(ui->controlTab->isTabEnabled(0))
+    if(ui->groupBox_world->isEnabled())
     {
         ui->program_btn_resumepause->setText("Pause");
         simulator.get()->runSimulation();
-        ui->controlTab->setTabEnabled(0, false);
-        ui->controlTab->setTabEnabled(1, false);
-        ui->controlTab->setTabEnabled(2, false);
+        ui->groupBox_obstacles->setEnabled(false);
+        ui->groupBox_robotcreator->setEnabled(false);
+        ui->groupBox_world->setEnabled(false);
     }
     else
     {
         ui->program_btn_resumepause->setText("Resume");
         simulator.get()->stopSimulation();
-        ui->controlTab->setTabEnabled(0, true);
-        ui->controlTab->setTabEnabled(1, true);
-        ui->controlTab->setTabEnabled(2, true);
+        ui->groupBox_obstacles->setEnabled(true);
+        ui->groupBox_robotcreator->setEnabled(true);
+        ui->groupBox_world->setEnabled(true);
     }
 }
 
@@ -287,27 +281,21 @@ void MainWindow::on_btn_worldAddMoreRobots_clicked()
         simulator->addAutomaticRobot(xPos, yPos, rad, rot, detRad, color, speed, turnAngle, turnDirection);
     }
 
-    // If ID selector is not enabled enable it
-    if(!ui->input_robot_IDSelector->isEnabled())
-    {
-        ui->input_robot_IDSelector->setEnabled(true);
-        simulator->setActiveRobot(simulator->getRobotsCount() -1);
-    }
-
-    // Set maximum value of robot selector to a size vector that stores robots
-    auto old = ui->input_robot_IDSelector->value();
-    ui->input_robot_IDSelector->setMaximum(static_cast<int>(simulator->getRobotsCount()) -1);
-    ui->input_robot_IDSelector->setValue(old);
-    on_input_robot_IDSelector_valueChanged(old);
-
     simulator.get()->balanceCores();
 }
 
 void MainWindow::on_btn_worldApplySize_clicked()
 {
-    scene->setSceneRect(0, 0, ui->sBox_worldc_sizeX->value(), ui->sBox_worldc_sizeY->value());
+    // ui->graphicsView->setGeometry(ui->graphicsView->geometry().x(),
+    //                               ui->graphicsView->geometry().y(),
+    //                               ui->sBox_worldc_sizeX->value(),
+    //                               ui->sBox_worldc_sizeY->value());
 
-    MainWindow::DrawGrid(ui->sBox_world_gridSize->value());
+    simulator->setSimulationSize(
+        ui->sBox_worldc_sizeX->value(),
+        ui->sBox_worldc_sizeY->value());
+
+    // MainWindow::DrawGrid(ui->sBox_world_gridSize->value());
 }
 
 
@@ -360,34 +348,12 @@ void MainWindow::on_btnCreateRobot_clicked()
             color
             );
     }
-
-    // If ID selector is not enabled enable it
-    if(!ui->input_robot_IDSelector->isEnabled())
-    {
-        ui->input_robot_IDSelector->setEnabled(true);
-        simulator->setActiveRobot(size_t{0});
-    }
-
-    // Set maximum value of robot selector to a size vector that stores robots
-    ui->input_robot_IDSelector->setMaximum(static_cast<int>(simulator->getRobotsCount()) -1);
 }
 
 void MainWindow::on_btnDeleteRobot_clicked()
 {
-    // get active robot id
-    auto robotId = ui->input_robot_IDSelector->value();
-
     // erase robot
-    simulator->deleteRobot(robotId);
-
-    // calculate new val
-    auto newCount = static_cast<int> (simulator->getRobotsCount()) - 1;
-
-    if(newCount <= 0)
-        newCount = 0;
-
-    ui->input_robot_IDSelector->setMaximum(newCount);
-    on_input_robot_IDSelector_valueChanged(newCount);
+    simulator->deleteRobot();
 
     scene->update();
 }
@@ -397,11 +363,6 @@ void MainWindow::on_input_robot_randomizeColors_toggled(bool checked)
     ui->input_robot_color_r->setEnabled(!checked);
     ui->input_robot_color_g->setEnabled(!checked);
     ui->input_robot_color_b->setEnabled(!checked);
-}
-
-void MainWindow::on_input_robot_IDSelector_valueChanged(int arg1)
-{
-    simulator->setActiveRobot(arg1);
 }
 
 void MainWindow::on_input_robot_onCollisionTurnRight_clicked(bool checked)
@@ -464,16 +425,6 @@ void MainWindow::on_btnCreateObstacle_clicked()
             ui->input_obstacle_height->value(),
             ui->input_obstacle_rotation->value(),
             color);
-
-    // If ID selector is not enabled enable it
-    if(!ui->input_obstacle_IDSelector->isEnabled())
-    {
-        ui->input_obstacle_IDSelector->setEnabled(true);
-        simulator->setActiveObstacle(simulator->getObstaclesCount() -1);
-    }
-
-    // Set maximum value of robot selector to a size vector that stores robots
-    ui->input_obstacle_IDSelector->setMaximum(static_cast<int>(simulator->getObstaclesCount()) -1);
 }
 
 void MainWindow::on_input_obstacle_randomizeColors_toggled(bool checked)
@@ -485,25 +436,10 @@ void MainWindow::on_input_obstacle_randomizeColors_toggled(bool checked)
 
 void MainWindow::on_btnDeleteObstacle_clicked()
 {
-    // get active robot id
-    auto obstacleId = ui->input_obstacle_IDSelector->value();
     // erase robot
-    simulator->deleteObstacle(obstacleId);
-    // calculate new val
-    auto newCount = static_cast<int> (simulator->getObstaclesCount()) - 1;
-
-    if(newCount <= 0)
-        newCount = 0;
-
-    ui->input_obstacle_IDSelector->setMaximum(newCount);
-    on_input_obstacle_IDSelector_valueChanged(newCount);
+    simulator->deleteObstacle();
 
     scene->update();
-}
-
-void MainWindow::on_input_obstacle_IDSelector_valueChanged(int arg1)
-{
-    simulator->setActiveObstacle(arg1);
 }
 
 //----------------------------------------------------------------------------

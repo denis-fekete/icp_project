@@ -153,6 +153,19 @@ public:
     void breakIntoEdges(int line, Point* start, Point* end);
 
 
+    /**
+     * @brief pointInRectangle Returns whenever point lies inside this rectangle
+     * @param p Point to be chcked
+     */
+    inline bool pointInRectangle(Point p)
+    {
+        return (
+            orientation(LB, RB, p) == 2 &&
+            orientation(RB, RT, p) == 2 &&
+            orientation(RT, LT, p) == 2 &&
+            orientation(LT, LB, p) == 2);
+    }
+
 protected:
 
     /**

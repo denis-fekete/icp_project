@@ -4,8 +4,8 @@ ManualRobot::ManualRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
                      std::vector<Rectangle*>* colliders,
                      std::vector<Robot*>* robotColliders,
-                     Simulator* simulator) :
-    BaseRobot(x, y, radius, rot, detRadius, color, 0, 0, 1, colliders, robotColliders, simulator)
+                     Simulator* simulator, double* spaceWidth, double* spaceHeight) :
+    BaseRobot(x, y, radius, rot, detRadius, color, 0, 0, 1, colliders, robotColliders, simulator, spaceWidth, spaceHeight)
 {
     cmd = Command::STAY;
     initialized = false;
@@ -16,6 +16,9 @@ void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     // Body
     painter->setPen(pen);
     painter->setBrush(color);
+    const int flooredRadius = std::floor(sim.getRadius());
+    const int flooredDetRadius = std::floor(sim.getDetRadius());
+
     painter->drawEllipse(-sim.getRadius(), -sim.getRadius(), 2 * sim.getRadius(), 2 * sim.getRadius());
 
     // Center sign
@@ -28,9 +31,10 @@ void ManualRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
     painter->setPen(QPen(highlightedColor, DEFAULT_PEN_WIDTH, Qt::DashLine));
     painter->setBrush(QBrush(this->color, Qt::BrushStyle::NoBrush));
 
-    painter->drawLine(0, sim.getRadius(), sim.getDetRadius(), sim.getRadius());
-    painter->drawLine(sim.getDetRadius(), sim.getRadius(), sim.getDetRadius(), -sim.getRadius());
-    painter->drawLine(sim.getDetRadius(), -sim.getRadius(), 0, -sim.getRadius());
+
+    painter->drawLine(0, flooredRadius, flooredDetRadius, flooredRadius);
+    painter->drawLine(flooredDetRadius,flooredRadius, flooredDetRadius, -flooredRadius);
+    painter->drawLine(flooredDetRadius, -flooredRadius, 0, -flooredRadius);
 
 }
 
@@ -41,7 +45,9 @@ void ManualRobot::simulate()
     case Command::STAY:
         break;
     case Command::FORWARD:
-        if(!this->sim.obstacleDetection(colliders) && !this->sim.robotDetection(robotColliders))
+        if( !this->sim.obstacleDetection(colliders) &&
+            !this->sim.robotDetection(robotColliders) &&
+            !isOutsideSimulation())
         {
             this->moveRobot(speed);
         }

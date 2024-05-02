@@ -30,9 +30,11 @@ void SaveManager::saveToFile()
     xmlWriter.setAutoFormatting(true);
 
     xmlWriter.writeStartDocument();
-    xmlWriter.writeDTD("<!DOCTYPE icpSave>");
+    // xmlWriter.writeDTD("<!DOCTYPE icpSave>");
 
     xmlWriter.writeStartElement("Simulation_space");
+    xmlWriter.writeAttribute("width", QString::number(simulator.getSimulationWidth()));
+    xmlWriter.writeAttribute("height", QString::number(simulator.getSimulationHeight()));
 
     xmlWriter.writeStartElement("Robots");
 

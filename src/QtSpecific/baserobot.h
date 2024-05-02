@@ -79,6 +79,16 @@ protected:
      * @brief Direction in which will robot turn on collision
      */
     short turnDirection;
+
+    /**
+     * @brief spaceWidth Pointer to the width of simulation space
+     */
+    double* spaceWidth;
+
+    /**
+     * @brief spaceHeight Pointer to the height of simulation space
+     */
+    double* spaceHeight;
 public:
 
     /**
@@ -101,7 +111,7 @@ public:
               double turnAngle, short turnDirection,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
-              Simulator* simulator);
+              Simulator* simulator, double* spaceWidth, double* spaceHeight);
 
     /**
      * @brief Initializes Robot values, this needs to called after constructor 
@@ -169,6 +179,20 @@ public:
      */
     inline QColor& getColor() { return this->color; }
 
+
+    inline bool isOutsideSimulation()
+    {
+        return (sim.getColliderFwd()->RB.x > *spaceWidth ||
+                sim.getColliderFwd()->RB.y > *spaceHeight ||
+                sim.getColliderFwd()->RB.x < 0 ||
+                sim.getColliderFwd()->RB.y < 0 ||
+
+                sim.getColliderFwd()->RT.x > *spaceWidth ||
+                sim.getColliderFwd()->RT.y > *spaceHeight ||
+                sim.getColliderFwd()->RT.x < 0 ||
+                sim.getColliderFwd()->RT.y < 0
+                );
+    }
 protected:
     void advance(int step) Q_DECL_OVERRIDE;
 public:

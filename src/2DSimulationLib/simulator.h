@@ -27,8 +27,12 @@ public:
      * @param maxThreads Maximum allowed threads to use
      * @param timerSim Pointer to QTimer for calling simulation
      * @param timerSim Pointer to QTimer for calling update position of graphics
+     * @param width Width of simulation space
+     * @param height Height of simulation space
+     * @param windowWidth Width of window space
+     * @param windowHeight Height of window space
      */
-    Simulator(QGraphicsScene &scene, size_t maxThreads);
+    Simulator(QGraphicsScene &scene, size_t maxThreads, double width, double height, double windowWidth, double windowHeight);
     ~Simulator();
 
     /*
@@ -78,16 +82,35 @@ public:
      */
     void initializeCores();
 
-
+    /**
+     * @return Returns number of robots in simulation
+     */
     inline size_t getRobotsCount() { return robots.size(); }
 
+    /**
+     * @return Returns number of robots in simulation
+     */
     inline size_t getObstaclesCount() { return obstacles.size(); }
 
+    /**
+     * @return Returns obstacle at given id
+     */
     inline Obstacle* getObstacle(size_t id) { return obstacles.at(id).get(); }
+
+    /**
+     * @return Returns robot at given id
+     */
     inline BaseRobot* getRobot(size_t id) { return robots.at(id); }
 
-    void deleteRobot(size_t id);
-    void deleteObstacle(size_t id);
+    /**
+     * @brief deleteRobot Deletes active robot
+     */
+    void deleteRobot();
+
+    /**
+     * @brief deleteObstacle Deletes active obstacle
+     */
+    void deleteObstacle();
 
     /**
      * @brief Starts simulation
@@ -121,22 +144,10 @@ public:
     void balanceCores();
 
     /**
-     * @brief Sets activeRobot by id
-     * @param id Id in vector of AutoRobots
-     */
-    void setActiveRobot(size_t id);
-
-    /**
      * @brief Sets activeRobot by pointer
      * @param robot Pointer to the robot
      */
     void setActiveRobot(BaseRobot* robot);
-
-    /**
-     * @brief Sets activeObstacle by id
-     * @param id Id in vector of Obstacles
-     */
-    void setActiveObstacle(size_t id);
 
     /**
      * @brief Sets activeObstacle by pointer
@@ -160,6 +171,35 @@ public:
      */
     inline Obstacle* getActiveObstacle() { return activeObstacle; }
 
+    /**
+     * @return Returns widht of simulation space
+     */
+    inline double getSimulationWidth() { return spaceWidth; }
+
+    /**
+     * @return Returns widht of simulation space
+     */
+    inline double getSimulationHeight() { return spaceHeight; }
+
+    /**
+     * @brief setSimulationSize Sets size of simulation space
+     * @param width New width of simulation space
+     * @param height New height of simulation space
+     */
+    void setSimulationSize(double width, double height);
+
+    /**
+     * @brief setWindowSize Sets size of window size stored in simulator
+     * @param width New value of window width
+     * @param height New value of window height
+     */
+    void setWindowSize(double width, double height);
+
+    /**
+     * @brief setBorder Sets border graphical representation
+     */
+    void setBorder();
+
 private:
     /**
      * @brief Reference to the scene for updating
@@ -172,14 +212,9 @@ private:
     std::vector<BaseRobot*> robots;
 
     /**
-     * @brief autoRobots Vector of automatic robots
+     * @brief autoRobots Vector of all robots (automatic or manual)
      */
-    std::vector<std::unique_ptr<BaseRobot>> autoRobots;
-
-    /**
-     * @brief manualRobots vector of manual robots
-     */
-    std::vector<std::unique_ptr<BaseRobot>> manualRobots;
+    std::vector<std::unique_ptr<BaseRobot>> allRobots;
 
     /**
      * @brief Vector of Robots
@@ -255,6 +290,32 @@ private:
      * @brief Last period of cycle timer
      */
     long long cycleTime = 0;
+
+    /**
+     * @brief spaceWidth Width of simulation space
+     */
+    double spaceWidth;
+
+    /**
+     * @brief spaceHeight Height of simulation space
+     */
+    double spaceHeight;
+
+    /**
+     * @brief windowWidth Width of the window
+     */
+    double windowWidth;
+
+    /**
+     * @brief windowHeight Height of the window
+     */
+    double windowHeight;
+
+    /**
+     * @brief worldBorder Polygon symbolizing world border
+     */
+    QGraphicsRectItem worldBorderX;
+    QGraphicsRectItem worldBorderY;
 
     /**
      * @brief Creates SimulationCore in another thread and runs in main loop

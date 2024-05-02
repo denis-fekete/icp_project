@@ -17,8 +17,8 @@ AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double turnAngle, short turnDirection,
                      std::vector<Rectangle*>* colliders,
                      std::vector<Robot*>* robotColliders,
-                     Simulator* simulator) :
-    BaseRobot(x, y, radius, rot, detRadius, color, speed, turnAngle, turnDirection, colliders, robotColliders, simulator)
+                     Simulator* simulator, double* spaceWidth, double* spaceHeight) :
+    BaseRobot(x, y, radius, rot, detRadius, color, speed, turnAngle, turnDirection, colliders, robotColliders, simulator, spaceWidth, spaceHeight)
 {
     initialized = false;
 }
@@ -28,6 +28,8 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     // Body
     painter->setPen(pen);
     painter->setBrush(color);
+
+
     const int flooredRadius = std::floor(sim.getRadius());
     const int flooredDetRadius = std::floor(sim.getDetRadius());
 
@@ -50,7 +52,9 @@ void AutoRobot::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
 void AutoRobot::simulate()
 {
-    if(sim.obstacleDetection(colliders) || sim.robotDetection(robotColliders))
+    if( sim.obstacleDetection(colliders) ||
+        sim.robotDetection(robotColliders) ||
+        isOutsideSimulation())
     {
         this->rotateRobot(turnAngle * turnDirection);
     }

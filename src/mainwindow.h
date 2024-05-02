@@ -61,8 +61,6 @@ private slots:
 
     void on_input_obstacle_randomizeColors_toggled(bool checked);
 
-    void on_input_robot_IDSelector_valueChanged(int arg1);
-
     void on_input_robot_onCollisionTurnLeft_clicked(bool checked);
 
     void on_input_robot_onCollisionTurnRight_clicked(bool checked);
@@ -81,9 +79,6 @@ private slots:
 
     void on_btnDeleteRobot_clicked();
 
-    void on_program_btn_hide_clicked();
-
-    void on_input_obstacle_IDSelector_valueChanged(int arg1);
     void on_btnDeleteObstacle_clicked();
     void on_program_btn_resumepause_clicked();
     void on_input_selectAutomatic_clicked();

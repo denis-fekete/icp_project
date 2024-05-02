@@ -37,7 +37,7 @@ public:
               double turnAngle, short turnDirection,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
-              Simulator* simulator);
+              Simulator* simulator, double* spaceWidth, double* spaceHeight);
 
 
     /**

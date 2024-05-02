@@ -3,15 +3,22 @@
 #include <algorithm>
 
 
-
-
-Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads) : scene(scene)
+Simulator::Simulator(QGraphicsScene &scene, size_t maxThreads,
+                     double width, double height,
+                     double windowWidth, double windowHeight):
+                    scene(scene)
 {
     this->maxThreads = maxThreads;
     timerPeriod = 30; // default 30 ms period
     activeRobot = nullptr;
     activeObstacle = nullptr;
     keepSimCoresRunning = false;
+
+    this->spaceWidth = width;
+    this->spaceHeight = height;
+
+    this->windowWidth = windowWidth;
+    this->windowHeight= windowHeight;
 
     connect(&timerSim, SIGNAL(timeout()), this, SLOT(simulationCycle()));
     connect(&timerGraphics, SIGNAL(timeout()), &scene, SLOT(advance()));
@@ -61,9 +68,18 @@ void Simulator::simulationCycle()
     scene.update();
 }
 
-
 void Simulator::initializeCores()
 {
+    scene.addItem(&worldBorderX);
+    scene.addItem(&worldBorderY);
+
+    worldBorderX.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
+    worldBorderY.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
+
+    worldBorderX.setPen(QPen(Qt::NoPen));
+    worldBorderY.setPen(QPen(Qt::NoPen));
+
+    // initialize cores
     keepSimCoresRunning = true;
     if(maxThreads > 1)
     {
@@ -137,13 +153,14 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
     const double timeNorm = 1000 / timerPeriod;
 
     // create new AutoRobot and add it to vector of AutoRobots
-    autoRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
+    allRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
                                                      detRadius, color,
                                                      speed / timeNorm,
                                                      turnAngle / timeNorm,
-                                                     turnDirection, &colliders, &robotColliders, this));
+                                                     turnDirection, &colliders, &robotColliders,
+                                                     this, &spaceWidth, &spaceHeight));
 
-    auto addedRobot = autoRobots.back().get();
+    auto addedRobot = allRobots.back().get();
     // add robot to the vector of robotColliders
     robotColliders.push_back(addedRobot->getSim());
 
@@ -164,9 +181,11 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
                                 double detRadius, QColor color)
 {
     // create new AutoRobot and add it to vector of manual robots
-    manualRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot, detRadius, color, &colliders, &robotColliders, this));
+    allRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot,
+                                                         detRadius, color, &colliders, &robotColliders,
+                                                         this,  &spaceWidth, &spaceHeight));
 
-    auto addedRobot = manualRobots.back().get();
+    auto addedRobot = allRobots.back().get();
     // add robot to the vector of robotColliders
     robotColliders.push_back(addedRobot->getSim());
 
@@ -202,25 +221,10 @@ void Simulator::setActiveRobot(BaseRobot* robot)
         activeRobot->setUnselected();
     }
 
-    // auto found = std::find(robots.begin(), robots.end(), robot);
-    // activeRobot = (*found);
     activeRobot = robot;
     activeRobot->setSelected();
 }
 
-void Simulator::setActiveRobot(size_t id)
-{
-    if(activeRobot != nullptr)
-    {
-        activeRobot->setUnselected();
-    }
-
-    if(id < robots.size())
-    {
-        activeRobot = robots.at(id);
-        activeRobot->setSelected();
-    }
-}
 
 void Simulator::setActiveObstacle(Obstacle* obstacle)
 {
@@ -233,28 +237,9 @@ void Simulator::setActiveObstacle(Obstacle* obstacle)
     activeObstacle->setSelected();
 }
 
-void Simulator::setActiveObstacle(size_t id)
-{
-    if(activeObstacle != nullptr)
-    {
-        activeObstacle->setUnselected();
-    }
-
-    if(id < obstacles.size())
-    {
-        activeObstacle = obstacles.at(id).get();
-        activeObstacle->setSelected();
-    }
-}
-
-void Simulator::deleteRobot(size_t id)
+void Simulator::deleteRobot()
 {
     if(activeRobot == nullptr)
-    {
-        return;
-    }
-
-    if(! (id < robots.size()))
     {
         return;
     }
@@ -268,38 +253,21 @@ void Simulator::deleteRobot(size_t id)
 
     std::unique_ptr<BaseRobot>* foundRobot;
     auto activeRobotPtr = activeRobot;
-    // remove robot from baseRobot (all) and manualRobot
-    if(typeid(*activeRobot) == typeid(ManualRobot))
+
+    // find robot it vector of robots
+    auto foundIt = std::find_if(allRobots.begin(), allRobots.end(),
+        [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) { return ptr.get() == activeRobotPtr; });
+
+    // if found
+    if(foundIt != allRobots.end())
     {
-        auto foundIt = std::find_if(manualRobots.begin(), manualRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
-            return ptr.get() == activeRobotPtr;});
+        foundRobot = &(*foundIt);
+        scene.removeItem(foundRobot->get());
 
-        if(foundIt != manualRobots.end())
-        {
-            foundRobot = &(*foundIt);
-            scene.removeItem(foundRobot->get());
+        auto foundRob = std::find(robots.begin(), robots.end(), activeRobot);
 
-            auto foundRob = std::find(robots.begin(), robots.end(), activeRobot);
-
-            robots.erase(foundRob);
-            manualRobots.erase(foundIt);
-        }
-    }
-    else // remove robot from baseRobot (all) and autoRobot
-    {
-        auto foundIt = std::find_if(autoRobots.begin(), autoRobots.end(), [activeRobotPtr](const std::unique_ptr<BaseRobot>& ptr) {
-            return ptr.get() == activeRobotPtr;});
-
-        if(foundIt != autoRobots.end())
-        {
-            foundRobot = &(*foundIt);
-            scene.removeItem(foundRobot->get());
-
-            auto foundRob = std::find(robots.begin(), robots.end(), activeRobot);
-
-            robots.erase(foundRob);
-            autoRobots.erase(foundIt);
-        }
+        robots.erase(foundRob);
+        allRobots.erase(foundIt);
     }
 
     activeRobot = nullptr;
@@ -308,34 +276,32 @@ void Simulator::deleteRobot(size_t id)
     scene.update();
 }
 
-void Simulator::deleteObstacle(size_t id)
+void Simulator::deleteObstacle()
 {
     if(activeObstacle == nullptr)
     {
         return;
     }
 
-    if(!(id < obstacles.size()))
-    {
-        return;
-    }
+    // find active obstacle in colliders
+    auto itColliders = std::find(colliders.begin(), colliders.end(), activeObstacle->getSim());
 
-    Rectangle* colliderToDelete = obstacles.at(id).get()->getSim();
+    // erase it from colliders
+    colliders.erase(itColliders);
 
-    for(size_t i = id; i < colliders.size(); i++)
-    {
-        if(colliders.at(i) == colliderToDelete)
-        {
-            colliders.erase(colliders.begin() + i);
-            break;
-        }
-    }
+    // find active obstacle in obstacles
+    auto obstaclePtr = activeObstacle;
+    auto itObstacles = std::find_if(obstacles.begin(), obstacles.end(),
+        [obstaclePtr](const std::unique_ptr<Obstacle>& ptr) { return ptr.get() == obstaclePtr; });
 
-    scene.removeItem(obstacles.at(id).get());
-    obstacles.at(id).release();
-    obstacles.erase(obstacles.begin() + id);
+    // remove obstacle from the scene
+    scene.removeItem(activeObstacle);
+    // release unique_ptr
+    itObstacles->release();
+    // delete found obstacle
+    obstacles.erase(itObstacles);
+
     activeObstacle = nullptr;
-
     scene.update();
 }
 
@@ -382,3 +348,26 @@ ManualRobot* Simulator::getActiveManualRobot()
         return nullptr;
 }
 
+void Simulator::setSimulationSize(double width, double height)
+{
+    this->spaceWidth = width;
+    this->spaceHeight = height;
+
+    setBorder();
+}
+
+void Simulator::setWindowSize(double width, double height)
+{
+    this->windowWidth = width;
+    this->windowHeight = height;
+
+    setBorder();
+}
+
+void Simulator::setBorder()
+{
+    worldBorderX.setRect(spaceWidth, 0, std::max(windowWidth-spaceWidth, 0.0), std::max(windowHeight, spaceHeight));
+    worldBorderY.setRect(0, spaceHeight, std::max(windowWidth, spaceWidth), std::max(windowHeight-spaceHeight, 0.0));
+
+    scene.update();
+}

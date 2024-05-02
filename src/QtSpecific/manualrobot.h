@@ -44,7 +44,7 @@ public:
               double detRadius, QColor color,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
-              Simulator* simulator);
+              Simulator* simulator, double* spaceWidth, double* spaceHeight);
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not
