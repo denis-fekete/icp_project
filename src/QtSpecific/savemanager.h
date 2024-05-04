@@ -1,7 +1,7 @@
 #ifndef SAVEMANAGER_H
 #define SAVEMANAGER_H
 
-#include "2DSimulationLib/simulator.h"
+#include "simulator.h"
 #include "QIODevice"
 #include "QFile"
 #include "QXmlStreamReader"

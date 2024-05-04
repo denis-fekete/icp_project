@@ -6,7 +6,7 @@
 #include <QGraphicsScene>
 #include <QDebug>
 
-#include "2DSimulationLib/simulator.h"
+#include "QtSpecific/simulator.h"
 
 class CustomScene : public QGraphicsScene
 {

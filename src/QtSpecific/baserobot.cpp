@@ -1,5 +1,5 @@
 #include "baserobot.h"
-#include "../2DSimulationLib/simulator.h"
+#include "simulator.h"
 
 BaseRobot::BaseRobot(double x, double y, double radius, double rot,
           double detRadius, QColor color, double speed,

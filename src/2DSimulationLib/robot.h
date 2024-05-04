@@ -6,8 +6,6 @@
 
 #include "rectangle.h"
 #include "circle.h"
-#include "../QtSpecific/obstacle.h"
-
 
 
 class Robot : public Circle

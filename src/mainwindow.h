@@ -10,7 +10,7 @@
 #include <vector>
 #include <random>
 
-#include "2DSimulationLib/simulator.h"
+#include "QtSpecific//simulator.h"
 #include "2DSimulationLib/randomgenerator.h"
 #include "QtSpecific/customscene.h"
 #include "QtSpecific/savemanager.h"

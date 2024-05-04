@@ -1,6 +1,5 @@
 #include "obstacle.h"
-#include "2DSimulationLib/simulator.h"
-#include "qpen.h"
+#include "simulator.h"
 
 Obstacle::Obstacle(double x, double y, double w, double h,
                    double rot, QColor& color, Simulator* simulator) :

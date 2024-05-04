@@ -13,13 +13,13 @@ SOURCES += \
     2DSimulationLib/point.cpp \
     2DSimulationLib/rectangle.cpp \
     2DSimulationLib/robot.cpp \
-    2DSimulationLib/simulationcore.cpp \
-    2DSimulationLib/simulator.cpp \
     QtSpecific/autorobot.cpp \
     QtSpecific/baserobot.cpp \
     QtSpecific/manualrobot.cpp \
     QtSpecific/obstacle.cpp \
     QtSpecific/savemanager.cpp \
+    QtSpecific/simulationcore.cpp \
+    QtSpecific/simulator.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -29,14 +29,14 @@ HEADERS += \
     2DSimulationLib/randomgenerator.h \
     2DSimulationLib/rectangle.h \
     2DSimulationLib/robot.h \
-    2DSimulationLib/simulationcore.h \
-    2DSimulationLib/simulator.h \
     QtSpecific/autorobot.h \
     QtSpecific/baserobot.h \
     QtSpecific/customscene.h \
     QtSpecific/manualrobot.h \
     QtSpecific/obstacle.h \
     QtSpecific/savemanager.h \
+    QtSpecific/simulationcore.h \
+    QtSpecific/simulator.h \
     mainwindow.h
 
 Release:DESTDIR = build/release
