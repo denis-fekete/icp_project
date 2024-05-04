@@ -46,7 +46,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->sBox_worldc_sizeY->value(),
         this->window()->size().width(),
         this->window()->size().height(),
-        std::bind(&MainWindow::updateMenuGUI, this)
+        std::bind(&MainWindow::updateMenuGUI, this),
+        &menuUpdate
         );
 
     // set thread count
@@ -63,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ------------------------------------------------------------------------
     //
 
-    menuUpdate.start(500);
+    menuUpdate.setInterval(500);
     connect(&menuUpdate, &QTimer::timeout, this, &MainWindow::updateMenuGUI);
 }
 
@@ -101,9 +102,6 @@ void MainWindow::updateMenuGUI()
 {
     auto obstacle = simulator.get()->getActiveObstacle();
     auto robot = simulator.get()->getActiveRobot();
-
-    if(simulator.get()->isPaused())
-        return;
 
     if(obstacle != nullptr)
     {
@@ -350,16 +348,12 @@ void MainWindow::on_input_robot_updateValues_clicked()
                            ui->input_robot_color_b->text().toDouble());
         }
 
-        // void BaseRobot::updateValues(double x, double y, double radius, double rot,
-        //                              double detRadius, QColor color, double speed,
-        //                              double turnSpeed, short turnDirection)
-
         robot->updateValues(
             ui->input_robot_xPos->text().toDouble(),
             ui->input_robot_yPos->text().toDouble(),
             ui->input_robot_radius->text().toDouble(),
-            ui->input_robot_detRadius->text().toDouble(),
             ui->input_robot_rotation->text().toDouble(),
+            ui->input_robot_detRadius->text().toDouble(),
             color,
             ui->input_robot_speed->text().toDouble() / simulator->getSmoothConst(),
             ui->input_robot_turnSpeed->text().toDouble() / simulator->getSmoothConst(),

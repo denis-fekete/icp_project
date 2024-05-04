@@ -11,9 +11,10 @@
 #include "customscene.h"
 
 Simulator::Simulator(QGraphicsScene &scene,
-          double width, double height,
-          double windowWidth, double windowHeight,
-          std::function<void()> updateGUIPtr):
+                     double width, double height,
+                     double windowWidth, double windowHeight,
+                     std::function<void()> updateGUIPtr,
+                     QTimer* guiUpdateTimer):
                     scene(scene)
 {
     timerPeriod = 30; // default 30 ms period
@@ -38,6 +39,8 @@ Simulator::Simulator(QGraphicsScene &scene,
     paused = true;
     updateGUI = updateGUIPtr;
     smoothConst = 1000 / timerPeriod;
+
+    this->guiUpdateTimer = guiUpdateTimer;
 }
 
 Simulator::~Simulator()
@@ -304,16 +307,18 @@ void Simulator::runSimulation()
         robots.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
     }
 
-    this->timerSim.start(timerPeriod);
-    this->timerGraphics.start(timerPeriod / 2);
+    timerSim.start(timerPeriod);
+    timerGraphics.start(timerPeriod / 2);
+    guiUpdateTimer->start();
     paused = false;
 }
 
 void Simulator::stopSimulation()
 {
     paused = true;
-    this->timerSim.stop();
-    this->timerGraphics.stop();
+    timerSim.stop();
+    timerGraphics.stop();
+    guiUpdateTimer->stop();
 
     for(size_t i = 0; i < obstacles.size(); i++)
     {

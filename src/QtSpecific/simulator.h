@@ -99,6 +99,11 @@ private:
     QTimer timerGraphics;
 
     /**
+     * @brief guiUpdateTimer Timer for updating GUI
+     */
+    QTimer* guiUpdateTimer;
+
+    /**
      * @brief Mutex for SimulationCore synchronization
      */
     std::mutex mutex;
@@ -188,7 +193,9 @@ public:
     Simulator(QGraphicsScene &scene,
                          double width, double height,
                          double windowWidth, double windowHeight,
-                         std::function<void()> updateGUIPtr);
+                         std::function<void()> updateGUIPtr,
+                         QTimer* guiUpdateTimer);
+
     ~Simulator();
 
     /*
