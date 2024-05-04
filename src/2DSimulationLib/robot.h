@@ -1,3 +1,14 @@
+/**
+ * @file robot.h
+ * @brief Header file for Robot class. 
+ * 
+ * Robot is class for simulation 
+ * circular shaped Robots in 2D space and allowing for collisions 
+ * between other objects and Rectangle obstacles.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef ROBOT_H
 #define ROBOT_H
 

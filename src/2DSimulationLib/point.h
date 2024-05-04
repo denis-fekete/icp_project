@@ -1,3 +1,13 @@
+/**
+ * @file point.h
+ * @brief Header file and implementation of Point class.
+ * 
+ * Point is used for position calculation and representation in 2D space
+ * 
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
+
 #ifndef POINT_2D_H
 #define POINT_2D_H
 
@@ -22,7 +32,11 @@ public:
      * @param x X position to be set, default value is 0
      * @param y Y Position to be set, default value is 0
      */
-    Point(double x = 0, double y = 0);
+    Point(double x = 0, double y = 0)
+    {
+        this->x = x;
+        this->y = y;
+    }
 
     ~Point();
 

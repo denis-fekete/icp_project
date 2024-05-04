@@ -1,3 +1,10 @@
+/**
+ * @file manualrobot.cpp
+ * @brief Implementation of ManualRobot class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "manualrobot.h"
 
 ManualRobot::ManualRobot(double x, double y, double radius, double rot,

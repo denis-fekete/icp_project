@@ -1,3 +1,10 @@
+/**
+ * @file autorobot.cpp
+ * @brief Implementation of AutoRobot class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "autorobot.h"
 #include "QPen"
 #include "QObject"

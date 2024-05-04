@@ -1,3 +1,15 @@
+/**
+ * @file baserobot.h
+ * @brief Header file for BaseRobot class. 
+ * 
+ * BaseRobot is class for graphical 
+ * representation of Robots in Simulation. It contains basic attributes and 
+ * methods that can be shared between its specializations like AutoRobot and 
+ * ManualRobot.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef BASEROBOT_H
 #define BASEROBOT_H
 

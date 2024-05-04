@@ -1,3 +1,15 @@
+/**
+ * @file customscene.h
+ * @brief Header file and implementation of CustomScene class. 
+ * 
+ * CustomScene is 
+ * QGraphicsScene that can communicate with Simulator to signal it that user 
+ * clicked onto scene however no object was selected, there all selected 
+ * Robots and Obstacles should be unselected.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef CUSTOMSCENE_H
 #define CUSTOMSCENE_H
 

@@ -1,11 +1,21 @@
+/**
+ * @file obstacle.h
+ * @brief Header file for Obstacle class. 
+ * 
+ * Obstacle is an visual representation 
+ * of Rectangles in GUI. It simulates convex polygon with 4 edges ... rotated 
+ * rectangle.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
-#include <QGraphicsRectItem>
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include "qpen.h"
+#include <QPen.h>
 
 #include "../2DSimulationLib/rectangle.h"
 

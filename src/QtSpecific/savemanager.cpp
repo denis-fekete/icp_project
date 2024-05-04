@@ -1,3 +1,10 @@
+/**
+ * @file savemanager.cpp
+ * @brief Implementation of SaveManager class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "savemanager.h"
 
 #include <QMessageBox>

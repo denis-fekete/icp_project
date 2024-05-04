@@ -1,3 +1,10 @@
+/**
+ * @file baserobot.cpp
+ * @brief Implementation of BaseRobot class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "baserobot.h"
 #include "simulator.h"
 

@@ -1,3 +1,10 @@
+/**
+ * @file rectangle.cpp
+ * @brief Implementation of Rectangle class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "rectangle.h"
 
 Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Circle(x, y, sqrt( (w * w +  h * h) / 4), rot)

@@ -1,3 +1,14 @@
+/**
+ * @file manualrobot.h
+ * @brief Header file for ManualRobot class. 
+ * 
+ * Manual robot is specialization 
+ * of BaseRobot that performs/executes only orders from user provided through 
+ * GUI.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef MANUALROBOT_H
 #define MANUALROBOT_H
 

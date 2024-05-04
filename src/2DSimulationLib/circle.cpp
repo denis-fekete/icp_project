@@ -1,3 +1,10 @@
+/**
+ * @file circle.cpp
+ * @brief Implementation of Circle class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "circle.h"
 
 Circle::Circle(double x, double y, double radius, double rot) : Point (x, y)

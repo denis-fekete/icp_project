@@ -1,3 +1,11 @@
+/**
+ * @file mainwindow.h
+ * @brief Header file for MainWindow class that contains methods, slots 
+ * (methods called from GUI) and internal attributes.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -10,7 +18,7 @@
 #include <vector>
 #include <random>
 
-#include "QtSpecific//simulator.h"
+#include "QtSpecific/simulator.h"
 #include "2DSimulationLib/randomgenerator.h"
 #include "QtSpecific/customscene.h"
 #include "QtSpecific/savemanager.h"

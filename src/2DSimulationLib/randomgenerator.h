@@ -1,3 +1,12 @@
+/**
+ * @file randomgenerator.h
+ * @brief Header file for RandomGenerator class. 
+ * 
+ * Random generator is class for generating random values in given range.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef RANDOMGENERATOR_H
 #define RANDOMGENERATOR_H
 

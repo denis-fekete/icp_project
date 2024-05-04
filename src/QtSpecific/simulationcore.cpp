@@ -1,3 +1,10 @@
+/**
+ * @file simulationcore.cpp
+ * @brief Implementation of SimulationCore class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "simulationcore.h"
 
 SimulationCore::SimulationCore(std::vector<BaseRobot *> *allRobots, std::condition_variable* wakeCondition, std::mutex* mutex, bool* simulate) : allRobots(allRobots)

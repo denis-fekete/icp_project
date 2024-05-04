@@ -1,3 +1,10 @@
+/**
+ * @file obstacle.cpp
+ * @brief Implementation of Obstacle class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "obstacle.h"
 #include "simulator.h"
 

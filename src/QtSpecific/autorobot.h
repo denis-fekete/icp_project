@@ -1,3 +1,12 @@
+/**
+ * @file autorobot.h
+ * @brief Header file for AutoRobot class. 
+ * 
+ * Automatic robot is specialization 
+ * of BaseRobot that performs/executes actions based on its own algorithm.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
 #ifndef AUTOROBOT_H
 #define AUTOROBOT_H
 

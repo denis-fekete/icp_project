@@ -1,3 +1,20 @@
+/**
+ * @file simulator.h
+ * @brief Header file for Simulator class.
+ * 
+ * Simulator is "interface" between internal calculations, simulation and GUI 
+ * (user inputs). It contains vectors of Obstacles and Robots (Manual and 
+ * Automatic) and methods needed for their working. Simulator can perform 
+ * simulation calculations either on same thread (bad performance useful for
+ * small simulations) or by creating multiple threads that are wrapped in 
+ * SimulationCore objects, these objects "execute" simulation in another threads 
+ * and simulator is "waking" them to "execute" simulation in given intervals.
+ * Simulator inherits from QObject, this way simulator can be "connected" to 
+ * QTimer that will call its methods in given intervals.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 

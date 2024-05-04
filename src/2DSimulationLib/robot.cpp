@@ -1,3 +1,10 @@
+/**
+ * @file robot.cpp
+ * @brief Implementation of Robot class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "robot.h"
 
 Robot::Robot(double x, double y, double radius, double rot, double detRadius) :

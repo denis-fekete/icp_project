@@ -1,3 +1,13 @@
+/**
+ * @file circle.h
+ * @brief Header file for Circle class.
+ * 
+ * Circle represents circle object with radius positioned in 2D space, used 
+ * for simulations.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef CIRCLE_H
 #define CIRCLE_H
 

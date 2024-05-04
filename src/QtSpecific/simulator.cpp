@@ -1,3 +1,10 @@
+/**
+ * @file simulator.cpp
+ * @brief Implementation of Simulator class methods
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #include "simulator.h"
 
 #include <algorithm>

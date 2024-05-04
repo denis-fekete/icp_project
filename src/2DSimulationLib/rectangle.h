@@ -1,3 +1,15 @@
+/**
+ * @file rectangle.h
+ * @brief Header file for Rectangle class.
+ * 
+ * Rectangle is class for simulating 2D 4-edged convex polygon with parallel 
+ * edges, which are same length ... a rotated rectangle. Class defines its 
+ * size, position and rotations, also algorithms for colliding with other 
+ * rectangles.
+ *
+ * @author Denis Fekete (xfeket01@fit.vutbr.cz)
+ */
+
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
