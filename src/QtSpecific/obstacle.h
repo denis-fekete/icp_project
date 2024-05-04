@@ -109,6 +109,18 @@ public:
     inline QColor& getColor() { return this->color; }
 
     /**
+     * @brief Updates values of this Obstacle
+     * @param x New x position
+     * @param y New y position
+     * @param w New width
+     * @param h New height
+     * @param rot New rotation
+     * @param color New color
+     */
+    void updateValues(double x, double y, double w, double h,
+                                double rot, QColor color);
+
+    /**
      * @brief Sets this robot to be highlighted
      */
     void setSelected();

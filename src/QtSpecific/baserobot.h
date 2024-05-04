@@ -85,7 +85,7 @@ protected:
      * @brief Turn angle on collision detection
      */
 
-    double turnAngle;
+    double turnSpeed;
 
     /**
      * @brief Direction in which will robot turn on collision
@@ -112,7 +112,7 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param turnAngle Turn angle on collision detection
+     * @param turnSpeed Turn angle on collision detection
      * @param turnDirection Turn direction, -1 or 1
      * @param colliders Pointer to the vector of obstacles
      * @param robotCollider Pointer to the vector of all robots
@@ -120,7 +120,7 @@ public:
      */
     BaseRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
-              double turnAngle, short turnDirection,
+              double turnSpeed, short turnDirection,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
               Simulator* simulator, double* spaceWidth, double* spaceHeight);
@@ -151,7 +151,6 @@ public:
      * @param angle Angle to be added to rotation
      */
     inline void rotateRobot(double angle) { sim.rotate(angle); }
-
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not
@@ -191,7 +190,42 @@ public:
      */
     inline QColor& getColor() { return this->color; }
 
+    /**
+     * @return Returns speed speed of this robot
+     */
+    inline double getSpeed() { return this->speed; }
 
+
+    /**
+     * @return Returns speed speed of this robot
+     */
+    inline double getTurnSpeed() { return this->turnSpeed; }
+
+    /**
+     * @return Returns turn direction of this robot
+     */
+    inline int getTurnDirection() { return this->turnDirection; }
+
+    /**
+     * @brief Updates values of this robot
+     * @param x New x position
+     * @param y New y position
+     * @param radius New radius
+     * @param rot New rotation
+     * @param detRadius New detection radius
+     * @param color New color
+     * @param speed New speed
+     * @param turnSpeed New turning speed
+     * @param turnDirection New turning direction
+     */
+    void updateValues(double x, double y, double radius, double rot,
+                                 double detRadius, QColor color, double speed,
+                                 double turnSpeed, short turnDirection);
+
+
+    /**
+     * @return Returns whenever robot is outside of simulated space
+     */
     inline bool isOutsideSimulation()
     {
         return (sim.getColliderFwd()->RB.x > *spaceWidth ||

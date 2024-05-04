@@ -8,11 +8,12 @@
 #include "simulator.h"
 
 #include <algorithm>
-
+#include "customscene.h"
 
 Simulator::Simulator(QGraphicsScene &scene,
-                     double width, double height,
-                     double windowWidth, double windowHeight):
+          double width, double height,
+          double windowWidth, double windowHeight,
+          std::function<void()> updateGUIPtr):
                     scene(scene)
 {
     timerPeriod = 30; // default 30 ms period
@@ -28,11 +29,15 @@ Simulator::Simulator(QGraphicsScene &scene,
 
     maxThreads = 0;
 
-    connect(&timerSim, SIGNAL(timeout()), this, SLOT(simulationCycle()));
-    connect(&timerGraphics, SIGNAL(timeout()), &scene, SLOT(advance()));
+    connect(&timerSim, &QTimer::timeout, this, &Simulator::simulationCycle);
+    connect(&timerGraphics, &QTimer::timeout, &scene, &CustomScene::advance);
 
     scene.addItem(&worldBorderX);
     scene.addItem(&worldBorderY);
+
+    paused = true;
+    updateGUI = updateGUIPtr;
+    smoothConst = 1000 / timerPeriod;
 }
 
 Simulator::~Simulator()
@@ -91,8 +96,6 @@ void Simulator::createSimulationCore(std::vector<std::unique_ptr<SimulationCore>
 }
 
 
-
-
 void Simulator::balanceCores()
 {
     if(maxThreads == 0)
@@ -131,16 +134,13 @@ void Simulator::balanceCores()
 
 void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
                                      double detRadius, QColor color, double speed,
-                                     double turnAngle, int turnDirection)
+                                     double turnSpeed, int turnDirection)
 {
-    // const for normalizing values
-    const double timeNorm = 1000 / timerPeriod;
-
     // create new AutoRobot and add it to vector of AutoRobots
     allRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
                                                      detRadius, color,
-                                                     speed / timeNorm,
-                                                     turnAngle / timeNorm,
+                                                     speed / smoothConst,
+                                                     turnSpeed / smoothConst,
                                                      turnDirection, &colliders, &robotColliders,
                                                      this, &spaceWidth, &spaceHeight));
 
@@ -207,6 +207,8 @@ void Simulator::setActiveRobot(BaseRobot* robot)
 
     activeRobot = robot;
     activeRobot->setSelected();
+
+    updateGUI();
 }
 
 void Simulator::setActiveObstacle(Obstacle* obstacle)
@@ -218,6 +220,8 @@ void Simulator::setActiveObstacle(Obstacle* obstacle)
 
     activeObstacle = obstacle;
     activeObstacle->setSelected();
+
+    updateGUI();
 }
 
 void Simulator::deleteRobot()
@@ -302,10 +306,12 @@ void Simulator::runSimulation()
 
     this->timerSim.start(timerPeriod);
     this->timerGraphics.start(timerPeriod / 2);
+    paused = false;
 }
 
 void Simulator::stopSimulation()
 {
+    paused = true;
     this->timerSim.stop();
     this->timerGraphics.stop();
 
@@ -374,6 +380,7 @@ void Simulator::unselectActive()
         activeRobot->setUnselected();
         activeRobot = nullptr;
     }
+    scene.update();
 }
 
 void Simulator::changeThreadCount(int threads)

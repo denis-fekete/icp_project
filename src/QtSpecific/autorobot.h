@@ -35,7 +35,7 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param turnAngle Turn angle on collision detection
+     * @param turnSpeed Turn angle on collision detection
      * @param turnDirection Turn direction, -1 or 1
      * @param colliders Pointer to the vector of obstacles
      * @param robotCollider Pointer to the vector of all robots
@@ -43,7 +43,7 @@ public:
      */
     AutoRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
-              double turnAngle, short turnDirection,
+              double turnSpeed, short turnDirection,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
               Simulator* simulator, double* spaceWidth, double* spaceHeight);
@@ -63,7 +63,7 @@ public:
     /**
      * @return Turn angle of the AutoRobot
      */
-    inline double getTurnAngle() { return this->turnAngle; }
+    inline double getturnSpeed() { return this->turnSpeed; }
 
     /**
      * @return Turn direction of the AutoRobot

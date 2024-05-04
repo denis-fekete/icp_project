@@ -21,16 +21,20 @@ MainWindow::MainWindow(QWidget *parent)
     // value 235 means that values in RGB wont be too bright,
     // potentially resulting in white robot on white background
     randColor = std::make_unique<RandomGenerator>(0, 235);
+
     // ------------------------------------------------------------------------
     // Setup graphics view
     ui->setupUi(this);
 
     scene = std::make_unique<CustomScene> (this);
     ui->graphicsView->setScene(scene.get());
-    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 
+    ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    ui->graphicsView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+
 
     QApplication::setStyle(QStyleFactory::create("Fusion"));
 
@@ -41,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
         ui->sBox_worldc_sizeX->value(),
         ui->sBox_worldc_sizeY->value(),
         this->window()->size().width(),
-        this->window()->size().height()
+        this->window()->size().height(),
+        std::bind(&MainWindow::updateMenuGUI, this)
         );
 
     // set thread count
@@ -54,6 +59,12 @@ MainWindow::MainWindow(QWidget *parent)
     // ------------------------------------------------------------------------
     // Apply world configuration
     on_btn_worldApplySize_clicked();
+
+    // ------------------------------------------------------------------------
+    //
+
+    menuUpdate.start(500);
+    connect(&menuUpdate, &QTimer::timeout, this, &MainWindow::updateMenuGUI);
 }
 
 MainWindow::~MainWindow()
@@ -76,7 +87,6 @@ void MainWindow::resizeEvent(QResizeEvent*)
                                   graphicalSceneW,
                                   graphicalSceneH - SPACING);
 
-
     ui->mainMenu->setGeometry(SPACING,
                               ui->program_btn_resumepause->geometry().height(),
                               ui->mainMenu->geometry().width(),
@@ -85,6 +95,58 @@ void MainWindow::resizeEvent(QResizeEvent*)
     simulator->setWindowSize(graphicalSceneW, graphicalSceneH);
 
     #undef SPACING
+}
+
+void MainWindow::updateMenuGUI()
+{
+    auto obstacle = simulator.get()->getActiveObstacle();
+    auto robot = simulator.get()->getActiveRobot();
+
+    if(simulator.get()->isPaused())
+        return;
+
+    if(obstacle != nullptr)
+    {
+        auto sim = obstacle->getSim();
+        ui->input_obstacle_xPos->setValue(sim->getX());
+        ui->input_obstacle_yPos->setValue(sim->getY());
+
+        ui->input_obstacle_width->setValue(sim->getW());
+        ui->input_obstacle_height->setValue(sim->getH());
+
+        ui->input_obstacle_rotation->setValue(sim->getRotation());
+
+        QColor& color = obstacle->getColor();
+        ui->input_obstacle_color_r->setValue(color.red());
+        ui->input_obstacle_color_g->setValue(color.green());
+        ui->input_obstacle_color_b->setValue(color.blue());
+    }
+
+    if(robot != nullptr)
+    {
+        auto sim = robot->getSim();
+        ui->input_robot_xPos->setValue(sim->getX());
+        ui->input_robot_yPos->setValue(sim->getY());
+        ui->input_robot_radius->setValue(sim->getRadius());
+        ui->input_robot_rotation->setValue(sim->getRotation());
+        ui->input_robot_speed->setValue(robot->getSpeed() * simulator.get()->getSmoothConst());
+        QColor& color = robot->getColor();
+        ui->input_robot_color_r->setValue(color.red());
+        ui->input_robot_color_g->setValue(color.green());
+        ui->input_robot_color_b->setValue(color.blue());
+        ui->input_robot_turnSpeed->setValue(robot->getTurnSpeed() * simulator.get()->getSmoothConst());
+        ui->input_robot_detRadius->setValue(sim->getDetRadius());
+        if(robot->getTurnDirection() == 1)
+        {
+            ui->input_robot_clockwise->setChecked(true);
+            ui->input_robot_anticlockwise->setChecked(false);
+        }
+        else
+        {
+            ui->input_robot_clockwise->setChecked(false);
+            ui->input_robot_anticlockwise->setChecked(true);
+        }
+    }
 }
 
 QColor MainWindow::getRandomColor()
@@ -156,7 +218,6 @@ void MainWindow::on_saveManager_btn_save_clicked()
     saveManager.get()->saveToFile();
 }
 
-
 void MainWindow::on_btn_worldApplySize_clicked()
 {
     simulator->setSimulationSize(
@@ -195,7 +256,7 @@ void MainWindow::on_btnCreateRobot_clicked()
     if(ui->input_selectAutomatic->isChecked())
 
     {
-        const short turnDirection = (ui->input_robot_onCollisionTurnRight->isChecked())? 1 : -1;
+        const short turnDirection = (ui->input_robot_clockwise->isChecked())? 1 : -1;
 
         simulator->addAutomaticRobot(
                 ui->input_robot_xPos->value(),
@@ -205,7 +266,7 @@ void MainWindow::on_btnCreateRobot_clicked()
                 ui->input_robot_detRadius->value(),
                 color,
                 ui->input_robot_speed->value(),
-                ui->input_robot_collisionDetectionAngle->value(),
+            ui->input_robot_turnSpeed->value(),
                 turnDirection
                 );
     }
@@ -232,17 +293,14 @@ void MainWindow::on_btnDeleteRobot_clicked()
 
 void MainWindow::on_input_robot_onCollisionTurnLeft_stateChanged(int arg1)
 {
-    ui->input_robot_onCollisionTurnLeft->setChecked(arg1);
-    ui->input_robot_onCollisionTurnRight->setChecked(!arg1);
-
+    ui->input_robot_anticlockwise->setChecked(arg1);
+    ui->input_robot_clockwise->setChecked(!arg1);
 }
-
 
 void MainWindow::on_input_robot_onCollisionTurnRight_stateChanged(int arg1)
 {
-    ui->input_robot_onCollisionTurnRight->setChecked(arg1);
-    ui->input_robot_onCollisionTurnLeft->setChecked(!arg1);
-
+    ui->input_robot_clockwise->setChecked(arg1);
+    ui->input_robot_anticlockwise->setChecked(!arg1);
 }
 
 void MainWindow::on_input_selectAutomatic_stateChanged(int arg1)
@@ -251,11 +309,10 @@ void MainWindow::on_input_selectAutomatic_stateChanged(int arg1)
     ui->input_selectManual->setChecked(!arg1);
 
     ui->input_robot_speed->setEnabled(true);
-    ui->input_robot_onCollisionTurnLeft->setEnabled(true);
-    ui->input_robot_onCollisionTurnRight->setEnabled(true);
-    ui->input_robot_collisionDetectionAngle->setEnabled(true);
+    ui->input_robot_anticlockwise->setEnabled(true);
+    ui->input_robot_clockwise->setEnabled(true);
+    ui->input_robot_turnSpeed->setEnabled(true);
 }
-
 
 void MainWindow::on_input_selectManual_stateChanged(int arg1)
 {
@@ -263,9 +320,9 @@ void MainWindow::on_input_selectManual_stateChanged(int arg1)
     ui->input_selectAutomatic->setChecked(!arg1);
 
     ui->input_robot_speed->setEnabled(false);
-    ui->input_robot_onCollisionTurnLeft->setEnabled(false);
-    ui->input_robot_onCollisionTurnRight->setEnabled(false);
-    ui->input_robot_collisionDetectionAngle->setEnabled(false);
+    ui->input_robot_anticlockwise->setEnabled(false);
+    ui->input_robot_clockwise->setEnabled(false);
+    ui->input_robot_turnSpeed->setEnabled(false);
 }
 
 void MainWindow::on_input_robot_randomizeColors_stateChanged(int arg1)
@@ -274,6 +331,44 @@ void MainWindow::on_input_robot_randomizeColors_stateChanged(int arg1)
     ui->input_robot_color_g->setEnabled(!arg1);
     ui->input_robot_color_b->setEnabled(!arg1);
 }
+
+void MainWindow::on_input_robot_updateValues_clicked()
+{
+    auto robot = simulator.get()->getActiveRobot();
+
+    if(robot != nullptr)
+    {
+        QColor color;
+        if(ui->input_obstacle_randomizeColors->isChecked())
+        {
+            color = robot->getColor();
+        }
+        else
+        {
+            color = QColor(ui->input_robot_color_r->text().toDouble(),
+                           ui->input_robot_color_g->text().toDouble(),
+                           ui->input_robot_color_b->text().toDouble());
+        }
+
+        // void BaseRobot::updateValues(double x, double y, double radius, double rot,
+        //                              double detRadius, QColor color, double speed,
+        //                              double turnSpeed, short turnDirection)
+
+        robot->updateValues(
+            ui->input_robot_xPos->text().toDouble(),
+            ui->input_robot_yPos->text().toDouble(),
+            ui->input_robot_radius->text().toDouble(),
+            ui->input_robot_detRadius->text().toDouble(),
+            ui->input_robot_rotation->text().toDouble(),
+            color,
+            ui->input_robot_speed->text().toDouble() / simulator->getSmoothConst(),
+            ui->input_robot_turnSpeed->text().toDouble() / simulator->getSmoothConst(),
+            (ui->input_robot_clockwise->isChecked()) ? 1 : -1
+            );
+    }
+}
+
+
 
 //----------------------------------------------------------------------------
 // Obstacle tab
@@ -313,11 +408,40 @@ void MainWindow::on_input_obstacle_randomizeColors_stateChanged(int arg1)
 
 void MainWindow::on_btnDeleteObstacle_clicked()
 {
-    // erase robot
     simulator->deleteObstacle();
 
     scene->update();
 }
+
+void MainWindow::on_input_obstacle_updateValues_clicked()
+{
+    auto obstacle = simulator.get()->getActiveObstacle();
+
+    if(obstacle != nullptr)
+    {
+        QColor color;
+        if(ui->input_obstacle_randomizeColors->isChecked())
+        {
+            color = obstacle->getColor();
+        }
+        else
+        {
+            color = QColor(ui->input_obstacle_color_r->text().toDouble(),
+                           ui->input_obstacle_color_g->text().toDouble(),
+                           ui->input_obstacle_color_b->text().toDouble());
+        }
+
+        obstacle->updateValues(
+            ui->input_obstacle_xPos->text().toDouble(),
+            ui->input_obstacle_yPos->text().toDouble(),
+            ui->input_obstacle_width->text().toDouble(),
+            ui->input_obstacle_height->text().toDouble(),
+            ui->input_obstacle_rotation->text().toDouble(),
+            color
+            );
+    }
+}
+
 
 //----------------------------------------------------------------------------
 // Control Robots tab
@@ -372,7 +496,7 @@ void MainWindow::on_input_manualrobot_anticlockwise_clicked()
     if(robot != nullptr)
     {
         robot->setCommand(Command::ROTATE_ANTICLOCK);
-        robot->setTurnAngle(-ui->input_manualrobot_turnAngle->value() / (1000 / simulator->getTimerPeriod()));
+        robot->setturnSpeed(-ui->input_manualrobot_turnSpeed->value() / (1000 / simulator->getTimerPeriod()));
     }
     else
     {
@@ -394,7 +518,7 @@ void MainWindow::on_input_manualrobot_clockwise_clicked()
     {
         robot->setCommand(Command::ROTATE_CLOCK);
         robot->setCommand(Command::ROTATE_ANTICLOCK);
-        robot->setTurnAngle(ui->input_manualrobot_turnAngle->value() / (1000 / simulator->getTimerPeriod()));
+        robot->setturnSpeed(ui->input_manualrobot_turnSpeed->value() / (1000 / simulator->getTimerPeriod()));
     }
     else
     {
@@ -403,3 +527,6 @@ void MainWindow::on_input_manualrobot_clockwise_clicked()
         msgBox.exec();
     }
 }
+
+
+

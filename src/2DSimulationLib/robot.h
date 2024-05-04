@@ -92,9 +92,16 @@ public:
     inline double getDetRadius() const { return this->detRadius; }
 
     /**
+     * @brief setDetRadius Sets value of detection radius
+     * @param detRadius New value of detection radius
+     */
+    inline void setDetRadius(double detRadius) { this->detRadius = detRadius; }
+
+    /**
      * @return Returns pointer to forward facing rectangle
      */
     inline Rectangle* getColliderFwd() { return &(this->colliderFwd); }
+
 
     /**
      * @brief Checks if this Robot intersects with other Circle

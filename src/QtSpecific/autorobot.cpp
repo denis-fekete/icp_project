@@ -13,7 +13,7 @@
 /*
     BaseRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
-              double turnAngle, bool turnRight,
+              double turnSpeed, bool turnRight,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
               Simulator* simulator);
@@ -21,11 +21,11 @@
 
 AutoRobot::AutoRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color, double speed,
-                     double turnAngle, short turnDirection,
+                     double turnSpeed, short turnDirection,
                      std::vector<Rectangle*>* colliders,
                      std::vector<Robot*>* robotColliders,
                      Simulator* simulator, double* spaceWidth, double* spaceHeight) :
-    BaseRobot(x, y, radius, rot, detRadius, color, speed, turnAngle, turnDirection, colliders, robotColliders, simulator, spaceWidth, spaceHeight)
+    BaseRobot(x, y, radius, rot, detRadius, color, speed, turnSpeed, turnDirection, colliders, robotColliders, simulator, spaceWidth, spaceHeight)
 {
     initialized = false;
 }
@@ -63,7 +63,7 @@ void AutoRobot::simulate()
         sim.robotDetection(robotColliders) ||
         isOutsideSimulation())
     {
-        this->rotateRobot(turnAngle * turnDirection);
+        this->rotateRobot(turnSpeed * turnDirection);
     }
     else
     {

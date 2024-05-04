@@ -45,7 +45,7 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param turnAngle Turn angle on collision detection
+     * @param turnSpeed Turn angle on collision detection
      * @param turnDirection Turn direction, -1 or 1
      * @param colliders Pointer to the vector of obstacles
      * @param robotCollider Pointer to the vector of all robots
@@ -83,9 +83,9 @@ public:
 
     /**
      * @brief Sets turn angle of this ManualRobot
-     * @param turnAngle New value to be set
+     * @param turnSpeed New value to be set
      */
-    inline void setTurnAngle(double turnAngle) { this->turnAngle = turnAngle; }
+    inline void setturnSpeed(double turnSpeed) { this->turnSpeed = turnSpeed; }
 
 };
 

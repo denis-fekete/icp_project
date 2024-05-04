@@ -61,10 +61,10 @@ void ManualRobot::simulate()
         }
         break;
     case Command::ROTATE_CLOCK:
-        this->rotateRobot(-turnAngle);
+        this->rotateRobot(-turnSpeed);
         break;
     case Command::ROTATE_ANTICLOCK:
-        this->rotateRobot(turnAngle);
+        this->rotateRobot(turnSpeed);
         break;
     }
 }

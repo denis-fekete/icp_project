@@ -85,7 +85,7 @@ void SaveManager::saveToFile()
         {
 
             xmlWriter.writeTextElement("speed", QString::number(autoRob->getSpeed() * simTimePeriod));
-            xmlWriter.writeTextElement("turn_angle", QString::number(autoRob->getTurnAngle() * simTimePeriod));
+            xmlWriter.writeTextElement("turn_angle", QString::number(autoRob->getturnSpeed() * simTimePeriod));
             xmlWriter.writeTextElement("turn_direction", QString::number(autoRob->getTurnDirection()));
         }
         xmlWriter.writeEndElement(); // end Robot
@@ -262,8 +262,8 @@ returnType SaveManager::readRobot()
     bool colorBlueRead = false;
     QColor color = Qt::black;
     double speed = -1;
-    bool turnAngleRead = false;
-    double turnAngle = 0;
+    bool turnSpeedRead = false;
+    double turnSpeed = 0;
     bool turnDirectionRead = false;
     int turnDirection = 0;
 
@@ -290,10 +290,10 @@ returnType SaveManager::readRobot()
                 speed = xmlReader.readElementText().toDouble();
             else if(elementName == "turn_angle")
             {
-                turnAngle = xmlReader.readElementText().toDouble();
+                turnSpeed = xmlReader.readElementText().toDouble();
                 // check if not set, if set return false as fail
-                if(!turnAngleRead)
-                    turnAngleRead = true;
+                if(!turnSpeedRead)
+                    turnSpeedRead = true;
                 else
                     return err;
             }
@@ -354,13 +354,13 @@ returnType SaveManager::readRobot()
         // check if all parameters were read
         if(x > -1 && y > -1 && radius > -1 && detRad > -1 && speed > -1 &&
             rotRead && colorRedRead && colorGreenRead &&
-            colorBlueRead && turnAngleRead && turnDirectionRead)
+            colorBlueRead && turnSpeedRead && turnDirectionRead)
         {
             simulator.addAutomaticRobot(
                 x, y, radius, rot, detRad,
                 color,
                 speed,
-                turnAngle,
+                turnSpeed,
                 turnDirection);
         }
         else

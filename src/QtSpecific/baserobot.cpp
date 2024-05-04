@@ -10,13 +10,13 @@
 
 BaseRobot::BaseRobot(double x, double y, double radius, double rot,
           double detRadius, QColor color, double speed,
-          double turnAngle, short turnDirection,
+          double turnSpeed, short turnDirection,
           std::vector<Rectangle*>* colliders,
           std::vector<Robot*>* robotColliders,
           Simulator* simulator, double* spaceWidth, double* spaceHeight) :
     sim(x, y, radius, rot, detRadius), colliders(colliders),
     robotColliders(robotColliders), color(color), simulator(simulator),
-    speed(speed), turnAngle(turnAngle), turnDirection(turnDirection),
+    speed(speed), turnSpeed(turnSpeed), turnDirection(turnDirection),
     spaceWidth(spaceWidth), spaceHeight(spaceHeight)
 {
     initialized = false;
@@ -111,7 +111,34 @@ void BaseRobot::advance(int step)
     if(!step)
         return;
 
+    const double x = sim.getX();
+    const double y = sim.getY();
     this->setPos(0, 0);
     this->setRotation(sim.getRotation());
-    this->setPos(sim.getX(), sim.getY());
+    this->setPos(x, y);
+}
+
+void BaseRobot::updateValues(double x, double y, double radius, double rot,
+                             double detRadius, QColor color, double speed,
+                             double turnSpeed, short turnDirection)
+{
+    this->turnDirection = turnDirection;
+    this->turnSpeed = turnSpeed;
+    this->color = color;
+    this->speed = speed;
+
+    sim.setRadius(radius);
+    sim.setDetRadius(detRadius);
+
+    sim.getColliderFwd()->setPos(sim.getX() + sim.getRadius(), sim.getY());
+    sim.getColliderFwd()->setW(sim.getDetRadius());
+    sim.getColliderFwd()->setH(2 * sim.getRadius());
+
+    sim.moveTo(Point(x, y));
+    sim.setRotation(rot);
+
+    // update rotation of collider by rotating by 0 angle
+    sim.rotate(0);
+
+    advance(1);
 }

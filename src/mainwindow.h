@@ -78,7 +78,11 @@ private:
      */
     std::unique_ptr<SaveManager> saveManager;
 
+    QTimer menuUpdate;
+
 private slots:
+    void updateMenuGUI();
+
     void on_btnCreateRobot_clicked();
     void on_btnCreateObstacle_clicked();
     void on_btn_worldApplySize_clicked();
@@ -99,5 +103,7 @@ private slots:
     void on_input_selectAutomatic_stateChanged(int arg1);
     void on_input_selectManual_stateChanged(int arg1);
     void on_world_applyThreadCount_clicked();
+    void on_input_robot_updateValues_clicked();
+    void on_input_obstacle_updateValues_clicked();
 };
 #endif // MAINWINDOW_H

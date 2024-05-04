@@ -37,6 +37,141 @@
 class Simulator : public QObject
 {
     Q_OBJECT
+private:
+    /**
+     * @brief Reference to the scene for updating
+     */
+    QGraphicsScene& scene;
+
+    /**
+     * @brief robots Vector of Robots
+     */
+    std::vector<BaseRobot*> robots;
+
+    /**
+     * @brief autoRobots Vector of all robots (automatic or manual)
+     */
+    std::vector<std::unique_ptr<BaseRobot>> allRobots;
+
+    /**
+     * @brief Vector of Robots
+     */
+    std::vector<std::unique_ptr<Obstacle>> obstacles;
+
+    /**
+     * @brief Vector of robot colliders
+     */
+    std::vector<Robot*> robotColliders;
+
+    /**
+     * @brief colliders Vector of all colliders
+     */
+    std::vector<Rectangle*> colliders;
+
+    /**
+     * @brief Vector of SimulationCores
+     */
+    std::vector<std::unique_ptr<SimulationCore>> simCores;
+
+    /**
+     * @brief Vector of threads that run SimulationCores
+     */
+    std::vector<std::unique_ptr<std::thread>> simThreads;
+
+    /**
+     * @brief activeRobot Pointer to active AutoRobot
+     */
+    BaseRobot* activeRobot;
+
+    /**
+     * @brief activeObstacle Pointer to active active Obstacle
+     */
+    Obstacle* activeObstacle;
+
+    /**
+     * @brief Pointer Timer for calling of simulation cycles
+     */
+    QTimer timerSim;
+
+    /**
+     * @brief Pointer Timer for calling of graphics update cycles
+     */
+    QTimer timerGraphics;
+
+    /**
+     * @brief Mutex for SimulationCore synchronization
+     */
+    std::mutex mutex;
+
+    /**
+     * @brief Condition for waking SimulationCores
+     */
+    std::condition_variable wakeCores;
+
+    /**
+     * @brief Bool value for keeping SimulationCores running
+     */
+    bool keepSimCoresRunning;
+
+    /**
+     * @brief Number of maximum threads
+     */
+    size_t maxThreads;
+
+    /**
+     * @brief Timer period in milliseconds
+     */
+    int timerPeriod;
+
+    /**
+     * @brief Last period of cycle timer
+     */
+    long long cycleTime = 0;
+
+    /**
+     * @brief spaceWidth Width of simulation space
+     */
+    double spaceWidth;
+
+    /**
+     * @brief spaceHeight Height of simulation space
+     */
+    double spaceHeight;
+
+    /**
+     * @brief windowWidth Width of the window
+     */
+    double windowWidth;
+
+    /**
+     * @brief windowHeight Height of the window
+     */
+    double windowHeight;
+
+    /**
+     * @brief worldBorder Polygon symbolizing world border
+     */
+    QGraphicsRectItem worldBorderX;
+
+    /**
+     * @brief worldBorder Polygon symbolizing world border
+     */
+    QGraphicsRectItem worldBorderY;
+
+    /**
+     * @brief isPaused Bool value of whenever simulator is running or not
+     */
+    bool paused;
+
+    /**
+     * @brief updateGUI Pointer to the function that updates GUI
+     */
+    std::function<void()> updateGUI;
+
+    /**
+     * @brief smoothConst Constant for smoothing movement
+     */
+    double smoothConst;
 public:
     /**
      * @brief Constructor of Simulator object
@@ -48,8 +183,12 @@ public:
      * @param height Height of simulation space
      * @param windowWidth Width of window space
      * @param windowHeight Height of window space
+     * @param Pointer to function that updates GUI
      */
-    Simulator(QGraphicsScene &scene, double width, double height, double windowWidth, double windowHeight);
+    Simulator(QGraphicsScene &scene,
+                         double width, double height,
+                         double windowWidth, double windowHeight,
+                         std::function<void()> updateGUIPtr);
     ~Simulator();
 
     /*
@@ -61,12 +200,12 @@ public:
      * @param detRadius Detection radius of this robot
      * @param color Color of the AutoRobot
      * @param speed Speed of the AutoRobot
-     * @param turnAngle Turn angle on collision detection
+     * @param turnSpeed Turn angle on collision detection
      * @param turnDirection Turn direction of the robot, 1 or -1
      */
     void addAutomaticRobot(double x, double y, double radius, double rot,
                               double detRadius, QColor color, double speed,
-                              double turnAngle, int turnDirection);
+                              double turnSpeed, int turnDirection);
 
     /*
      * @brief Creates and adds new AutoRobot to the scene
@@ -227,126 +366,16 @@ public:
      * @param threads New number of threads
      */
     void changeThreadCount(int threads);
-private:
-    /**
-     * @brief Reference to the scene for updating
-     */
-    QGraphicsScene& scene;
 
     /**
-     * @brief robots Vector of Robots
+     * @return Returns true if Simulator is paused
      */
-    std::vector<BaseRobot*> robots;
+    inline bool isPaused() { return this->paused; }
 
     /**
-     * @brief autoRobots Vector of all robots (automatic or manual)
+     * @return Returns smooth cosntant of Simulator, used for normalizing/smooting movement
      */
-    std::vector<std::unique_ptr<BaseRobot>> allRobots;
-
-    /**
-     * @brief Vector of Robots
-     */
-    std::vector<std::unique_ptr<Obstacle>> obstacles;
-
-    /**
-     * @brief Vector of robot colliders
-     */
-    std::vector<Robot*> robotColliders;
-
-    /**
-     * @brief colliders Vector of all colliders
-     */
-    std::vector<Rectangle*> colliders;
-
-    /**
-     * @brief Vector of SimulationCores
-     */
-    std::vector<std::unique_ptr<SimulationCore>> simCores;
-
-    /**
-     * @brief Vector of threads that run SimulationCores
-     */
-    std::vector<std::unique_ptr<std::thread>> simThreads;
-
-    /**
-     * @brief activeRobot Pointer to active AutoRobot
-     */
-    BaseRobot* activeRobot;
-
-    /**
-     * @brief activeObstacle Pointer to active active Obstacle
-     */
-    Obstacle* activeObstacle;
-
-    /**
-     * @brief Pointer Timer for calling of simulation cycles
-     */
-    QTimer timerSim;
-
-    /**
-     * @brief Pointer Timer for calling of graphics update cycles
-     */
-    QTimer timerGraphics;
-
-    /**
-     * @brief Mutex for SimulationCore synchronization
-     */
-    std::mutex mutex;
-
-    /**
-     * @brief Condition for waking SimulationCores
-     */
-    std::condition_variable wakeCores;
-
-    /**
-     * @brief Bool value for keeping SimulationCores running
-     */
-    bool keepSimCoresRunning;
-
-    /**
-     * @brief Number of maximum threads
-     */
-    size_t maxThreads;
-
-    /**
-     * @brief Timer period in milliseconds
-     */
-    int timerPeriod;
-
-    /**
-     * @brief Last period of cycle timer
-     */
-    long long cycleTime = 0;
-
-    /**
-     * @brief spaceWidth Width of simulation space
-     */
-    double spaceWidth;
-
-    /**
-     * @brief spaceHeight Height of simulation space
-     */
-    double spaceHeight;
-
-    /**
-     * @brief windowWidth Width of the window
-     */
-    double windowWidth;
-
-    /**
-     * @brief windowHeight Height of the window
-     */
-    double windowHeight;
-
-    /**
-     * @brief worldBorder Polygon symbolizing world border
-     */
-    QGraphicsRectItem worldBorderX;
-
-    /**
-     * @brief worldBorder Polygon symbolizing world border
-     */
-    QGraphicsRectItem worldBorderY;
+    inline double getSmoothConst() { return this->smoothConst;}
 
     /**
      * @brief Creates SimulationCore in another thread and runs in main loop

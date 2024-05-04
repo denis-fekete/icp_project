@@ -38,7 +38,7 @@ public:
         this->y = y;
     }
 
-    ~Point();
+    ~Point() = default;
 
     /**
      * @brief Sets new value to this Point from input Point

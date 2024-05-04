@@ -104,3 +104,22 @@ void Obstacle::setUnselected()
     pen.setColor(color);
     pen.setWidth(DEFAULT_PEN_WIDTH);
 }
+
+void Obstacle::updateValues(double x, double y, double w, double h,
+                             double rot, QColor color)
+{
+    sim.setW(w);
+    sim.setH(h);
+    this->color = color;
+    sim.setRotation(rot);
+    // updates sinus and cosine values
+    sim.calculateSinCos();
+
+    // correctly rotate and move
+    this->setPos(0, 0);
+    this->setRotation(sim.getRotation());
+    this->setPos(x, y);
+
+    // updates point
+    sim.updatePoints();
+}

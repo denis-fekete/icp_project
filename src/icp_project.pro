@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     2DSimulationLib/circle.cpp \
-    2DSimulationLib/point.cpp \
     2DSimulationLib/rectangle.cpp \
     2DSimulationLib/robot.cpp \
     QtSpecific/autorobot.cpp \
