@@ -2,7 +2,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17
+CONFIG += c++17 QMAKE_CFLAGS_RELEASE release
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -38,17 +38,6 @@ HEADERS += \
     QtSpecific/simulator.h \
     mainwindow.h
 
-Release:DESTDIR = build/release
-Release:OBJECTS_DIR = build/release/obj
-Release:MOC_DIR = build/release/moc
-Release:RCC_DIR = build/release/rcc
-Release:UI_DIR = build/release/.ui
-
-Debug:DESTDIR = build/debug
-Debug:OBJECTS_DIR = build/debug/obj
-Debug:MOC_DIR = build/debug/moc
-Debug:RCC_DIR = build/debug/rcc
-Debug:UI_DIR = build/debug/ui
 
 FORMS += \
     mainwindow.ui

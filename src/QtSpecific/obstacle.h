@@ -15,7 +15,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QPen.h>
+#include <QPen>
 
 #include "../2DSimulationLib/rectangle.h"
 
