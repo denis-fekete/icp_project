@@ -35,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->graphicsView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     ui->graphicsView->setResizeAnchor(QGraphicsView::AnchorViewCenter);
 
+    // prints world boundries
+    ui->graphicsView->setBackgroundBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
 
     QApplication::setStyle(QStyleFactory::create("Fusion"));
 
@@ -48,7 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
         this->window()->size().height(),
         std::bind(&MainWindow::updateMenuGUI, this),
         &menuUpdate,
-        30, 30
+        ui->world_input_simulationPeriod->value(),
+        ui->world_input_graphicsPeriod->value()
         );
 
     // add simulator to CustomScene for unselecting objects
@@ -202,6 +205,9 @@ void MainWindow::on_saveManger_btn_load_clicked()
 
     saveManager.get()->loadFromFile();
 
+    // fit new loaded simulation into view
+    ui->graphicsView->fitInView(0, 0, simulator->getSimulationWidth(), simulator->getSimulationHeight(), Qt::KeepAspectRatio);
+
     scene->update();
 }
 
@@ -234,10 +240,19 @@ void MainWindow::on_world_input_graphicsPeriod_valueChanged(int arg1)
     simulator.get()->setGraphicsTimer(arg1);
 }
 
-
 void MainWindow::on_world_input_simulationPeriod_valueChanged(int arg1)
 {
-     simulator.get()->setSimulationTimer(arg1);
+    simulator.get()->setSimulationTimer(arg1);
+}
+
+void MainWindow::on_world_input_zoom_valueChanged(int value)
+{
+    ui->graphicsView->resetMatrix();
+    ui->graphicsView->fitInView(0, 0, simulator->getSimulationWidth(), simulator->getSimulationHeight(), Qt::KeepAspectRatio);
+
+    const double val = 100 / (double)value;
+
+    ui->graphicsView->scale(val, val);
 }
 
 //----------------------------------------------------------------------------

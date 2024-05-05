@@ -29,8 +29,8 @@ void Obstacle::initialize()
     this->setFlag(QGraphicsItem::ItemIsSelectable);
     // anti-aliasing
     this->setTransformationMode(Qt::SmoothTransformation);
-    // make this appear on top of all objects, obstacles have 1
-    this->setZValue(1);
+    // make this appear on top of all objects, robots have 1
+    this->setZValue(2);
 
     pen.setColor(color);
 

@@ -38,8 +38,8 @@ void BaseRobot::initialize()
     setTransformationMode(Qt::SmoothTransformation);
     // set origin point to 0,0
     setTransformOriginPoint(0, 0);
-    // make this appear on top of all objects, obstacles have 1
-    setZValue(2);
+    // make this under obstacles, obstacles have 2
+    setZValue(1);
     initialized = true;
 
     highlightedColor.setRed(std::min(color.red() + 30, 240));

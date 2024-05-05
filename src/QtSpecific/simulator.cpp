@@ -34,8 +34,9 @@ Simulator::Simulator(QGraphicsScene &scene,
     connect(&timerSim, &QTimer::timeout, this, &Simulator::simulationCycle);
     connect(&timerGraphics, &QTimer::timeout, &scene, &CustomScene::advance);
 
-    scene.addItem(&worldBorderX);
-    scene.addItem(&worldBorderY);
+    simulationSpaceRect.setBrush(QBrush(Qt::white, Qt::SolidPattern));
+    simulationSpaceRect.setPen(QPen(Qt::transparent));
+    scene.addItem(&simulationSpaceRect);
 
     paused = true;
     updateGUI = updateGUIPtr;
@@ -366,30 +367,15 @@ void Simulator::setSimulationSize(double width, double height)
     this->spaceWidth = width;
     this->spaceHeight = height;
 
-    setBorder();
+    simulationSpaceRect.setRect(0, 0, width, height);
 }
 
 void Simulator::setWindowSize(double width, double height)
 {
     this->windowWidth = width;
     this->windowHeight = height;
-
-    setBorder();
 }
 
-void Simulator::setBorder()
-{
-    worldBorderX.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
-    worldBorderY.setBrush(QBrush(Qt::gray, Qt::DiagCrossPattern));
-
-    worldBorderX.setPen(QPen(Qt::NoPen));
-    worldBorderY.setPen(QPen(Qt::NoPen));
-
-    worldBorderX.setRect(spaceWidth, 0, std::max(windowWidth-spaceWidth, 0.0), std::max(windowHeight, spaceHeight));
-    worldBorderY.setRect(0, spaceHeight, spaceWidth, std::max(windowHeight-spaceHeight, 0.0));
-
-    scene.update();
-}
 
 void Simulator::unselectActive()
 {

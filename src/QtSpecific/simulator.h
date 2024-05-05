@@ -151,12 +151,8 @@ private:
     /**
      * @brief worldBorder Polygon symbolizing world border
      */
-    QGraphicsRectItem worldBorderX;
+    QGraphicsRectItem simulationSpaceRect;
 
-    /**
-     * @brief worldBorder Polygon symbolizing world border
-     */
-    QGraphicsRectItem worldBorderY;
 
     /**
      * @brief isPaused Bool value of whenever simulator is running or not
