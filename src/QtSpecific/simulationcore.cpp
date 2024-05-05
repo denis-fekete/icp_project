@@ -18,8 +18,6 @@ SimulationCore::SimulationCore(std::vector<BaseRobot *> *allRobots, std::conditi
     lastDuration = 0;
 }
 
-#define LOG_TIME
-
 #ifdef LOG_TIME
 #include <thread>
 #include <iostream>

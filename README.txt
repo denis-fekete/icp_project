@@ -10,23 +10,34 @@ Used tools:
 
 Implemented functions:
     - working collision system
+    - working automatic and manual robots
     - creating/deleting Obstacle/Robots (both types) and moving and 
     changing their parameters
     - manipulating simulation is only possible in the Paused state (except 
-    controlling ManualRobots)
+    controlling ManualRobots and zooming in/out)
     - loading and saving simulation state into XML files
+    - zooming into and out of the simulation
 
 
 Known limits/bugs:
- - Application exits with a segmentation fault on exit in Unix (tested only on 
- WSLv2 in Windows), however, on Windows no such behavior is present
- 
- - On other operating systems (not Windows), texts might be incorrectly 
- displayed (moved in direction)
- 
- - By default, no additional threads are used for calculation, all calculations 
- are done on the main thread. Changing the number of threads can be done only 
- once per program. This bug/issue was not fixed.
+    - Application exits with a segmentation fault on exit in Unix (tested only on 
+    WSLv2 in Windows), however, on Windows no such behavior is present
+    - On other operating systems (not Windows), texts might be incorrectly 
+    displayed (moved in direction) 
+    - By default, no additional threads are used for calculation, all calculations 
+    are done on the main thread. Changing the number of threads can be done only 
+    once per program. This bug/issue was not fixed.
+    - Loaded input values are not controlled
+    - Robots placed under/on top of obstacles will not get unstuck (same for 
+    placing the robots outside world boundaries)
+
+
+Testing:
+    - no automatic tests are provided, however for testing the application as a 
+    whole or also for stress testing it is possible to use .xml files in 
+    examples/ which can be loaded into a simulator and played
+    - it is also possible to run build with "make time_log" which will build 
+    program with basic time logging (calculation time)
 
 
 The simplified class diagram is in doc directory (doc/icp_img6.drawio.svg) or in 

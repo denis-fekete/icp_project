@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulation_space width="700" height="500">
+    <Robots>
+        <Robot type="automatic" id="0">
+            <x>91.9759</x>
+            <y>21.7749</y>
+            <radius>20</radius>
+            <detection_radius>50</detection_radius>
+            <rotation>-192.6</rotation>
+            <color_red>98</color_red>
+            <color_green>4</color_green>
+            <color_blue>84</color_blue>
+            <speed>300</speed>
+            <turn_angle>180</turn_angle>
+            <turn_direction>-1</turn_direction>
+        </Robot>
+        <Robot type="automatic" id="1">
+            <x>31.6273</x>
+            <y>58.2951</y>
+            <radius>20</radius>
+            <detection_radius>50</detection_radius>
+            <rotation>-256</rotation>
+            <color_red>82</color_red>
+            <color_green>164</color_green>
+            <color_blue>16</color_blue>
+            <speed>120</speed>
+            <turn_angle>80</turn_angle>
+            <turn_direction>-1</turn_direction>
+        </Robot>
+    </Robots>
+    <Obstacles/>
+</Simulation_space>

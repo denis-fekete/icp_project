@@ -30,16 +30,20 @@ doxygen:
 
 clean:
 	rm -f -r doc/html
-	rm -f -r build
+	rm -f -r build*
 	rm -f src/moc_*
 	rm -f src/.qmake.stash
 	rm -f ui_*
 	rm -f src/Makefile
 	rm -f icp_project
 	rm -f xfeket01.zip
+	rm -f src/*.pro.user
+	rm -f src/ui_*.h
+	rm -f src/*.o
+
 
 make run: all
 	./icp_project
 	
-pack:
-	zip -r xfeket01.zip src examples doc/main_page.md Makefile
+pack: clean
+	zip -r xfeket01.zip src examples doc/* Makefile README.txt Doxyfile

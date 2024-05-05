@@ -57,7 +57,6 @@ Simulator::~Simulator()
     this->timerSim.stop();
 }
 
-#define LOG_TIME
 #ifdef LOG_TIME
     #include <iostream>
 #endif
@@ -73,17 +72,19 @@ void Simulator::simulationCycle()
     {
         #ifdef LOG_TIME
             #define castToMilis(time) std::chrono::duration<double, std::milli>(time).count()
+            auto startCalc = std::chrono::high_resolution_clock::now();
         #endif
 
-        auto startCalc = std::chrono::high_resolution_clock::now();
         for(size_t i = 0; i < robots.size(); i++)
         {
             robots.at(i)->simulate();
         }
 
-        std::cout << "Simulator: " << "robot range(" <<
-            0 << ", " << robots.size() << "), calculated: " <<
-            castToMilis(std::chrono::high_resolution_clock::now() - startCalc) << "ms\n" << std::flush;
+        #ifdef LOG_TIME
+            std::cout << "Simulator: " << "robot range(" <<
+                0 << ", " << robots.size() << "), calculated: " <<
+                castToMilis(std::chrono::high_resolution_clock::now() - startCalc) << "ms\n" << std::flush;
+        #endif
     }
     else
     {
