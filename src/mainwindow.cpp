@@ -247,7 +247,7 @@ void MainWindow::on_world_input_simulationPeriod_valueChanged(int arg1)
 
 void MainWindow::on_world_input_zoom_valueChanged(int value)
 {
-    ui->graphicsView->resetMatrix();
+    ui->graphicsView->resetTransform();
     ui->graphicsView->fitInView(0, 0, simulator->getSimulationWidth(), simulator->getSimulationHeight(), Qt::KeepAspectRatio);
 
     const double val = 100 / (double)value;
