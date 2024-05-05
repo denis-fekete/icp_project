@@ -1,10 +1,12 @@
 Author: Denis Fekete (xfeket01@fit.vutbr.cz)
 
+
 Used tools:
     - C++ version: C17
     - Compiler MSVC (C++ Compiler 17.8.34525.116 (amd64))  
     - IDE : Qt Creator 12.0.2 (Community)
     - Qt Version: Qt 5.9.0 MSVC2017 64bit
+
 
 Implemented functions:
     - working collision system
@@ -13,7 +15,6 @@ Implemented functions:
     - manipulating simulation is only possible in the Paused state (except 
     controlling ManualRobots)
     - loading and saving simulation state into XML files
-
 
 
 Known limits/bugs:
@@ -31,9 +32,11 @@ Known limits/bugs:
 The simplified class diagram is in doc directory (doc/icp_img6.drawio.svg) or in 
 MarkDown conceptual design.
 
+
 Conceptual design is also inside the doc directory (doc/concept_design.md), it 
 is written in MarkDown which allows images and links, therefore it is 
 recommended to read the concept design from that file.
+
 
 Conceptual design:
 
