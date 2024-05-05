@@ -74,6 +74,15 @@ MainWindow::~MainWindow()
     scene.release();
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(event){}
+    simulator->stopSimulation();
+
+    simulator.release();
+    exit(0);
+}
+
 void MainWindow::resizeEvent(QResizeEvent*)
 {
     #define SPACING 5
@@ -153,15 +162,6 @@ QColor MainWindow::getRandomColor()
     return QColor(  randColor->getRandomValue(),
                     randColor->getRandomValue(),
                     randColor->getRandomValue());
-}
-
-void MainWindow::closeEvent(QCloseEvent *event)
-{
-    if(event){}
-    simulator->stopSimulation();
-
-    simulator.release();
-    exit(0);
 }
 
 //----------------------------------------------------------------------------
@@ -289,13 +289,15 @@ void MainWindow::on_btnDeleteRobot_clicked()
     scene->update();
 }
 
-void MainWindow::on_input_robot_onCollisionTurnLeft_stateChanged(int arg1)
+
+void MainWindow::on_input_robot_anticlockwise_stateChanged(int arg1)
 {
     ui->input_robot_anticlockwise->setChecked(arg1);
     ui->input_robot_clockwise->setChecked(!arg1);
 }
 
-void MainWindow::on_input_robot_onCollisionTurnRight_stateChanged(int arg1)
+
+void MainWindow::on_input_robot_clockwise_stateChanged(int arg1)
 {
     ui->input_robot_clockwise->setChecked(arg1);
     ui->input_robot_anticlockwise->setChecked(!arg1);
@@ -521,6 +523,3 @@ void MainWindow::on_input_manualrobot_clockwise_clicked()
         msgBox.exec();
     }
 }
-
-
-

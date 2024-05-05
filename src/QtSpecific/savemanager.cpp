@@ -283,7 +283,7 @@ returnType SaveManager::readRobot()
             else if (elementName == "y")
                 y = xmlReader.readElementText().toDouble();
             else if (elementName == "radius")
-                radius = xmlReader.readElementText().toInt();
+                radius = xmlReader.readElementText().toDouble();
             else if(elementName == "detection_radius")
                 detRad = xmlReader.readElementText().toDouble();
             else if(elementName == "speed")

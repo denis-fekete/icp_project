@@ -91,3 +91,4 @@ doc/html
 moc_*
 icp_project
 build-*
+*.zip

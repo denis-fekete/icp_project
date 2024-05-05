@@ -1,6 +1,15 @@
 all:
 	cd src; \
-	qmake icp_project.pro; \
+	qmake icp_project.pro "CONFIG+=release"; \
+	make; \
+	cd ..; \
+	mv src/icp_project icp_project;
+	mkdir -p build;
+	mv src/*.o build/;
+
+debug:
+	cd src; \
+	qmake icp_project.pro "CONFIG+=debug"; \
 	make; \
 	cd ..; \
 	mv src/icp_project icp_project;
@@ -18,6 +27,7 @@ clean:
 	rm -f ui_*
 	rm -f src/Makefile
 	rm -f icp_project
+	rm -f xfeket01.zip
 
 make run: all
 	./icp_project

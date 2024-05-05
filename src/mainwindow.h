@@ -98,12 +98,12 @@ private slots:
     void on_input_manualrobot_clockwise_clicked();
     void on_input_robot_randomizeColors_stateChanged(int arg1);
     void on_input_obstacle_randomizeColors_stateChanged(int arg1);
-    void on_input_robot_onCollisionTurnLeft_stateChanged(int arg1);
-    void on_input_robot_onCollisionTurnRight_stateChanged(int arg1);
     void on_input_selectAutomatic_stateChanged(int arg1);
     void on_input_selectManual_stateChanged(int arg1);
     void on_world_applyThreadCount_clicked();
     void on_input_robot_updateValues_clicked();
     void on_input_obstacle_updateValues_clicked();
+    void on_input_robot_anticlockwise_stateChanged(int arg1);
+    void on_input_robot_clockwise_stateChanged(int arg1);
 };
 #endif // MAINWINDOW_H
