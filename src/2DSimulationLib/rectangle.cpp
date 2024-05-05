@@ -215,6 +215,13 @@ bool Rectangle::intersects(Rectangle* other)
         }
     }
 
+    // check if one of the points is inside this rect
+    if( pointInRectangle(other->LB) ||
+        pointInRectangle(other->RB) ||
+        pointInRectangle(other->RT) ||
+        pointInRectangle(other->LT))
+        return true;
+
     return false;
 }
 

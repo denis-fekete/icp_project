@@ -16,6 +16,15 @@ debug:
 	mkdir -p build;
 	mv src/*.o build/;
 
+time_log:
+	cd src; \
+	qmake icp_project.pro "CONFIG+=release" "DEFINES += LOG_TIME"; \
+	make; \
+	cd ..; \
+	mv src/icp_project icp_project;
+	mkdir -p build;
+	mv src/*.o build/;
+
 doxygen:
 	doxygen Doxyfile
 

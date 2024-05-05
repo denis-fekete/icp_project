@@ -11,8 +11,11 @@ ManualRobot::ManualRobot(double x, double y, double radius, double rot,
                      double detRadius, QColor color,
                      std::vector<Rectangle*>* colliders,
                      std::vector<Robot*>* robotColliders,
-                     Simulator* simulator, double* spaceWidth, double* spaceHeight) :
-    BaseRobot(x, y, radius, rot, detRadius, color, 0, 0, 1, colliders, robotColliders, simulator, spaceWidth, spaceHeight)
+                     Simulator* simulator, double* spaceWidth,
+                     double* spaceHeight, double* smoothConst) :
+                     BaseRobot(x, y, radius, rot, detRadius, color, 0, 0, 1,
+                     colliders, robotColliders, simulator, spaceWidth,
+                     spaceHeight, smoothConst)
 {
     cmd = Command::STAY;
     initialized = false;
@@ -57,14 +60,14 @@ void ManualRobot::simulate()
             !this->sim.robotDetection(robotColliders) &&
             !isOutsideSimulation())
         {
-            this->moveRobot(speed);
+            this->moveRobot(speed * (*smoothConst));
         }
         break;
     case Command::ROTATE_CLOCK:
         this->rotateRobot(-turnSpeed);
         break;
     case Command::ROTATE_ANTICLOCK:
-        this->rotateRobot(turnSpeed);
+        this->rotateRobot(turnSpeed * (*smoothConst));
         break;
     }
 }

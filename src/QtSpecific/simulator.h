@@ -124,11 +124,6 @@ private:
     size_t maxThreads;
 
     /**
-     * @brief Timer period in milliseconds
-     */
-    int timerPeriod;
-
-    /**
      * @brief Last period of cycle timer
      */
     long long cycleTime = 0;
@@ -188,13 +183,19 @@ public:
      * @param height Height of simulation space
      * @param windowWidth Width of window space
      * @param windowHeight Height of window space
-     * @param Pointer to function that updates GUI
+     * @param updateGUIPtr Pointer to function that updates GUI
+     * @param Pointer to timer that updates gui,
+     * simulator will stop it if simulation stops
+     * @param Update period for simulation in milliseconds
+     * @param Update period for graphical update in milliseconds
      */
     Simulator(QGraphicsScene &scene,
-                         double width, double height,
-                         double windowWidth, double windowHeight,
-                         std::function<void()> updateGUIPtr,
-                         QTimer* guiUpdateTimer);
+                                  double width, double height,
+                                  double windowWidth, double windowHeight,
+                                  std::function<void()> updateGUIPtr,
+                                  QTimer* guiUpdateTimer,
+                                  int simulationUpdatePeriod,
+                                  int graphicsUpdatePeriod);
 
     ~Simulator();
 
@@ -286,17 +287,6 @@ public:
     void stopSimulation();
 
     /**
-     * @brief Sets period of QTimer updating in milliseconds
-     * @param milliSeconds Value to be set to the QTimer
-     */
-    inline void setTimerPeriod(int milliSeconds) { this->timerPeriod = milliSeconds; }
-
-    /**
-     * @return Returns period time of Simulator
-     */
-    inline double getTimerPeriod() { return this->timerPeriod; }
-
-    /**
      * @return Returns last simulation cycle time
      */
     inline long long getCycleTime() { return this->cycleTime; }
@@ -383,6 +373,28 @@ public:
      * @return Returns smooth cosntant of Simulator, used for normalizing/smooting movement
      */
     inline double getSmoothConst() { return this->smoothConst;}
+
+    /**
+     * @brief setSimulationTimer Sets simulator update time for simulation
+     * @param milliseconds New value in miliseconds
+     */
+    void setSimulationTimer(int milliseconds);
+
+    /**
+     * @brief setGraphicsTimer Sets simulator update time for graphics
+     * @param milliseconds New value in miliseconds
+     */
+    void setGraphicsTimer(int milliseconds);
+
+    /**
+     * @return Returns timer period of simulation timer in milliseconds
+     */
+    int getSimulationTimer();
+
+    /**
+     * @return Returns timer period of graphics update timer in milliseconds
+     */
+    int getGraphicsTimer();
 
     /**
      * @brief Creates SimulationCore in another thread and runs in main loop

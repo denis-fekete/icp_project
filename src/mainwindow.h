@@ -105,5 +105,7 @@ private slots:
     void on_input_obstacle_updateValues_clicked();
     void on_input_robot_anticlockwise_stateChanged(int arg1);
     void on_input_robot_clockwise_stateChanged(int arg1);
+    void on_world_input_graphicsPeriod_valueChanged(int arg1);
+    void on_world_input_simulationPeriod_valueChanged(int arg1);
 };
 #endif // MAINWINDOW_H

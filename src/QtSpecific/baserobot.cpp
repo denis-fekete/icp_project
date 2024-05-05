@@ -13,11 +13,13 @@ BaseRobot::BaseRobot(double x, double y, double radius, double rot,
           double turnSpeed, short turnDirection,
           std::vector<Rectangle*>* colliders,
           std::vector<Robot*>* robotColliders,
-          Simulator* simulator, double* spaceWidth, double* spaceHeight) :
+          Simulator* simulator,
+          double* spaceWidth, double* spaceHeight,
+          double* smoothConst) :
     sim(x, y, radius, rot, detRadius), colliders(colliders),
     robotColliders(robotColliders), color(color), simulator(simulator),
     speed(speed), turnSpeed(turnSpeed), turnDirection(turnDirection),
-    spaceWidth(spaceWidth), spaceHeight(spaceHeight)
+    spaceWidth(spaceWidth), spaceHeight(spaceHeight), smoothConst(smoothConst)
 {
     initialized = false;
 }

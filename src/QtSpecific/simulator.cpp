@@ -14,10 +14,11 @@ Simulator::Simulator(QGraphicsScene &scene,
                      double width, double height,
                      double windowWidth, double windowHeight,
                      std::function<void()> updateGUIPtr,
-                     QTimer* guiUpdateTimer):
+                     QTimer* guiUpdateTimer,
+                     int simulationUpdatePeriod,
+                     int graphicsUpdatePeriod):
                     scene(scene)
 {
-    timerPeriod = 30; // default 30 ms period
     activeRobot = nullptr;
     activeObstacle = nullptr;
     keepSimCoresRunning = false;
@@ -38,7 +39,11 @@ Simulator::Simulator(QGraphicsScene &scene,
 
     paused = true;
     updateGUI = updateGUIPtr;
-    smoothConst = 1000 / timerPeriod;
+
+    timerSim.setInterval(simulationUpdatePeriod);
+    timerGraphics.setInterval(graphicsUpdatePeriod);
+
+    smoothConst = timerSim.interval() / 1000.0;
 
     this->guiUpdateTimer = guiUpdateTimer;
 }
@@ -51,6 +56,11 @@ Simulator::~Simulator()
     this->timerSim.stop();
 }
 
+#define LOG_TIME
+#ifdef LOG_TIME
+    #include <iostream>
+#endif
+
 void Simulator::simulationCycle()
 {
     if(robots.size() == 0)
@@ -60,10 +70,19 @@ void Simulator::simulationCycle()
 
     if(maxThreads == 0)
     {
+        #ifdef LOG_TIME
+            #define castToMilis(time) std::chrono::duration<double, std::milli>(time).count()
+        #endif
+
+        auto startCalc = std::chrono::high_resolution_clock::now();
         for(size_t i = 0; i < robots.size(); i++)
         {
             robots.at(i)->simulate();
         }
+
+        std::cout << "Simulator: " << "robot range(" <<
+            0 << ", " << robots.size() << "), calculated: " <<
+            castToMilis(std::chrono::high_resolution_clock::now() - startCalc) << "ms\n" << std::flush;
     }
     else
     {
@@ -142,10 +161,10 @@ void Simulator::addAutomaticRobot(double x, double y, double radius, double rot,
     // create new AutoRobot and add it to vector of AutoRobots
     allRobots.push_back(std::make_unique<AutoRobot> (x, y, radius, rot,
                                                      detRadius, color,
-                                                     speed / smoothConst,
-                                                     turnSpeed / smoothConst,
+                                                     speed,
+                                                     turnSpeed,
                                                      turnDirection, &colliders, &robotColliders,
-                                                     this, &spaceWidth, &spaceHeight));
+                                                     this, &spaceWidth, &spaceHeight, &smoothConst));
 
     auto addedRobot = allRobots.back().get();
     // add robot to the vector of robotColliders
@@ -170,7 +189,7 @@ void Simulator::addManualRobot(double x, double y, double radius, double rot,
     // create new AutoRobot and add it to vector of manual robots
     allRobots.push_back(std::make_unique<ManualRobot> (x, y, radius, rot,
                                                          detRadius, color, &colliders, &robotColliders,
-                                                         this,  &spaceWidth, &spaceHeight));
+                                                         this,  &spaceWidth, &spaceHeight, &smoothConst));
 
     auto addedRobot = allRobots.back().get();
     // add robot to the vector of robotColliders
@@ -307,8 +326,8 @@ void Simulator::runSimulation()
         robots.at(i)->setFlag(QGraphicsItem::ItemIsMovable, false);
     }
 
-    timerSim.start(timerPeriod);
-    timerGraphics.start(timerPeriod / 2);
+    timerSim.start();
+    timerGraphics.start();
     guiUpdateTimer->start();
     paused = false;
 }
@@ -394,4 +413,25 @@ void Simulator::changeThreadCount(int threads)
 
     initializeCores();
     balanceCores();
+}
+
+void Simulator::setSimulationTimer(int milliseconds)
+{
+    timerSim.setInterval(milliseconds);
+    smoothConst = timerSim.interval() / 1000.0;
+}
+
+void Simulator::setGraphicsTimer(int milliseconds)
+{
+    timerGraphics.setInterval(milliseconds);
+}
+
+int Simulator::getSimulationTimer()
+{
+    return timerSim.interval();
+}
+
+int Simulator::getGraphicsTimer()
+{
+    return timerGraphics.interval();
 }

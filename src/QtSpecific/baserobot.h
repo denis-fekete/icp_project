@@ -101,6 +101,12 @@ protected:
      * @brief spaceHeight Pointer to the height of simulation space
      */
     double* spaceHeight;
+
+    /**
+     * @brief smoothConst Constant calculated from update time of Simulator for
+     * smoother movement
+     */
+    double* smoothConst;
 public:
 
     /**
@@ -117,13 +123,15 @@ public:
      * @param colliders Pointer to the vector of obstacles
      * @param robotCollider Pointer to the vector of all robots
      * @param simulator Pointer to the simulator
+     * @param smoothConst Pointer to the smoothing constant calcualted by simulator
      */
     BaseRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color, double speed,
               double turnSpeed, short turnDirection,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
-              Simulator* simulator, double* spaceWidth, double* spaceHeight);
+              Simulator* simulator, double* spaceWidth, double* spaceHeight,
+              double* smoothConst);
 
     /**
      * @brief Initializes Robot values, this needs to called after constructor 

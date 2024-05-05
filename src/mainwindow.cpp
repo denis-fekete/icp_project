@@ -47,14 +47,11 @@ MainWindow::MainWindow(QWidget *parent)
         this->window()->size().width(),
         this->window()->size().height(),
         std::bind(&MainWindow::updateMenuGUI, this),
-        &menuUpdate
+        &menuUpdate,
+        30, 30
         );
 
-    // set thread count
-
-    simulator->setTimerPeriod(30);
-
-    // add simulator to CustomScene
+    // add simulator to CustomScene for unselecting objects
     scene->setSimulator(simulator.get());
 
     // ------------------------------------------------------------------------
@@ -136,12 +133,12 @@ void MainWindow::updateMenuGUI()
         ui->input_robot_yPos->setValue(sim->getY());
         ui->input_robot_radius->setValue(sim->getRadius());
         ui->input_robot_rotation->setValue(sim->getRotation());
-        ui->input_robot_speed->setValue(robot->getSpeed() * simulator.get()->getSmoothConst());
+        ui->input_robot_speed->setValue(robot->getSpeed());
         QColor& color = robot->getColor();
         ui->input_robot_color_r->setValue(color.red());
         ui->input_robot_color_g->setValue(color.green());
         ui->input_robot_color_b->setValue(color.blue());
-        ui->input_robot_turnSpeed->setValue(robot->getTurnSpeed() * simulator.get()->getSmoothConst());
+        ui->input_robot_turnSpeed->setValue(robot->getTurnSpeed());
         ui->input_robot_detRadius->setValue(sim->getDetRadius());
         if(robot->getTurnDirection() == 1)
         {
@@ -154,6 +151,9 @@ void MainWindow::updateMenuGUI()
             ui->input_robot_anticlockwise->setChecked(true);
         }
     }
+
+    ui->sBox_worldc_sizeX->setValue(simulator->getSimulationWidth());
+    ui->sBox_worldc_sizeY->setValue(simulator->getSimulationHeight());
 }
 
 QColor MainWindow::getRandomColor()
@@ -229,6 +229,16 @@ void MainWindow::on_world_applyThreadCount_clicked()
     ui->world_applyThreadCount->setEnabled(false);
 }
 
+void MainWindow::on_world_input_graphicsPeriod_valueChanged(int arg1)
+{
+    simulator.get()->setGraphicsTimer(arg1);
+}
+
+
+void MainWindow::on_world_input_simulationPeriod_valueChanged(int arg1)
+{
+     simulator.get()->setSimulationTimer(arg1);
+}
 
 //----------------------------------------------------------------------------
 // Create Robot tab
@@ -289,13 +299,11 @@ void MainWindow::on_btnDeleteRobot_clicked()
     scene->update();
 }
 
-
 void MainWindow::on_input_robot_anticlockwise_stateChanged(int arg1)
 {
     ui->input_robot_anticlockwise->setChecked(arg1);
     ui->input_robot_clockwise->setChecked(!arg1);
 }
-
 
 void MainWindow::on_input_robot_clockwise_stateChanged(int arg1)
 {
@@ -357,8 +365,8 @@ void MainWindow::on_input_robot_updateValues_clicked()
             ui->input_robot_rotation->text().toDouble(),
             ui->input_robot_detRadius->text().toDouble(),
             color,
-            ui->input_robot_speed->text().toDouble() / simulator->getSmoothConst(),
-            ui->input_robot_turnSpeed->text().toDouble() / simulator->getSmoothConst(),
+            ui->input_robot_speed->text().toDouble(),
+            ui->input_robot_turnSpeed->text().toDouble(),
             (ui->input_robot_clockwise->isChecked()) ? 1 : -1
             );
     }
@@ -400,7 +408,6 @@ void MainWindow::on_input_obstacle_randomizeColors_stateChanged(int arg1)
     ui->input_obstacle_color_g->setEnabled(!arg1);
     ui->input_obstacle_color_b->setEnabled(!arg1);
 }
-
 
 void MainWindow::on_btnDeleteObstacle_clicked()
 {
@@ -453,7 +460,7 @@ void MainWindow::on_input_manualrobot_forward_clicked()
     if(robot != nullptr)
     {
         robot->setCommand(Command::FORWARD);
-        robot->setSpeed(ui->input_manualrobot_speed->value() / (1000 / simulator->getTimerPeriod()));
+        robot->setSpeed(ui->input_manualrobot_speed->value());
     }
     else
     {
@@ -492,7 +499,7 @@ void MainWindow::on_input_manualrobot_anticlockwise_clicked()
     if(robot != nullptr)
     {
         robot->setCommand(Command::ROTATE_ANTICLOCK);
-        robot->setturnSpeed(-ui->input_manualrobot_turnSpeed->value() / (1000 / simulator->getTimerPeriod()));
+        robot->setturnSpeed(-ui->input_manualrobot_turnSpeed->value());
     }
     else
     {
@@ -514,7 +521,7 @@ void MainWindow::on_input_manualrobot_clockwise_clicked()
     {
         robot->setCommand(Command::ROTATE_CLOCK);
         robot->setCommand(Command::ROTATE_ANTICLOCK);
-        robot->setturnSpeed(ui->input_manualrobot_turnSpeed->value() / (1000 / simulator->getTimerPeriod()));
+        robot->setturnSpeed(ui->input_manualrobot_turnSpeed->value());
     }
     else
     {

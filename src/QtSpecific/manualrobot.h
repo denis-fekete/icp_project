@@ -50,12 +50,15 @@ public:
      * @param colliders Pointer to the vector of obstacles
      * @param robotCollider Pointer to the vector of all robots
      * @param simulator Pointer to the simulator
+     * @param smoothConst Pointer to the smoothing constant calcualted by simulator
      */
     ManualRobot(double x, double y, double radius, double rot,
               double detRadius, QColor color,
               std::vector<Rectangle*>* colliders,
               std::vector<Robot*>* robotColliders,
-              Simulator* simulator, double* spaceWidth, double* spaceHeight);
+              Simulator* simulator, double* spaceWidth, double* spaceHeight,
+              double* smoothConst);
+
 
     /**
      * @brief Simulates robot once, check if collision is occurring, if not
