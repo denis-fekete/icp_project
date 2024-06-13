@@ -46,4 +46,4 @@ make run: all
 	./icp_project
 	
 pack: clean
-	zip -r xfeket01.zip src examples doc/* Makefile README.txt Doxyfile
+	zip -r xfeket01-xxxxxx00.zip src examples doc/* Makefile README.txt Doxyfile

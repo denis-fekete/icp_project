@@ -120,6 +120,11 @@ void Obstacle::updateValues(double x, double y, double w, double h,
     this->setRotation(sim.getRotation());
     this->setPos(x, y);
 
+
+    // !!! Not part of submitted assignment
+    sim.setRadius(sqrt( (w * w +  h * h) / 4));
+    // !!! Not part of submitted assignment
+
     // updates point
     sim.updatePoints();
 }
