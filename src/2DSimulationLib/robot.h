@@ -6,9 +6,6 @@
  * circular shaped Robots in 2D space and allowing for collisions 
  * between other objects and Rectangle obstacles.
  *
- * Source line circle intersect:
- * https://www.youtube.com/watch?v=ebq7L2Wtbl4
- *
  * @author Denis Fekete (xfeket01@fit.vutbr.cz)
  */
 

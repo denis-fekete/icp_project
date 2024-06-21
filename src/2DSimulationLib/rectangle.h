@@ -7,9 +7,6 @@
  * size, position and rotations, also algorithms for colliding with other 
  * rectangles.
  *
- * Source for rectangle collision:
- * https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
- *
  * @author Denis Fekete (xfeket01@fit.vutbr.cz)
  */
 
