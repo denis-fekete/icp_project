@@ -18,9 +18,8 @@
 #include <vector>
 #include <memory>
 
-#include "rectangle.h"
 #include "circle.h"
-
+#include "rectangle.h"
 
 class Robot : public Circle
 {
@@ -54,14 +53,6 @@ public:
      * @return True if Robot collides with one of the Rectangles
      */
     bool obstacleDetection(std::vector<Rectangle*>* validObstacles);
-
-    /**
-     * @brief Checks if line intersects with this robot
-     * @param lineStart Point where line starts
-     * @param lineEnd Point where line ends
-     * @return True if line intersects with robot
-     */
-    bool lineCircleIntersect(Point& lineStart, Point& lineEnd);
 
     /**
      * @brief Check is this robot collides with another robot

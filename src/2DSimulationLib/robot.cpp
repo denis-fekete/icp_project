@@ -6,6 +6,7 @@
  */
 
 #include "robot.h"
+#include "intersection.h"
 
 Robot::Robot(double x, double y, double radius, double rot, double detRadius) :
     Circle::Circle(x, y, radius, rot),
@@ -107,32 +108,6 @@ bool Robot::intersect(Circle& other)
     return left <= ((this->detRadius + other.getRadius()) * (this->detRadius + other.getRadius()));
 }
 
-bool Robot::lineCircleIntersect(Point& lineStart, Point& lineEnd)
-{
-
-    double lineX1 = lineEnd.x - lineStart.x;
-    double lineY1 = lineEnd.y - lineStart.y;
-
-    double lineX2 = this->x - lineStart.x;
-    double lineY2 = this->y - lineStart.y;
-
-    double lineLength = lineX1 * lineX1 + lineY1 * lineY1;
-
-    double t = std::max(0.0, std::min(lineLength, (lineX1 * lineX2 + lineY1 * lineY2))) / lineLength;
-
-    double closestX = lineStart.x + t * lineX1;
-    double closestY = lineStart.y + t * lineY1;
-
-    double distance = sqrt((this->x - closestX) * (this->x - closestX) + (this->y - closestY) * (this->y - closestY));
-
-    if(distance <= this->getRadius())
-    {
-        return true;
-    }
-
-    return false;
-}
-
 
 bool Robot::robotDetection(std::vector<Robot *> *robots)
 {
@@ -150,7 +125,8 @@ bool Robot::robotDetection(std::vector<Robot *> *robots)
             {
                 this->colliderFwd.breakIntoEdges(i, &lineStart, &lineEnd);
 
-                if(other->lineCircleIntersect(lineStart, lineEnd))
+
+                if(Intersection::lineCircleIntersect(other, lineStart, lineEnd))
                 {
                     return true;
                 }

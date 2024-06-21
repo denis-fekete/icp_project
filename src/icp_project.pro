@@ -24,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     2DSimulationLib/circle.h \
+    2DSimulationLib/intersection.h \
     2DSimulationLib/point.h \
     2DSimulationLib/randomgenerator.h \
     2DSimulationLib/rectangle.h \

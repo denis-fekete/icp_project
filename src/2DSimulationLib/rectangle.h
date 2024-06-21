@@ -22,6 +22,7 @@
 #include "point.h"
 #include "circle.h"
 
+
 class Rectangle : public Circle
 {
 public:
@@ -148,17 +149,6 @@ public:
         LT.x += deltaX; LT.y += deltaY;
     }
 
-
-    /**
-     * @brief Checks if two line intersect
-     * @param a Start point of first line
-     * @param b End point of first line
-     * @param c Start point of second line
-     * @param d End point of second
-     * @return True if lines intersect
-     */
-    bool linesIntersect(Point& startA, Point& endA, Point& startB, Point& endB);
-
     /**
      * @brief Returns one of the Rectangle lines based on `line`
      * @param line Value based on which line of the Rectangle will be returned
@@ -172,35 +162,9 @@ public:
      * @brief pointInRectangle Returns whenever point lies inside this rectangle
      * @param p Point to be chcked
      */
-    inline bool pointInRectangle(Point p)
-    {
-        return (
-            orientation(LB, RB, p) == 2 &&
-            orientation(RB, RT, p) == 2 &&
-            orientation(RT, LT, p) == 2 &&
-            orientation(LT, LB, p) == 2);
-    }
+    bool pointInRectangle(Point p);
 
 protected:
-
-    /**
-     * @brief onSegment Checks if Point c lies on line segment
-     * @param a Start of line segment
-     * @param b End of line segment
-     * @param c Point that is checked
-     * @return True if point lies on segment
-     */
-    bool onSegment(Point& a, Point& b, Point& c);
-
-    /**
-     * @brief Returns orientation of points
-     * @param a Start of first line
-     * @param b End of first line
-     * @param c Point that is checked
-     * @return Returns: 0 if c is collinear with a,b line, 1 if on right side, 2 if on left side
-     */
-    double orientation(Point& a, Point& b, Point& c);
-
     /**
      * @brief Updates single point based on `center` Point
      * @param center Point based on which position will be calculated

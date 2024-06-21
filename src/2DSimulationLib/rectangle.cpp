@@ -6,6 +6,7 @@
  */
 
 #include "rectangle.h"
+#include "intersection.h"
 
 Rectangle::Rectangle(double x, double y, double w, double h, double rot) : Circle(x, y, sqrt( (w * w +  h * h) / 4), rot)
 {
@@ -123,49 +124,6 @@ void Rectangle::updatePoints()
     updateSinglePoint(&center, &(this->RT), cosRad, sinRad);
 }
 
-bool Rectangle::onSegment(Point& a, Point& b, Point& c)
-{
-    return (b.x <= std::max(a.x, c.x) && b.x >= std::min(a.x, c.x) &&
-            b.y <= std::max(a.y, c.y) && b.y >= std::min(a.y, c.y));
-}
-
-
-double Rectangle::orientation(Point& a, Point& b, Point& c)
-{
-    double val = (b.y - a.y) * (c.x - b.x) -
-              (b.x - a.x) * (c.y - b.y);
-
-    if (val >= -0.01 && val <= 0.01) return 0;
-
-    return (val > 0)? 1: 2;
-}
-
-bool Rectangle::linesIntersect(Point& startA, Point& endA, Point& startB, Point& endB)
-{
-    double o1 = orientation(startA, endA, startB);
-    double o2 = orientation(startA, endA, endB);
-    double o3 = orientation(startB, endB, startA);
-    double o4 = orientation(startB, endB, endA);
-
-    if (o1 != o2 && o3 != o4)
-        return true;
-
-    // Special Cases
-    // p1, q1 and p2 are collinear and p2 lies on segment p1q1
-    if (o1 == 0 && onSegment(startA, endB, endA)) return true;
-
-    // p1, q1 and q2 are collinear and q2 lies on segment p1q1
-    if (o2 == 0 && onSegment(startA, endB, endA)) return true;
-
-    // p2, q2 and p1 are collinear and p1 lies on segment p2q2
-    if (o3 == 0 && onSegment(startB, startA, endB)) return true;
-
-    // p2, q2 and q1 are collinear and q1 lies on segment p2q2
-    if (o4 == 0 && onSegment(startB, startA, endB)) return true;
-
-    return false;
-}
-
 #define POLYGON_EDGE_COUNT 4
 #define LB_RB_LINE 0
 #define RB_RT_LINE 1
@@ -208,7 +166,7 @@ bool Rectangle::intersects(Rectangle* other)
         {
             other->breakIntoEdges(j, &startB, &endB);
 
-            if(linesIntersect(startA, endA, startB, endB))
+            if(Intersection::linesIntersect(startA, endA, startB, endB))
             {
                 return true;
             }
@@ -223,6 +181,15 @@ bool Rectangle::intersects(Rectangle* other)
         return true;
 
     return false;
+}
+
+bool Rectangle::pointInRectangle(Point p)
+{
+    return (
+        Intersection::orientation(LB, RB, p) == 2 &&
+        Intersection::orientation(RB, RT, p) == 2 &&
+        Intersection::orientation(RT, LT, p) == 2 &&
+        Intersection::orientation(LT, LB, p) == 2);
 }
 
 #undef POLYGON_EDGE_COUNT
